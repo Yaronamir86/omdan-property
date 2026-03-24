@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OMDAN | דשבורד</title>
+  <script>
+    // רץ לפני הרינדור — מונע flash
+    try{
+      const p=JSON.parse(localStorage.getItem("omdan_profile")||"null");
+      if(p){
+        document.addEventListener("DOMContentLoaded",()=>{
+          const mark=document.getElementById("logoMark");
+          const name=document.getElementById("logoName");
+          if(!mark||!name) return;
+          if(p.logoType==="upload"&&p.logoImageData){
+            mark.innerHTML=`<img src="${p.logoImageData}" style="width:100%;height:100%;object-fit:cover;">`;
+          } else {
+            mark.textContent=p.logoLetters||"YA";
+            mark.style.background=p.logoColor||"#F59E0B";
+          }
+          if(p.nameHe) name.textContent=p.nameHe;
+        });
+      }
+    }catch(e){}
+  </script>
+  <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
+  <link rel="icon" type="image/png" href="/assets/omdan-favicon.png">
+  <link rel="apple-touch-icon" href="/assets/omdan-app-icon.png">
+  <meta name="theme-color" content="#F59E0B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="OMDAN">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ── CSS VARS — זהה לחלוטין ל-form.html ── */
+    :root{
+      --primary:#111827;--primary2:#1F2937;--primary3:#374151;
+      --r:10px;
+      --accent:#F59E0B;--accent2:#FDE68A;--accent3:#D97706;
+      --blue:#3B82F6;--red:#EF4444;--green:#10B981;--purple:#8B5CF6;
+      --text:#F9FAFB;--muted:#9CA3AF;--subtle:#6B7280;--border:#1F2937;
+      --card:#111827;--bg:#030712;
+      --shadow:0 4px 20px rgba(0,0,0,0.4);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;}
+
+    /* ── NAV ── */
+    #topbar{
+      background:var(--primary);border-bottom:1px solid var(--border);
+      padding:0 20px;display:flex;align-items:center;justify-content:space-between;
+      height:56px;position:sticky;top:0;z-index:100;
+    }
+    .tb-left{display:flex;align-items:center;gap:10px;}
+    .tb-logo{font-size:20px;font-weight:900;color:var(--accent);letter-spacing:1px;}
+    .tb-divider{width:1px;height:22px;background:var(--border);}
+    .tb-page{font-size:13px;font-weight:700;color:var(--muted);}
+    .tb-right{display:flex;align-items:center;gap:8px;}
+    .tb-user{font-size:13px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+    /* ── BUTTONS ── */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border:none;border-radius:12px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;transition:all .18s;}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#111;box-shadow:0 3px 12px rgba(245,158,11,.3);}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(245,158,11,.4);}
+    .btn-secondary{background:var(--primary2);border:1px solid var(--primary3);color:var(--text);}
+    .btn-secondary:hover{border-color:var(--muted);}
+    .btn-ghost{background:transparent;border:1px solid var(--primary3);color:var(--muted);}
+    .btn-ghost:hover{color:var(--text);border-color:var(--muted);}
+    .btn-sm{padding:6px 14px;font-size:12px;border-radius:10px;}
+
+    /* ── MAIN ── */
+    main{max-width:1100px;margin:0 auto;padding:28px 20px;}
+
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+    .page-title{font-size:20px;font-weight:800;}
+    .page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+
+    /* ── STATS ── */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+    .sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;transition:border-color .2s;}
+    .sc:hover{border-color:var(--primary3);}
+    .sc .label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+    .sc .value{font-size:26px;font-weight:900;letter-spacing:-1px;}
+    .sc .sub{font-size:12px;color:var(--subtle);margin-top:3px;}
+    .sc-accent{border-top:3px solid var(--accent);}
+    .sc-green{border-top:3px solid var(--green);}
+    .sc-blue{border-top:3px solid var(--blue);}
+    .sc-purple{border-top:3px solid var(--purple);}
+
+    /* ── TOOLBAR ── */
+    .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+    .toolbar-title{font-size:16px;font-weight:800;}
+    .search-wrap{position:relative;flex:1;max-width:300px;}
+    .search-wrap input{
+      width:100%;background:var(--primary2);border:1.5px solid var(--primary3);border-radius:10px;
+      padding:9px 12px 9px 36px;font-size:13px;font-family:'Heebo',sans-serif;color:var(--text);
+      direction:rtl;outline:none;transition:border-color .2s;
+    }
+    .search-wrap input:focus{border-color:var(--accent);}
+    .search-wrap .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none;}
+
+    /* ── TABLE ── */
+    .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead{background:var(--primary2);}
+    th{padding:11px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
+    td{padding:13px 16px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle;}
+    tr:hover td{background:rgba(245,158,11,.04);cursor:pointer;}
+    .case-num{font-weight:800;color:var(--accent);font-size:12px;}
+    .case-title{font-weight:600;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+    /* ── BADGES ── */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+    .badge-draft{background:rgba(107,114,128,.15);color:var(--muted);}
+    .badge-processing{background:rgba(59,130,246,.15);color:var(--blue);}
+    .badge-done{background:rgba(16,185,129,.15);color:var(--green);}
+    .badge-review{background:rgba(245,158,11,.15);color:var(--accent);}
+
+    /* ── MODE TAG ── */
+    .mode-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+    .mode-private{background:rgba(59,130,246,.12);color:var(--blue);}
+    .mode-insurance{background:rgba(239,68,68,.12);color:var(--red);}
+    .mode-tax{background:rgba(16,185,129,.12);color:var(--green);}
+
+    /* ── EMPTY / LOADING ── */
+    .loading-row td,.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+    .empty .icon{font-size:40px;margin-bottom:10px;}
+    .empty p{font-size:14px;}
+    .spin{display:inline-block;width:18px;height:18px;border:2px solid var(--primary3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:8px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+
+    @media(max-width:480px){
+      #topbar{padding:0 12px;}
+      main{padding:16px 12px;}
+      .stats{grid-template-columns:repeat(2,1fr);gap:10px;}
+      .sc{padding:14px;}
+      .sc .value{font-size:22px;}
+      th:nth-child(3),td:nth-child(3){display:none;}
+      .toolbar{flex-direction:column;align-items:stretch;}
+      .search-wrap{max-width:100%;}
+      .page-header{flex-direction:column;align-items:flex-start;}
+    }
+    @media(max-width:768px){
+      .stats{grid-template-columns:repeat(2,1fr);}
+      .toolbar{flex-wrap:wrap;}
+      th:nth-child(4),th:nth-child(5),td:nth-child(4),td:nth-child(5){display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="tb-left">
+    <div id="topbarLogo" style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="goSettings()">
+      <div id="logoMark" style="width:34px;height:34px;border-radius:8px;background:var(--accent);color:#111;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">YA</div>
+      <div id="logoName" style="font-size:16px;font-weight:900;color:var(--accent);letter-spacing:1px;">OMDAN</div>
+    </div>
+    <div class="tb-divider"></div>
+    <div class="tb-page">ניהול תיקים</div>
+  </div>
+  <div class="tb-right">
+    <span class="tb-user" id="navUser"></span>
+    <button class="btn btn-ghost btn-sm" onclick="goBilling()">💳 מנוי</button>
+    <button class="btn btn-ghost btn-sm" onclick="goSettings()">⚙️ הגדרות</button>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">יציאה</button>
+  </div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div>
+      <div class="page-title">התיקים שלי</div>
+      <div class="page-sub" id="pageSubtitle">טוען...</div>
+    </div>
+    <button class="btn btn-primary" onclick="newCase()">+ תיק חדש</button>
+  </div>
+
+  <!-- סטטיסטיקות -->
+  <div class="stats">
+    <div class="sc sc-accent">
+      <div class="label">סה"כ תיקים</div>
+      <div class="value" id="statTotal">—</div>
+      <div class="sub">כל הזמנים</div>
+    </div>
+    <div class="sc sc-blue">
+      <div class="label">בטיפול</div>
+      <div class="value" id="statOpen">—</div>
+      <div class="sub">טיוטות ובעיבוד</div>
+    </div>
+    <div class="sc sc-green">
+      <div class="label">הושלמו</div>
+      <div class="value" id="statDone">—</div>
+      <div class="sub">דוחות מוכנים</div>
+    </div>
+    <div class="sc sc-purple">
+      <div class="label">החודש</div>
+      <div class="value" id="statMonth">—</div>
+      <div class="sub">תיקים חדשים</div>
+    </div>
+  </div>
+
+  <!-- כלי עבודה -->
+  <div class="toolbar">
+    <div class="toolbar-title">כל התיקים</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="search-wrap">
+        <span class="ico">🔍</span>
+        <input type="text" id="searchInput" placeholder="חיפוש לפי שם, מספר תביעה..." oninput="filterCases()" />
+      </div>
+    </div>
+  </div>
+
+  <!-- טבלת תיקים -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>מספר תיק</th>
+          <th>שם / כותרת</th>
+          <th>סוג</th>
+          <th>סטטוס</th>
+          <th>תאריך</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="casesBody">
+        <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);">טוען תיקים... <span class="spin"></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+  authDomain:"omdan-property.firebaseapp.com",
+  projectId:"omdan-property",
+  storageBucket:"omdan-property.firebasestorage.app",
+  messagingSenderId:"1028931108038",
+  appId:"1:1028931108038:web:01731ca2a152b700ea6bc7"
+});
+const auth=firebase.auth(), db=firebase.firestore();
+
+let currentUser=null, allCases=[];
+
+auth.onAuthStateChanged(async u=>{
+  if(!u){ window.location.href="/"; return; }
+  currentUser=u;
+  document.getElementById("navUser").textContent=u.displayName||u.email;
+  loadProfile(u.uid);
+  loadCases();
+});
+
+function applyProfile(p){
+  if(!p) return;
+  const mark=document.getElementById("logoMark");
+  const name=document.getElementById("logoName");
+  if(p.logoType==="upload" && p.logoImageData){
+    mark.innerHTML=`<img src="${p.logoImageData}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    mark.textContent=p.logoLetters||"YA";
+    mark.style.background=p.logoColor||"var(--accent)";
+  }
+  if(p.nameHe) name.textContent=p.nameHe;
+}
+
+async function loadProfile(uid){
+  // טעינה מיידית מ-cache
+  try{
+    const cached=localStorage.getItem("omdan_profile");
+    if(cached) applyProfile(JSON.parse(cached));
+  }catch(e){}
+  // עדכון מ-Firestore ברקע
+  try{
+    const snap=await db.collection("users").doc(uid).get();
+    if(!snap.exists) return;
+    const p=snap.data();
+    localStorage.setItem("omdan_profile", JSON.stringify(p));
+    applyProfile(p);
+  }catch(e){ console.warn("profile load",e); }
+}
+
+
+async function loadCases(){
+  try{
+    const snap = await db.collection("cases")
+      .where("createdBy","==",currentUser.uid)
+      .orderBy("createdAt","desc")
+      .limit(100)
+      .get();
+    allCases = snap.docs.map(d=>({id:d.id,...d.data(),
+      createdAt: d.data().createdAt?.toDate?.()?.toISOString() || d.data().createdAt
+    }));
+    renderStats(allCases);
+    renderTable(allCases);
+    document.getElementById("pageSubtitle").textContent=`${allCases.length} תיקים בסך הכל`;
+  }catch(e){
+    console.error("loadCases error:",e);
+    document.getElementById("casesBody").innerHTML=`<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--red);">שגיאה: ${e.message}</td></tr>`;
+  }
+}
+
+function renderStats(cases){
+  const now=new Date();
+  const thisMonth=cases.filter(c=>{
+    if(!c.createdAt)return false;
+    const d=new Date(c.createdAt);
+    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+  });
+  document.getElementById("statTotal").textContent=cases.length;
+  document.getElementById("statOpen").textContent=cases.filter(c=>c.status==="draft"||c.status==="processing").length;
+  document.getElementById("statDone").textContent=cases.filter(c=>c.status==="completed").length;
+  document.getElementById("statMonth").textContent=thisMonth.length;
+}
+
+function renderTable(cases){
+  const tbody=document.getElementById("casesBody");
+  if(!cases.length){
+    tbody.innerHTML=`<tr><td colspan="6"><div class="empty"><div class="icon">📁</div><p>אין תיקים עדיין — <a href="#" onclick="newCase()" style="color:var(--accent)">פתח תיק ראשון</a></p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML=cases.map(c=>`
+    <tr onclick="openCase('${c.id}')">
+      <td><span class="case-num">${c.caseNumber||"—"}</span></td>
+      <td><span class="case-title">${escHtml(c.title||"ללא כותרת")}</span></td>
+      <td>${modeTag(c.mode)}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td style="color:var(--muted);font-size:12px;">${fmtDate(c.createdAt)}</td>
+      <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openCase('${c.id}')">פתח ›</button></td>
+    </tr>`).join("");
+}
+
+function filterCases(){
+  const q=document.getElementById("searchInput").value.toLowerCase();
+  const filtered=allCases.filter(c=>
+    (c.title||"").toLowerCase().includes(q)||
+    (c.caseNumber||"").toLowerCase().includes(q)||
+    (c.summary||"").toLowerCase().includes(q)
+  );
+  renderTable(filtered);
+}
+
+function modeTag(m){
+  const map={private:["mode-private","שומה פרטית"],insurance:["mode-insurance","ביטוח"],tax:["mode-tax","מס רכוש"]};
+  const[cls,lbl]=map[m]||["mode-private",m||"—"];
+  return`<span class="mode-tag ${cls}">${lbl}</span>`;
+}
+
+function statusBadge(s){
+  const map={draft:["badge-draft","טיוטה"],processing:["badge-processing","בעיבוד"],completed:["badge-done","הושלם"],review:["badge-review","לבדיקה"]};
+  const[cls,lbl]=map[s]||["badge-draft",s||"—"];
+  return`<span class="badge ${cls}">${lbl}</span>`;
+}
+
+function fmtDate(iso){
+  if(!iso)return"—";
+  return new Date(iso).toLocaleDateString("he-IL",{day:"2-digit",month:"2-digit",year:"numeric"});
+}
+
+function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function openCase(caseId){ window.location.href=`/app/case.html?id=${caseId}`; }
+function newCase(){ window.location.href="/app/case.html"; }
+function goSettings(){ window.location.href="/app/settings.html"; }
+function doLogout(){ auth.signOut().then(()=>window.location.href="/"); }
+function goBilling(){ window.location.href='/app/account-billing.html'; }
+</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js', {updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});});}</script>
+</body>
+</html>

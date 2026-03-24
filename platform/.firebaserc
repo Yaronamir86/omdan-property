@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "yaron-appraiser"
+  },
+  "targets": {
+    "yaron-appraiser": {
+      "hosting": {
+        "core": ["omdan-core"],
+        "property": ["omdan-property"],
+        "leak": ["omdan-leak"],
+        "insurance": ["omdan-insurance"]
+      }
+    }
+  }
+}

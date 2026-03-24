@@ -1,0 +1,17 @@
+{
+  "folders": [
+	{
+		"name": "hosting",
+		"path": "../../Downloads/omdan-property-v1/omdan-clean/hosting"
+	},
+	{
+		"name": "omdan-property",
+		"path": ".."
+	},
+	{
+		"name": "functions",
+		"path": "../../Downloads/omdan-property-v1/omdan-clean/functions"
+	}
+],
+  "settings": {}
+}
