@@ -153,10 +153,7 @@
 
 <div id="topbar">
   <div class="tb-left">
-    <div id="topbarLogo" style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="goSettings()">
-      <div id="logoMark" style="width:34px;height:34px;border-radius:8px;background:var(--accent);color:#111;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">YA</div>
-      <div id="logoName" style="font-size:16px;font-weight:900;color:var(--accent);letter-spacing:1px;">OMDAN</div>
-    </div>
+    <a id="topbarLogo" href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;"><img src="/assets/omdan-logo.png" alt="OMDAN" style="height:30px;object-fit:contain;" onerror="this.style.display='none'"><div style="line-height:1.15;"><div style="font-size:11px;font-weight:900;color:#F9FAFB;letter-spacing:.5px;">OMDAN</div><div style="font-size:11px;font-weight:700;color:#F59E0B;letter-spacing:.5px;">רכוש</div></div></a>
     <div class="tb-divider"></div>
     <div class="tb-page">ניהול תיקים</div>
   </div>
@@ -255,19 +252,6 @@ auth.onAuthStateChanged(async u=>{
   loadProfile(u.uid);
   loadCases();
 });
-
-function applyProfile(p){
-  if(!p) return;
-  const mark=document.getElementById("logoMark");
-  const name=document.getElementById("logoName");
-  if(p.logoType==="upload" && p.logoImageData){
-    mark.innerHTML=`<img src="${p.logoImageData}" style="width:100%;height:100%;object-fit:cover;">`;
-  } else {
-    mark.textContent=p.logoLetters||"YA";
-    mark.style.background=p.logoColor||"var(--accent)";
-  }
-  if(p.nameHe) name.textContent=p.nameHe;
-}
 
 async function loadProfile(uid){
   // טעינה מיידית מ-cache
@@ -401,5 +385,19 @@ function doLogout(){ auth.signOut().then(()=>window.location.href="/"); }
 function goBilling(){ window.location.href='/app/account-billing.html'; }
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js', {updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});});}</script>
+
+<style>
+.omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}
+.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;transition:color .2s;}
+.omdan-footer a:hover{color:#f59e0b;}
+</style>
+<footer class="omdan-footer">
+  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
+  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
+  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
+  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
+  <a href="/legal/index.html">מסמכים משפטיים</a>
+  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
+</footer>
 </body>
 </html>

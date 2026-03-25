@@ -102,7 +102,7 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:14px
 <body>
 
 <nav>
-  <a class="nav-logo" href="/app/dashboard.html"><img src="../assets/omdan-logo.png" style="height:32px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span style="display:none">OMDAN</span></a>
+  <a class="nav-logo" href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;"><img src="/assets/omdan-logo.png" alt="OMDAN" style="height:32px;object-fit:contain;" onerror="this.style.display='none'"><div style="line-height:1.15;"><div style="font-size:12px;font-weight:900;color:#F9FAFB;letter-spacing:.5px;">OMDAN</div><div style="font-size:11px;font-weight:700;color:#F59E0B;letter-spacing:.5px;">רכוש</div></div></a>
   <a class="nav-back" href="/app/dashboard.html">← חזרה לדשבורד</a>
 </nav>
 
@@ -400,5 +400,19 @@ onAuthStateChanged(auth, async user => {
 </script>
 
 <script>if("serviceWorker"in navigator){navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});}</script>
+
+<style>
+.omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}
+.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;transition:color .2s;}
+.omdan-footer a:hover{color:#f59e0b;}
+</style>
+<footer class="omdan-footer">
+  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
+  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
+  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
+  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
+  <a href="/legal/index.html">מסמכים משפטיים</a>
+  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
+</footer>
 </body>
 </html>

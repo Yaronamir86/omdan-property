@@ -151,7 +151,7 @@ footer{border-top:1px solid var(--border);padding:32px 6%;display:flex;align-ite
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#">⚖️ אומדן <span>פרו</span></a>
+  <a href="/" class="nav-logo" style="display:flex;align-items:center;gap:10px;text-decoration:none;"><img src="/assets/omdan-logo.png" alt="OMDAN" style="height:36px;object-fit:contain;" onerror="this.style.display='none'"><div style="line-height:1.15;"><div style="font-size:13px;font-weight:900;color:#F9FAFB;letter-spacing:.5px;">OMDAN</div><div style="font-size:12px;font-weight:700;color:#F59E0B;letter-spacing:.5px;">רכוש</div></div></a>
   <div class="nav-links">
     <a href="#features">יכולות</a>
     <a href="#pricing">מחירים</a>
@@ -159,7 +159,7 @@ footer{border-top:1px solid var(--border);padding:32px 6%;display:flex;align-ite
     <a href="#faq">שאלות</a>
   </div>
   <div style="display:flex;gap:10px;align-items:center;">
-    <a href="/app/dashboard.html" class="btn-outline" style="padding:8px 18px;font-size:13px;">נסה דמו</a>
+    <a href="/demo.html" class="btn-outline" style="padding:8px 18px;font-size:13px;">נסה דמו</a>
     <a href="/index.html" class="btn-nav">התחל 14 יום חינם</a>
   </div>
 </nav>
@@ -172,7 +172,7 @@ footer{border-top:1px solid var(--border);padding:32px 6%;display:flex;align-ite
     <p class="hero-sub">מערכת שמאות חכמה לשמאים עצמאיים — כתב כמויות אוטומטי, דוחות מוכנים לחתימה, וסנכרון ענן. תשלום אחד נמוך במקום תשלום לכל דוח.</p>
     <div class="hero-cta">
       <a href="/index.html" class="btn-primary">🚀 התחל ניסיון חינם</a>
-      <a href="/app/dashboard.html" class="btn-outline">👁️ צפה בדמו</a>
+      <a href="/demo.html" class="btn-outline">👁️ צפה בדמו</a>
     </div>
     <div class="hero-stats">
       <div class="stat"><div class="stat-n">89₪</div><div class="stat-l">Starter לחודש</div></div>
@@ -247,7 +247,7 @@ footer{border-top:1px solid var(--border);padding:32px 6%;display:flex;align-ite
       <div class="big-icon">⚖️</div>
       <div style="font-size:18px;font-weight:700;color:#6b7280;">מערכת שמאות מקצועית</div>
       <div style="font-size:14px;color:#4b5563;">לחץ "נסה דמו" לחוות את המערכת</div>
-      <a href="/app/dashboard.html" class="btn-primary" style="margin-top:8px;">🚀 פתח דמו</a>
+      <a href="/demo.html" class="btn-primary" style="margin-top:8px;">🚀 פתח דמו</a>
     </div>
   </div>
   <div class="demo-features">
@@ -377,15 +377,7 @@ footer{border-top:1px solid var(--border);padding:32px 6%;display:flex;align-ite
 </section>
 
 <!-- FOOTER -->
-<footer>
-  <a class="nav-logo" href="#">⚖️ אומדן <span style="color:var(--accent);">פרו</span></a>
-  <div class="footer-links">
-    <a href="#">תנאי שימוש</a>
-    <a href="#">פרטיות</a>
-    <a href="mailto:yaronamir86@gmail.com">צור קשר</a>
-  </div>
-  <div class="footer-copy">© 2025 אומדן פרו. כל הזכויות שמורות.</div>
-</footer>
+
 
 <script>
 function toggleFaq(el){
@@ -422,14 +414,21 @@ sections.forEach(s=>obs.observe(s));
 .site-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;}
 .site-footer a:hover{color:#f59e0b;}
 </style>
-<footer class="site-footer">
-  <a href="/legal/index.html">מסמכים משפטיים</a> |
+
+
+
+<style>
+.omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}
+.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;transition:color .2s;}
+.omdan-footer a:hover{color:#f59e0b;}
+</style>
+<footer class="omdan-footer">
   <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
   <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
   <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
-  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a>
-  <br><br>© 2025 OMDAN. כל הזכויות שמורות.
+  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
+  <a href="/legal/index.html">מסמכים משפטיים</a>
+  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
 </footer>
-
 </body>
 </html>
