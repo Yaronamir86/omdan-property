@@ -473,6 +473,24 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 </script>
+
+<style>
+@media(max-width:768px){
+  nav{padding:10px 4% !important;flex-wrap:nowrap;}
+  .nav-links{display:none;}
+  .hero h1,.hero-title{font-size:28px !important;}
+  .pricing-grid{grid-template-columns:1fr !important;}
+  .pricing-section{padding:0 16px !important;}
+  .plan-card.popular{order:-1;}
+  .faq-section{padding:0 16px !important;}
+}
+@media(max-width:480px){
+  body{font-size:13px;}
+  h1{font-size:24px !important;}
+  .card{padding:24px 16px !important;}
+  .btn{font-size:13px !important;}
+}
+</style>
 </head>
   <body>
     <nav>
@@ -712,60 +730,12 @@ firebase.auth().onAuthStateChanged(user => {
       let _authPromise   = null; // Promise שיסתיים כשauth יתבהר
 
       async function startCheckout(planId) {
-        // Cardcom עדיין בהקמה — הצג הודעה
-        const user = firebase.auth().currentUser;
+        const user = window._firebaseUser || null;
         if (!user) {
           window.location.href = '/index.html';
           return;
         }
-        // TODO: replace with real Cardcom when credentials ready
         alert('מערכת התשלומים בהקמה. לשדרוג מנוי פנה אלינו ישירות.');
-        return;
-        // --- original code below (disabled until Cardcom ready) ---
-        void 0;
-        async function _disabled_startCheckout(planId) {
-        const btn = event.currentTarget || event.target;
-        const origText = btn.textContent;
-
-        // המתן לauth אם עדיין לא הסתיים
-        if (!_authResolved) {
-          btn.disabled = true;
-          btn.textContent = '⏳...';
-          await _authPromise;
-          btn.disabled = false;
-          btn.textContent = origText;
-        }
-
-        if (!_firebaseUser) {
-          // לא מחובר — שלח ל-register עם params
-          window.location.href = `/index.html?plan=${planId}&billing=${billingMode}`;
-          return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = '⏳ מעבד...';
-
-        try {
-          const token = await _firebaseUser.getIdToken();
-          const res = await fetch(
-            "https://us-central1-omdan-property.cloudfunctions.net/cardcomCreatePayment",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-              body: JSON.stringify({ planId, billingMode }),
-            }
-          );
-          const data = await res.json();
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            throw new Error(data.error || 'שגיאה ביצירת תשלום');
-          }
-        } catch(e) {
-          btn.disabled = false;
-          btn.textContent = origText;
-          alert('שגיאה: ' + e.message);
-        }
       }
     </script>
 
@@ -780,7 +750,6 @@ firebase.auth().onAuthStateChanged(user => {
       });
       const auth = getAuth(app);
 
-        } // end _disabled_startCheckout
       // צור Promise שמסתיים כשauth יתבהר — startCheckout ממתין לזה
       window._authPromise = new Promise(resolve => {
         onAuthStateChanged(auth, user => {

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OMDAN | נדרש מנוי</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.logo-row{text-align:center;margin-bottom:32px;}
+.card{background:#111827;border:1px solid rgba(245,158,11,.3);border-radius:24px;padding:48px 40px;max-width:480px;width:100%;text-align:center;}
+.icon{font-size:56px;margin-bottom:16px;}
+h1{font-size:26px;font-weight:900;margin-bottom:10px;}
+.sub{font-size:14px;color:#9ca3af;margin-bottom:28px;line-height:1.7;}
+.plan-info{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:16px 20px;margin-bottom:24px;text-align:right;}
+.plan-info .label{font-size:11px;color:#9ca3af;font-weight:600;margin-bottom:4px;}
+.plan-info .value{font-size:15px;font-weight:800;color:#f59e0b;}
+.btn{display:inline-block;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;font-weight:800;font-size:15px;padding:14px 36px;border-radius:12px;text-decoration:none;width:100%;margin-bottom:10px;}
+.btn-ghost{background:transparent;border:1px solid #374151;color:#9ca3af;font-size:13px;padding:10px 24px;display:inline-block;text-decoration:none;border-radius:12px;width:100%;}
+</style>
+
+<style>
+@media(max-width:768px){
+  nav{padding:10px 4% !important;flex-wrap:nowrap;}
+  .nav-links{display:none;}
+  .hero h1,.hero-title{font-size:28px !important;}
+  .pricing-grid{grid-template-columns:1fr !important;}
+  .pricing-section{padding:0 16px !important;}
+  .plan-card.popular{order:-1;}
+  .faq-section{padding:0 16px !important;}
+}
+@media(max-width:480px){
+  body{font-size:13px;}
+  h1{font-size:24px !important;}
+  .card{padding:24px 16px !important;}
+  .btn{font-size:13px !important;}
+}
+</style>
+</head>
+<body>
+<div class="logo-row">
+  <a href="/" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
+    <img src="/assets/omdan-logo.png" style="height:36px;object-fit:contain;" onerror="this.style.display='none'">
+    <div style="line-height:1.15;text-align:right;">
+      <div style="font-size:13px;font-weight:900;color:#F9FAFB;">OMDAN</div>
+      <div style="font-size:12px;font-weight:700;color:#F59E0B;">רכוש</div>
+    </div>
+  </a>
+</div>
+
+<div class="card">
+  <div class="icon">🔒</div>
+  <h1>נדרש מנוי פעיל</h1>
+  <div class="sub" id="gateMsg">לגישה למערכת נדרש מנוי פעיל או תקופת ניסיון.</div>
+  <div class="plan-info" id="planInfo" style="display:none;">
+    <div class="label">המסלול שבחרת</div>
+    <div class="value" id="planName">—</div>
+  </div>
+  <a href="/pricing.html" class="btn">⚡ לרכישת מנוי</a>
+  <a href="/app/dashboard.html" class="btn-ghost">חזרה לדשבורד</a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+  authDomain:"omdan-property.firebaseapp.com",
+  projectId:"omdan-property",
+  storageBucket:"omdan-property.firebasestorage.app",
+  messagingSenderId:"1028931108038",
+  appId:"1:1028931108038:web:01731ca2a152b700ea6bc7"
+});
+const auth=firebase.auth(), db=firebase.firestore();
+
+const params = new URLSearchParams(window.location.search);
+const plan = params.get('plan');
+const reason = params.get('reason');
+
+if(plan){
+  const names={starter:'Starter — שמאי עצמאי',pro:'Pro — שמאי פעיל',office:'Office — משרד שמאים'};
+  document.getElementById('planName').textContent = names[plan]||plan;
+  document.getElementById('planInfo').style.display='block';
+}
+if(reason==='trial_expired'){
+  document.getElementById('gateMsg').textContent='תקופת הניסיון שלך הסתיימה. שדרג כדי להמשיך להשתמש במערכת.';
+} else if(reason==='subscription_expired'){
+  document.getElementById('gateMsg').textContent='המנוי שלך פג. חדש את המנוי כדי להמשיך.';
+}
+
+auth.onAuthStateChanged(user=>{
+  if(!user) window.location.href='/';
+});
+</script>
+
+<style>
+.omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}
+.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;transition:color .2s;}
+.omdan-footer a:hover{color:#f59e0b;}
+</style>
+<footer class="omdan-footer">
+  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
+  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
+  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
+  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
+  <a href="/legal/index.html">מסמכים משפטיים</a>
+  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
+</footer>
+</body>
+</html>

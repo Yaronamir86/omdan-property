@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMDAN | הרשמה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+.card{background:#0d1117;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:48px 40px;width:440px;max-width:100%;box-shadow:0 32px 80px rgba(0,0,0,.6);}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;}
+.subtitle{text-align:center;font-size:12px;color:#6b7280;margin-bottom:28px;}
+.trial-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;margin-bottom:28px;}
+.section-title{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.field input{width:100%;background:#030712;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:11px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:#f59e0b;}
+.field input::placeholder{color:#4b5563;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.divider{border:none;border-top:1px solid rgba(255,255,255,.06);margin:22px 0;}
+.btn-register{width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:12px;padding:14px;color:#000;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity .2s;margin-top:8px;}
+.btn-register:hover{opacity:.88;}
+.btn-register:disabled{opacity:.4;cursor:not-allowed;}
+.terms{font-size:11px;color:#4b5563;text-align:center;margin-top:14px;line-height:1.6;}
+.terms a{color:#6b7280;text-decoration:underline;}
+.login-link{text-align:center;margin-top:20px;font-size:13px;color:#6b7280;}
+.login-link a{color:#f59e0b;text-decoration:none;font-weight:700;}
+.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;font-size:13px;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:none;}
+.success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;font-size:14px;border-radius:12px;padding:24px;text-align:center;display:none;}
+.pw-bar{height:3px;border-radius:2px;margin-top:6px;background:#1f2937;overflow:hidden;}
+.pw-fill{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%;}
+.pw-hint{font-size:11px;color:#6b7280;margin-top:4px;}
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-left:40px;}
+.pw-toggle{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#6b7280;padding:0;display:flex;align-items:center;font-size:18px;line-height:1;}
+.pw-toggle:hover{color:#f59e0b;}
+.btn-google{width:100%;background:#1e1e2e;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:13px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;}
+.btn-google:hover{background:#2a2a3e;border-color:rgba(255,255,255,.3);}
+.or-divider{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.or-divider span{font-size:11px;color:#4b5563;white-space:nowrap;}
+.or-divider::before,.or-divider::after{content:'';flex:1;border-top:1px solid rgba(255,255,255,.08);}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="logo-row">
+    <img src="/assets/omdan-logo.png" alt="OMDAN" style="height:44px;object-fit:contain;" onerror="this.style.display='none'">
+    <div style="text-align:right;">
+      <div style="font-size:15px;font-weight:900;color:#F9FAFB;">OMDAN</div>
+      <div style="font-size:13px;font-weight:700;color:#F59E0B;">רכוש</div>
+    </div>
+  </div>
+  <div class="subtitle">מערכת ניהול תיקי שמאות לשמאי רכוש</div>
+
+  <div style="text-align:center;margin-bottom:28px;" id="badgeArea">
+    <span class="trial-badge" id="trialBadge">✅ ניסיון חינמי 14 יום — ללא כרטיס אשראי</span>
+  </div>
+
+  <div class="success" id="successMsg">
+    <div style="font-size:36px;margin-bottom:10px;">🎉</div>
+    <div style="font-size:17px;font-weight:800;margin-bottom:6px;">ברוך הבא למערכת!</div>
+    <div style="font-size:13px;opacity:.8;">החשבון נוצר. מועבר לדשבורד...</div>
+  </div>
+
+  <div id="regErr" class="err"></div>
+
+  <div id="regForm">
+    <button class="btn-google" id="googleBtn" onclick="doGoogleRegister()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      הרשמה עם Google
+    </button>
+    <div class="or-divider"><span>או עם אימייל וסיסמה</span></div>
+    <div class="section-title">פרטים אישיים</div>
+    <div class="row-2">
+      <div class="field">
+        <label>שם פרטי</label>
+        <input type="text" id="firstName" placeholder="ישראל" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label>שם משפחה</label>
+        <input type="text" id="lastName" placeholder="ישראלי" autocomplete="family-name">
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>טלפון</label>
+        <input type="tel" id="phone" placeholder="050-0000000">
+      </div>
+      <div class="field">
+        <label>עיר</label>
+        <input type="text" id="city" placeholder="תל אביב">
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">פרטי כניסה</div>
+
+    <div class="field">
+      <label>אימייל</label>
+      <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>סיסמה</label>
+      <div class="pw-wrap">
+        <input type="password" id="regPass" placeholder="לפחות 8 תווים" autocomplete="new-password" oninput="checkPW(this.value)">
+        <button type="button" class="pw-toggle" onclick="togglePW('regPass',this)" tabindex="-1">👁</button>
+      </div>
+      <div class="pw-bar"><div class="pw-fill" id="pwFill"></div></div>
+      <div class="pw-hint" id="pwHint">לפחות 8 תווים</div>
+    </div>
+    <div class="field">
+      <label>אימות סיסמה</label>
+      <div class="pw-wrap">
+        <input type="password" id="regPass2" placeholder="הקלד שוב" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+        <button type="button" class="pw-toggle" onclick="togglePW('regPass2',this)" tabindex="-1">👁</button>
+      </div>
+    </div>
+
+    <button class="btn-register" id="regBtn" onclick="doRegister()">התחל ניסיון חינמי ←</button>
+
+    <div class="legal-agreement" style="margin-top:16px;">
+      <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.6;color:#9ca3af;cursor:pointer;">
+        <input type="checkbox" id="acceptLegal" style="margin-top:3px;accent-color:#f59e0b;flex-shrink:0;">
+        <span>
+          קראתי ואני מסכים/ה ל<a href="/legal/terms-of-service/terms-he.html" target="_blank" rel="noopener" style="color:#f59e0b;text-decoration:none;">תנאי השימוש</a>,
+          ל<a href="/legal/privacy-policy/privacy-he.html" target="_blank" rel="noopener" style="color:#f59e0b;text-decoration:none;">מדיניות הפרטיות</a>
+          ול<a href="/legal/refund-policy/refunds-he.html" target="_blank" rel="noopener" style="color:#f59e0b;text-decoration:none;">מדיניות ההחזרים</a>.
+        </span>
+      </label>
+    </div>
+
+    <div class="terms" id="termsText">
+      אחרי 14 יום — 89₪/חודש.
+    </div>
+  </div>
+
+  <div class="login-link">כבר יש לך חשבון? <a href="/index.html" id="loginLink">כניסה למערכת</a></div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, doc, setDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const app = initializeApp({
+  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+  authDomain:"omdan-property.firebaseapp.com",
+  projectId:"omdan-property",
+  storageBucket:"omdan-property.firebasestorage.app",
+  messagingSenderId:"1028931108038",
+  appId:"1:1028931108038:web:01731ca2a152b700ea6bc7"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── קרא plan+billing מה-URL ──
+const urlParams   = new URLSearchParams(window.location.search);
+const pendingPlan = urlParams.get('plan');    // 'starter' | 'pro' | 'office' | null
+const pendingBilling = urlParams.get('billing') || 'monthly'; // 'monthly' | 'annual'
+
+const PLAN_NAMES = { starter:'Starter', pro:'Pro', office:'Office' };
+const BILLING_LABELS = { monthly:'חודשי', annual:'שנתי' };
+
+// עדכן UI אם הגיע עם plan
+if (pendingPlan && PLAN_NAMES[pendingPlan]) {
+  const badge = document.getElementById('trialBadge');
+  if (badge) {
+    badge.textContent = `💳 רכישת מסלול ${PLAN_NAMES[pendingPlan]} — ${BILLING_LABELS[pendingBilling]}`;
+    badge.style.background = 'rgba(245,158,11,.12)';
+    badge.style.borderColor = 'rgba(245,158,11,.3)';
+    badge.style.color = '#fbbf24';
+  }
+  const btn = document.getElementById('regBtn');
+  if (btn) btn.textContent = 'הירשם ועבור לתשלום ←';
+  const terms = document.getElementById('termsText');
+  if (terms) terms.textContent = 'לאחר ההרשמה תועבר לדף תשלום מאובטח של קארדקום.';
+  const loginLink = document.getElementById('loginLink');
+  if (loginLink) loginLink.href = `index.html?plan=${pendingPlan}&billing=${pendingBilling}`;
+}
+
+// ── flag — מונע ריצה כפולה בין onAuthStateChanged ל-doRegister ──
+let _handlingAuth = false;
+
+// ── פונקציה מרכזית — יצירת checkout אחרי auth ──
+async function proceedToCheckout(user) {
+  document.getElementById('regForm').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+  const msgs = document.querySelectorAll('#successMsg div');
+  if(msgs[1]) msgs[1].textContent = '⏳';
+  if(msgs[2]) msgs[2].textContent = 'מעביר לדף תשלום מאובטח...';
+  if(msgs[3]) msgs[3].textContent = '';
+
+  // נסה עד 3 פעמים עם token מרוענן
+  let lastError = null;
+  for(let attempt = 0; attempt < 3; attempt++){
+    try {
+      const token = await user.getIdToken(true); // force refresh כל פעם
+      const res = await fetch(
+        'https://us-central1-omdan-property.cloudfunctions.net/cardcomCreatePayment',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ planId: pendingPlan, billingMode: pendingBilling }),
+        }
+      );
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+        return; // הצלחה
+      }
+      lastError = new Error(data.error || 'שגיאה ביצירת תשלום');
+    } catch(e) {
+      lastError = e;
+      console.warn(`Checkout attempt ${attempt+1} failed:`, e.message);
+      await new Promise(r => setTimeout(r, 1000)); // המתן שניה לפני ניסיון חוזר
+    }
+  }
+
+  // כל הניסיונות נכשלו — הצג שגיאה ברורה (לא redirect שקט לדשבורד)
+  console.error('All checkout attempts failed:', lastError);
+  document.getElementById('successMsg').innerHTML = `
+    <div style="font-size:28px;margin-bottom:12px;">⚠️</div>
+    <div style="font-size:16px;font-weight:800;color:#fca5a5;margin-bottom:8px;">שגיאה ביצירת תשלום</div>
+    <div style="font-size:13px;color:#9ca3af;margin-bottom:16px;">${lastError?.message || 'שגיאה לא ידועה'}</div>
+    <button onclick="window.location.href='pricing.html?plan=${pendingPlan}&billing=${pendingBilling}'"
+      style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;color:#000;padding:10px 24px;border-radius:10px;font-family:'Heebo',sans-serif;font-weight:800;cursor:pointer;font-size:14px;">
+      נסה שוב
+    </button>
+    <br><br>
+    <a href="/index.html" style="font-size:12px;color:#6b7280;">כניסה לדשבורד</a>
+  `;
+}
+
+// ── onAuthStateChanged — רק למשתמש שכבר מחובר לפני טעינת הדף ──
+// _handlingAuth מונע התנגשות עם doRegister
+let _authInitialized = false;
+onAuthStateChanged(auth, user => {
+  if (_handlingAuth) return; // doRegister מטפל — אל תתערב
+
+  if (!_authInitialized) {
+    _authInitialized = true;
+    if (!user) return; // לא מחובר — דף הרשמה רגיל
+    // מחובר כבר לפני שנכנס לדף — הפנה בהתאם
+    if (pendingPlan && PLAN_NAMES[pendingPlan]) {
+      proceedToCheckout(user);
+    } else {
+      window.location.href = '/app/dashboard.html';
+    }
+  }
+});
+
+// ── הרשמה ──
+window.doRegister = async function(){
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
+  const phone     = document.getElementById('phone').value.trim();
+  const city      = document.getElementById('city').value.trim();
+  const email     = document.getElementById('regEmail').value.trim();
+  const pass      = document.getElementById('regPass').value;
+  const pass2     = document.getElementById('regPass2').value;
+  const btn       = document.getElementById('regBtn');
+
+  showErr('');
+
+  if(!firstName||!lastName)  return showErr('נא למלא שם פרטי ושם משפחה');
+  if(!email||!email.includes('@')) return showErr('נא למלא אימייל תקין');
+  if(pass.length < 8)        return showErr('הסיסמה חייבת להכיל לפחות 8 תווים');
+  if(pass !== pass2)         return showErr('הסיסמאות אינן זהות');
+
+  const legalCheckbox = document.getElementById('acceptLegal');
+  if(!legalCheckbox || !legalCheckbox.checked) {
+    return showErr('יש לאשר את תנאי השימוש ומדיניות הפרטיות לפני הרשמה.');
+  }
+
+  btn.textContent = 'יוצר חשבון...'; btn.disabled = true;
+  _handlingAuth = true; // נעל את onAuthStateChanged
+
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    const uid  = cred.user.uid;
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 14);
+
+    // כתוב פרופיל משתמש
+    await setDoc(doc(db,'users',uid), {
+      uid, firstName, lastName,
+      fullName: firstName+' '+lastName,
+      phone, city, email,
+      role: 'appraiser',
+      plan: 'trial',
+      trialEnd: trialEnd.toISOString(),
+      createdAt: serverTimestamp()
+    });
+
+    // כתוב billing — trial
+    await setDoc(doc(db,'billing',uid), {
+      uid, email, plan: 'trial',
+      products: ['appraiser-pro'],
+      trialEnd: trialEnd.toISOString(),
+      subscriptionEnd: null,
+      reportsThisMonth: 0,
+      reportsResetAt: new Date(new Date().getFullYear(), new Date().getMonth()+1, 1).toISOString(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    // אחרי הרשמה — checkout או דשבורד
+    if (pendingPlan && PLAN_NAMES[pendingPlan]) {
+      await proceedToCheckout(cred.user);
+    } else {
+      document.getElementById('regForm').style.display='none';
+      document.getElementById('successMsg').style.display='block';
+      setTimeout(()=>{ window.location.href='/index.html'; }, 2000);
+    }
+
+  } catch(e) {
+    btn.textContent = pendingPlan ? 'הירשם ועבור לתשלום ←' : 'התחל ניסיון חינמי ←';
+    btn.disabled = false;
+    const msgs = {
+      'auth/email-already-in-use': 'אימייל זה כבר רשום. <a href='/index.html' + (pendingPlan ? `?plan=${pendingPlan}&billing=${pendingBilling}` : '') + '" style="color:#f59e0b">כניסה</a>',
+      'auth/invalid-email':        'כתובת האימייל אינה תקינה',
+      'auth/weak-password':        'הסיסמה חלשה — השתמש ב-8 תווים עם מספרים'
+    };
+    showErr(msgs[e.code]||'שגיאה: '+e.message);
+  }
+};
+
+// ── Google Sign-In ──
+// ── טיפול בתוצאת redirect (מובייל) ──
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+// במובייל — הסתר כפתור Google והצג הודעה
+if(isMobile){
+  const googleBtn = document.getElementById('googleBtn');
+  const orDiv = document.querySelector('.or-divider');
+  if(googleBtn) {
+    googleBtn.style.display = 'none';
+    const msg = document.createElement('div');
+    msg.style.cssText = 'background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 14px;font-size:12px;color:#fbbf24;margin-bottom:14px;text-align:center;';
+    msg.textContent = 'כניסה עם Google זמינה מהמחשב בלבד. אנא השתמש באימייל וסיסמה.';
+    googleBtn.parentNode.insertBefore(msg, googleBtn);
+  }
+  if(orDiv) orDiv.style.display = 'none';
+}
+
+getRedirectResult(auth).then(async cred => {
+  if(!cred || !cred.user) return;
+  _handlingAuth = true;
+  const user = cred.user;
+  const uid  = user.uid;
+  const isNew = cred._tokenResponse?.isNewUser;
+  if(isNew){
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate()+14);
+    const nameParts = (user.displayName||'').split(' ');
+    await setDoc(doc(db,'users',uid),{
+      uid, firstName:nameParts[0]||'', lastName:nameParts.slice(1).join(' ')||'',
+      fullName:user.displayName||'', phone:'', city:'', email:user.email,
+      role:'appraiser', plan:'trial', trialEnd:trialEnd.toISOString(), createdAt:serverTimestamp()
+    });
+    await setDoc(doc(db,'billing',uid),{
+      uid, email:user.email, plan:'trial', products:['appraiser-pro'],
+      trialEnd:trialEnd.toISOString(), subscriptionEnd:null, reportsThisMonth:0,
+      reportsResetAt:new Date(new Date().getFullYear(),new Date().getMonth()+1,1).toISOString(),
+      createdAt:serverTimestamp(), updatedAt:serverTimestamp()
+    });
+  }
+  if(pendingPlan && PLAN_NAMES[pendingPlan]){ await proceedToCheckout(user); }
+  else { window.location.href='/index.html'; }
+}).catch(e=>{ if(e.code) console.warn('redirect result:',e.code); });
+
+window.doGoogleRegister = async function(){
+  const btn = document.getElementById('googleBtn');
+  btn.disabled = true;
+  btn.textContent = 'מתחבר...';
+  _handlingAuth = true;
+  const provider = new GoogleAuthProvider();
+  try {
+    if(isMobile){
+      // מובייל — redirect (לא popup)
+      await signInWithRedirect(auth, provider);
+      return; // הדף יועבר — הקוד ממשיך אחרי החזרה
+    }
+    const cred = await signInWithPopup(auth, provider);
+    const user = cred.user;
+    const uid  = user.uid;
+    const isNew = cred._tokenResponse?.isNewUser;
+    if (isNew) {
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 14);
+      const nameParts = (user.displayName || '').split(' ');
+      await setDoc(doc(db,'users',uid), {
+        uid,
+        firstName: nameParts[0] || '',
+        lastName:  nameParts.slice(1).join(' ') || '',
+        fullName:  user.displayName || '',
+        phone: '', city: '',
+        email: user.email,
+        role: 'appraiser',
+        plan: 'trial',
+        trialEnd: trialEnd.toISOString(),
+        createdAt: serverTimestamp()
+      });
+      await setDoc(doc(db,'billing',uid), {
+        uid, email: user.email, plan: 'trial',
+        products: ['appraiser-pro'],
+        trialEnd: trialEnd.toISOString(),
+        subscriptionEnd: null,
+        reportsThisMonth: 0,
+        reportsResetAt: new Date(new Date().getFullYear(), new Date().getMonth()+1, 1).toISOString(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+    if (pendingPlan && PLAN_NAMES[pendingPlan]) {
+      await proceedToCheckout(user);
+    } else {
+      window.location.href = '/app/dashboard.html';
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> הרשמה עם Google`;
+    _handlingAuth = false;
+    if (e.code !== 'auth/popup-closed-by-user') {
+      showErr('שגיאה בהתחברות עם Google: ' + e.message);
+    }
+  }
+};
+
+function showErr(msg){
+  const el = document.getElementById('regErr');
+  el.innerHTML = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+</script>
+
+<script>
+function togglePW(id, btn){
+  const inp = document.getElementById(id);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+function checkPW(v){
+  const fill=document.getElementById('pwFill');
+  const hint=document.getElementById('pwHint');
+  if(!v){fill.style.width='0%';hint.textContent='לפחות 8 תווים';hint.style.color='#6b7280';return;}
+  let s=0;
+  if(v.length>=8)s++;
+  if(/[0-9]/.test(v))s++;
+  if(/[A-Za-z]/.test(v))s++;
+  if(/[^A-Za-z0-9]/.test(v))s++;
+  const c=['#ef4444','#f59e0b','#3b82f6','#10b981'];
+  const l=['חלשה','בינונית','טובה','חזקה'];
+  fill.style.width=((s/4)*100)+'%';
+  fill.style.background=c[s-1]||'#ef4444';
+  hint.textContent=l[s-1]||'';
+  hint.style.color=c[s-1]||'#6b7280';
+}
+</script>
+
+<style>
+.site-footer{margin-top:40px;padding:20px 5% 28px;text-align:center;font-size:12px;color:#6b7280;border-top:1px solid rgba(255,255,255,.06);}
+.site-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;}
+.site-footer a:hover{color:#f59e0b;}
+</style>
+<footer class="site-footer">
+  <a href="/legal/index.html">מסמכים משפטיים</a> |
+  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
+  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
+  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
+  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a>
+  <br><br>© 2025 OMDAN. כל הזכויות שמורות.
+</footer>
+
+<style>.omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;}.omdan-footer a:hover{color:#f59e0b;}</style>
+<footer class="omdan-footer">
+  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
+  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
+  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
+  <a href="/legal/index.html">מסמכים משפטיים</a>
+  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
+</footer>
+</body>
+</html>

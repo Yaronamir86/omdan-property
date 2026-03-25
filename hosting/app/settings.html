@@ -266,7 +266,7 @@ body::before{
 
 /* ── Save bar ── */
 .save-bar{
-  position:fixed;bottom:0;left:0;right:0;background:rgba(3,7,18,.96);
+  position:fixed;bottom:0;left:0;right:0;padding-bottom:max(16px,env(safe-area-inset-bottom));background:rgba(3,7,18,.96);
   border-top:1px solid var(--border);padding:14px 40px;
   display:flex;align-items:center;justify-content:space-between;
   backdrop-filter:blur(10px);z-index:200;
@@ -294,31 +294,55 @@ body::before{
   z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;
 }
 #toast.show{opacity:1;}
+
+@media(max-width:768px){
+  .sidebar{display:none !important;}
+  .main{padding:16px !important;}
+  .section-body{padding:16px !important;}
+  .grid2,.grid3{grid-template-columns:1fr !important;}
+  .logo-builder{flex-direction:column;}
+}
 </style>
 </head>
 <body>
+<div id="mob-topbar" style="display:none;background:#111827;border-bottom:1px solid #1F2937;padding:0 16px;height:52px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+  <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <img src="/assets/omdan-logo.png" style="height:26px;object-fit:contain;">
+    <div style="line-height:1.1;">
+      <div style="font-size:10px;font-weight:900;color:#F9FAFB;">OMDAN</div>
+      <div style="font-size:10px;font-weight:700;color:#F59E0B;">רכוש</div>
+    </div>
+  </a>
+  <span style="font-size:13px;font-weight:700;color:#9CA3AF;">הגדרות</span>
+</div>
+<style>
+@media(max-width:768px){
+  #mob-topbar{display:flex !important;}
+  .main{padding-top:8px !important;}
+}
+</style>
+
 <div class="app">
 
 <!-- ── Sidebar ── -->
 <aside class="sidebar">
-  <div class="sb-logo" style="display:flex;align-items:center;gap:10px;padding:0 20px 20px;">
-    <img src="/assets/omdan-logo.png" alt="OMDAN" style="height:32px;object-fit:contain;" onerror="this.style.display='none'">
+  <div class="sb-logo">
+    <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+      <img src="/assets/omdan-logo.png" alt="OMDAN" style="height:32px;object-fit:contain;" onerror="this.style.display='none'">
       <div style="line-height:1.15;">
         <div style="font-size:11px;font-weight:900;color:#F9FAFB;letter-spacing:.5px;">OMDAN</div>
         <div style="font-size:11px;font-weight:700;color:#F59E0B;letter-spacing:.5px;">רכוש</div>
       </div>
-    </div>
-    <div>
-      <div class="sb-logo-name" id="sbLogoName">שמאי רכוש</div>
-      <div class="sb-logo-sub">הגדרות</div>
-    </div>
+    </a>
   </div>
   <nav class="sb-nav">
-    <a href="dashboard.html">
+    <a href="/app/dashboard.html">
       <span class="nav-icon">📊</span> דשבורד
     </a>
-      <a href="account-billing.html" style="display:flex;align-items:center;gap:8px;padding:10px 20px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;transition:color .2s;" onmouseover="this.style.color=\'var(--text)\'" onmouseout="this.style.color=\'var(--muted)\'">💳 ניהול מנוי</a>
-    <a href="settings.html" class="active">
+    <a href="/app/account-billing.html" class="sb-nav-item">
+      <span class="nav-icon">💳</span> ניהול מנוי
+    </a>
+    <a href="/app/settings.html" class="active">
       <span class="nav-icon">⚙️</span> פרופיל והגדרות
     </a>
   </nav>
@@ -333,7 +357,7 @@ body::before{
 
   <div class="page-header">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-      <a href="dashboard.html" style="color:var(--muted);font-size:13px;text-decoration:none;font-weight:600;">← דשבורד</a>
+      <a href="/app/dashboard.html" style="color:var(--muted);font-size:13px;text-decoration:none;font-weight:600;">← דשבורד</a>
     </div>
     <h1 class="page-title">⚙️ פרופיל והגדרות</h1>
     <p class="page-sub">הפרטים יופיעו בכל הדוחות שלך</p>
@@ -929,5 +953,21 @@ document.addEventListener('keydown', e=>{
   <a href="/legal/index.html">מסמכים משפטיים</a>
   <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
 </footer>
+
+<style>.settings-mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;padding-bottom:max(16px,env(safe-area-inset-bottom));z-index:200;
+  background:#111827;border-top:1px solid #1F2937;padding:8px 0 max(8px,env(safe-area-inset-bottom));
+  grid-template-columns:repeat(4,1fr);}
+.settings-mob-nav a,.settings-mob-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:4px;color:#9CA3AF;font-family:'Heebo',sans-serif;font-size:9px;font-weight:600;
+  background:none;border:none;cursor:pointer;text-decoration:none;}
+.settings-mob-nav a.active{color:#F59E0B;}
+@media(max-width:768px){.settings-mob-nav{display:grid;}.app{padding-bottom:72px;}}
+</style>
+<nav class="settings-mob-nav">
+  <a href="/app/dashboard.html"><span style="font-size:20px">📊</span>תיקים</a>
+  <a href="/app/case.html"><span style="font-size:20px">➕</span>תיק חדש</a>
+  <a href="/app/settings.html" class="active"><span style="font-size:20px">⚙️</span>הגדרות</a>
+  <button onclick="window._doLogout()"><span style="font-size:20px">🚪</span>יציאה</button>
+</nav>
 </body>
 </html>

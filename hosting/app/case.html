@@ -2788,10 +2788,7 @@ function renderBOQSection(key, title, color){
   items.forEach(i=>{ if(i.isSupervision) i.price = String(supervisionAmt>0?supervisionAmt:0); });
   const totalSec = calcSectionTotal(items.filter(i=>!i.isRental));
   const totalClaim = isIns ? (items||[]).reduce((s,i)=>s+(parseFloat(i.claim)||0),0) : 0;
-
-  // Hierarchical numbering
-  let areaNum = 0, lastArea = null, itemCounters = {}, noAreaCounter = 0;
-  const COLS = isIns ? 9 : 7; // total columns for colspan
+  const COLS = isIns ? 9 : 7;
 
   let html = `<div class="boq-section">
     <div class="flex justify-between items-center mb8">
@@ -2827,71 +2824,120 @@ function renderBOQSection(key, title, color){
   }
   html += `</thead><tbody>`;
 
-  // Build a map: roomHeader → last item index
-  const lastIdxByRoom = {};
-  items.forEach((item, i) => {
-    const key2 = item.roomHeader || '__none__';
-    lastIdxByRoom[key2] = i;
+  // ── Build chapter → room → items hierarchy ──
+  const chapterOrder = [];
+  const chapterMap = {}; // ch → { roomOrder:[], roomMap: { room → items[] } }
+
+  items.forEach(item => {
+    const ch = item.ch || (typeof guessChFromDesc === 'function' ? guessChFromDesc(item.desc) : 0) || 0;
+    const room = item.roomHeader || '__none__';
+    if(!chapterMap[ch]){
+      chapterMap[ch] = { roomOrder:[], roomMap:{} };
+      chapterOrder.push(ch);
+    }
+    if(!chapterMap[ch].roomMap[room]){
+      chapterMap[ch].roomMap[room] = [];
+      chapterMap[ch].roomOrder.push(room);
+    }
+    chapterMap[ch].roomMap[room].push(item);
   });
 
-  items.forEach((item, idx)=>{
-    if(item.roomHeader && item.roomHeader !== lastArea){
-      lastArea = item.roomHeader;
-      areaNum++;
-      itemCounters[item.roomHeader] = 0;
-      html += `<tr style="background:rgba(245,158,11,.08);">
-        <td colspan="${COLS}" style="padding:6px 10px;font-weight:800;font-size:12px;color:var(--accent);letter-spacing:.04em;">
-          ${areaNum}. ${item.roomHeader}</td></tr>`;
-    }
-    let displayId;
-    if(item.roomHeader){
-      itemCounters[item.roomHeader]++;
-      displayId = `${areaNum}.${itemCounters[item.roomHeader]}`;
-    } else {
-      noAreaCounter++;
-      displayId = String(noAreaCounter);
-    }
-    const kinun = item.isRental?(item.rentalAmount||0):(parseFloat(item.qty)||0)*(parseFloat(item.price)||0);
-    const shiput_val = (item.isSupervision||item.isRental||item.noShiput) ? null : Math.round(kinun*0.67);
+  // Last index tracking for + buttons
+  const lastIdxGlobal = {};
+  items.forEach((item,i) => {
+    const ch = item.ch || (typeof guessChFromDesc==='function'?guessChFromDesc(item.desc):0) || 0;
+    const room = item.roomHeader || '__none__';
+    lastIdxGlobal[`${ch}__${room}`] = item.id;
+  });
 
-    if(isIns){
-      html += `<tr class="boq-row-draggable ${item.zeroPrice?'row-zero':''} ${item.isRental?'row-rental':''}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader||''}">
-        <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
-        <td><textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea></td>
-        <td><input class="boq-input" style="width:44px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
-        <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
-        <td><input class="boq-input num" type="number" value="${item.isSupervision?item.price:esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} ${item.isSupervision?'disabled title="מחושב אוטומטית 5%"':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)"></td>
-        <td class="ta-l" style="background:rgba(59,130,246,.04);color:${kinun>0?'var(--blue)':'var(--subtle)'};font-weight:700;font-size:12px;" data-total="${key}_${item.id}">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):''}</td>
-        <td class="ta-l" style="background:rgba(16,185,129,.04);color:${shiput_val>0?'var(--green)':'var(--subtle)'};font-size:12px;" data-shiput="${key}_${item.id}">${item.zeroPrice?'—':shiput_val!=null&&shiput_val>0?'₪'+fmtNum(shiput_val):'—'}</td>
-        <td style="background:${STATE.boq.hasClaim?'rgba(252,211,77,.04)':'rgba(0,0,0,.2)'};"><input class="boq-input num" type="number" placeholder="₪" style="width:70px;color:#FCD34D;${STATE.boq.hasClaim?'':'opacity:.25;pointer-events:none;'}" value="${esc(item.claim||'')}" ${STATE.boq.hasClaim?'':'disabled'} oninput="updateBOQItem('${key}','${item.id}','claim',this.value)" title="תביעת השמאי הפרטי לסעיף זה"></td>
-        <td><button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button></td>
-      </tr>`;
-    } else {
-      html += `<tr class="boq-row-draggable ${item.zeroPrice?'row-zero':''} ${item.isRental?'row-rental':''}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader||''}">
-        <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
-        <td><textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea></td>
-        <td><input class="boq-input" style="width:60px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
-        <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
-        <td><input class="boq-input num" type="number" value="${item.isSupervision?item.price:esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} ${item.isSupervision?'disabled title="מחושב אוטומטית 5%"':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)"></td>
-        <td class="ta-l fw7" data-total="${key}_${item.id}" style="color:${kinun>0?'var(--accent)':'var(--subtle)'};">${item.zeroPrice?'—':item.isRental?`<span style="color:var(--blue);">₪${fmtNum(kinun)}</span>`:kinun>0?'₪'+fmtNum(kinun):''}</td>
-        <td><button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button></td>
-      </tr>`;
-    }
+  let chIdx = 0;
+  chapterOrder.forEach(chNum => {
+    chIdx++;
+    const chName = chNum ? (BOQ_CHAPTER_NAMES[chNum] || `פרק ${chNum}`) : 'כללי';
+    const chData = chapterMap[chNum];
+    const chAllItems = chData.roomOrder.reduce((a,r)=>a.concat(chData.roomMap[r]),[]);
+    const chTotal = calcSectionTotal(chAllItems.filter(i=>!i.isRental));
+    const chShiput = Math.round(calcShiputBase(chAllItems.filter(i=>!i.isRental))*0.67);
 
-    // After last item of each room group — show "+ הוסף שורה לחדר"
-    const roomKey = item.roomHeader || '__none__';
-    if(idx === lastIdxByRoom[roomKey]){
-      const roomLabel = item.roomHeader || null;
-      const btnLabel = roomLabel ? `+ שורה ל${roomLabel}` : '+ הוסף שורה';
-      const addCall = roomLabel
-        ? `addBOQItem('${key}','${roomLabel.replace(/'/g,"\\'")}')`
-        : `addBOQItem('${key}')`;
-      html += `<tr><td colspan="${COLS}" style="padding:2px 8px 6px;">
-        <button class="btn btn-ghost btn-xs" style="font-size:10px;color:var(--accent);opacity:.7;" onclick="${addCall}">${btnLabel}</button>
-      </td></tr>`;
+    // Chapter header row
+    html += `<tr style="background:rgba(59,130,246,.08);">
+      <td colspan="${COLS}" style="padding:7px 10px;font-weight:800;font-size:12px;color:var(--blue);border-top:2px solid rgba(59,130,246,.2);">
+        ${chIdx}. ${chName}</td></tr>`;
+
+    let roomIdx = 0;
+    chData.roomOrder.forEach(room => {
+      const roomItems = chData.roomMap[room];
+      const hasRoom = room !== '__none__';
+
+      if(hasRoom){
+        roomIdx++;
+        html += `<tr style="background:rgba(245,158,11,.06);">
+          <td colspan="${COLS}" style="padding:5px 10px 5px 20px;font-weight:700;font-size:11px;color:var(--accent);">
+            ${chIdx}.${roomIdx} ${room}</td></tr>`;
+      }
+
+      roomItems.forEach((item, itemIdx) => {
+        const displayId = hasRoom
+          ? `${chIdx}.${roomIdx}.${itemIdx+1}`
+          : `${chIdx}.${itemIdx+1}`;
+        const kinun = item.isRental?(item.rentalAmount||0):(parseFloat(item.qty)||0)*(parseFloat(item.price)||0);
+        const shiput_val = (item.isSupervision||item.isRental||item.noShiput) ? null : Math.round(kinun*0.67);
+
+        if(isIns){
+          html += `<tr class="boq-row-draggable ${item.zeroPrice?'row-zero':''} ${item.isRental?'row-rental':''}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader||''}">
+            <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
+            <td><textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea></td>
+            <td><input class="boq-input" style="width:44px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
+            <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
+            <td><input class="boq-input num" type="number" value="${item.isSupervision?item.price:esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} ${item.isSupervision?'disabled title="מחושב אוטומטית 5%"':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)"></td>
+            <td class="ta-l" style="background:rgba(59,130,246,.04);color:${kinun>0?'var(--blue)':'var(--subtle)'};font-weight:700;font-size:12px;" data-total="${key}_${item.id}">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):''}</td>
+            <td class="ta-l" style="background:rgba(16,185,129,.04);color:${shiput_val>0?'var(--green)':'var(--subtle)'};font-size:12px;" data-shiput="${key}_${item.id}">${item.zeroPrice?'—':shiput_val!=null&&shiput_val>0?'₪'+fmtNum(shiput_val):'—'}</td>
+            <td style="background:${STATE.boq.hasClaim?'rgba(252,211,77,.04)':'rgba(0,0,0,.2)'};">
+              <input class="boq-input num" type="number" placeholder="₪" style="width:70px;color:#FCD34D;${STATE.boq.hasClaim?'':'opacity:.25;pointer-events:none;'}" value="${esc(item.claim||'')}" ${STATE.boq.hasClaim?'':'disabled'} oninput="updateBOQItem('${key}','${item.id}','claim',this.value)" title="תביעת השמאי הפרטי לסעיף זה"></td>
+            <td><button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button></td>
+          </tr>`;
+        } else {
+          html += `<tr class="boq-row-draggable ${item.zeroPrice?'row-zero':''} ${item.isRental?'row-rental':''}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader||''}">
+            <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
+            <td><textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea></td>
+            <td><input class="boq-input" style="width:60px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
+            <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
+            <td><input class="boq-input num" type="number" value="${item.isSupervision?item.price:esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} ${item.isSupervision?'disabled title="מחושב אוטומטית 5%"':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)"></td>
+            <td class="ta-l fw7" data-total="${key}_${item.id}" style="color:${kinun>0?'var(--accent)':'var(--subtle)'};">${item.zeroPrice?'—':item.isRental?`<span style="color:var(--blue);">₪${fmtNum(kinun)}</span>`:kinun>0?'₪'+fmtNum(kinun):''}</td>
+            <td><button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button></td>
+          </tr>`;
+        }
+
+        // + button after last item in room
+        if(itemIdx === roomItems.length - 1){
+          const roomLabel = hasRoom ? room : null;
+          const btnLabel = roomLabel ? `+ שורה ל${roomLabel}` : '+ הוסף שורה';
+          const addCall = roomLabel
+            ? `addBOQItem('${key}','${roomLabel.replace(/'/g,"\\'")}',${chNum})`
+            : `addBOQItem('${key}',null,${chNum})`;
+          html += `<tr><td colspan="${COLS}" style="padding:2px 8px 6px;">
+            <button class="btn btn-ghost btn-xs" style="font-size:10px;color:var(--accent);opacity:.7;" onclick="${addCall}">${btnLabel}</button>
+          </td></tr>`;
+        }
+      });
+    });
+
+    // Chapter subtotal
+    if(chTotal > 0){
+      html += `<tr style="background:var(--primary2);border-top:1px solid var(--primary3);">
+        <td colspan="${isIns?5:5}" style="text-align:right;padding:6px 10px;font-size:11px;color:var(--muted);">סה"כ ${chName}</td>`;
+      if(isIns){
+        html += `<td style="text-align:left;padding:6px 10px;font-size:11px;color:var(--blue);font-weight:700;">₪${fmtNum(chTotal)}</td>
+                 <td style="text-align:left;padding:6px 10px;font-size:11px;color:var(--green);font-weight:700;">₪${fmtNum(chShiput)}</td>
+                 <td></td><td></td>`;
+      } else {
+        html += `<td style="text-align:left;padding:6px 10px;font-size:11px;font-weight:700;">₪${fmtNum(chTotal)}</td><td></td>`;
+      }
+      html += `</tr>`;
     }
   });
 
+  // Section total
   if(isIns && totalSec>0){
     const totalShiput = Math.round(calcShiputBase(items.filter(i=>!i.isRental))*0.67);
     html += `<tr class="row-subtotal">
@@ -2907,14 +2953,14 @@ function renderBOQSection(key, title, color){
   if(items.length===0) html += `<tr><td colspan="${COLS}" class="ta-c c-subtle" style="padding:20px;font-size:13px;">אין פריטים</td></tr>`;
   html += `</tbody></table>
     <div style="padding:6px 4px;">
-      <button class="btn btn-ghost btn-xs" style="font-size:11px;" onclick="addBOQItem('${key}')">+ הוסף שורה ללא שיוך לחדר</button>
+      <button class="btn btn-ghost btn-xs" style="font-size:11px;" onclick="addBOQItem('${key}')">+ הוסף שורה ללא שיוך</button>
     </div>
   </div>`;
   return html;
 }
 
 
-// ══════════════════════════════════════════════════
+// ══/ ══════════════════════════════════════════════════
 // CARD 8 – SUMMARY
 // ══════════════════════════════════════════════════
 function renderCard8(){
@@ -3534,35 +3580,28 @@ function _doGenerateReport(){
     if(!items.length) return '';
     const isIns = (mode === 'insurance');
     const showClaim = !!STATE.boq.hasClaim;
-    const badgePalette = [
-      {bg:'#E6F1FB',color:'#185FA5'},{bg:'#EAF3DE',color:'#3B6D11'},
-      {bg:'#FAEEDA',color:'#854F0B'},{bg:'#FBEAF0',color:'#993556'},
-      {bg:'#F1EFE8',color:'#5F5E5A'},{bg:'#E1F5EE',color:'#085041'},
-    ];
-    const roomColorMap = {};
-    let colorIdx = 0;
-    items.forEach(item=>{
-      if(item.roomHeader && !roomColorMap[item.roomHeader]){
-        roomColorMap[item.roomHeader] = badgePalette[colorIdx % badgePalette.length];
-        colorIdx++;
-      }
-    });
+
+    // ── Build chapter → room → items hierarchy (same as form UI) ──
     const chapterOrder = [];
-    const chapterMap = {};
-    items.forEach(item=>{
+    const chapterMap = {}; // ch → { roomOrder, roomMap }
+    items.forEach(item => {
       const ch = item.ch || guessChFromDesc(item.desc) || 0;
-      if(!chapterMap[ch]){ chapterMap[ch]=[]; chapterOrder.push(ch); }
-      chapterMap[ch].push(item);
+      const room = item.roomHeader || '__none__';
+      if(!chapterMap[ch]){ chapterMap[ch]={ roomOrder:[], roomMap:{} }; chapterOrder.push(ch); }
+      if(!chapterMap[ch].roomMap[room]){ chapterMap[ch].roomMap[room]=[]; chapterMap[ch].roomOrder.push(room); }
+      chapterMap[ch].roomMap[room].push(item);
     });
-    const fixedCols = 6;
+
     const valueCols = isIns ? 2 : 1;
-    const totalCols = fixedCols + valueCols + (showClaim?1:0);
+    const claimCol = showClaim ? 1 : 0;
+    const totalCols = 5 + valueCols + claimCol; // #, desc, unit, qty, price, +values, +claim
+
+    let secTotal=0, secShiputTotal=0, secClaimTotal=0;
 
     let h = `<div style="margin-bottom:28px;">
-      <h4 style="font-size:13px;font-weight:800;color:#111827;margin-bottom:10px;padding:8px 0;border-bottom:2px solid #1F2937;">${sectionTitle}</h4>
+      <h4 style="font-size:13px;font-weight:800;color:#111827;margin-bottom:10px;padding:8px 0;border-bottom:2px solid #E5E7EB;">${sectionTitle}</h4>
       <table class="rpt-table" style="width:100%;"><thead><tr style="font-size:11px;">
         <th style="width:42px">מס'</th><th>תיאור עבודה</th>
-        <th style="width:72px">אזור</th>
         <th style="width:36px;text-align:center">יח'</th>
         <th style="width:46px;text-align:right">כמות</th>
         <th style="width:62px;text-align:right">מחיר יח'</th>`;
@@ -3575,60 +3614,81 @@ function _doGenerateReport(){
     if(showClaim) h += `<th style="width:68px;text-align:right;color:#92400E">תביעה ₪</th>`;
     h += `</tr></thead><tbody>`;
 
-    let secTotal=0, secShiputTotal=0, secClaimTotal=0;
-    chapterOrder.forEach((chNum, chIdx)=>{
-      const chItems = chapterMap[chNum];
+    let chIdx = 0;
+    chapterOrder.forEach(chNum => {
+      chIdx++;
+      const chData = chapterMap[chNum];
       const chName = chNum ? (BOQ_CHAPTER_NAMES[chNum]||`פרק ${chNum}`) : 'כללי';
-      const chNumDisplay = chIdx+1;
-      const chTotal = calcSectionTotal(chItems);
-      const chShiput = Math.round(calcShiputBase(chItems)*0.67);
-      const chClaim = chItems.reduce((s,i)=>s+(parseFloat(i.claim)||0),0);
+      const chAllItems = chData.roomOrder.reduce((a,r)=>a.concat(chData.roomMap[r]),[]);
+      const chTotal = calcSectionTotal(chAllItems);
+      const chShiput = Math.round(calcShiputBase(chAllItems)*0.67);
+      const chClaim = chAllItems.reduce((s,i)=>s+(parseFloat(i.claim)||0),0);
       secTotal+=chTotal; secShiputTotal+=chShiput; secClaimTotal+=chClaim;
 
-      h += `<tr style="background:#F3F4F6;"><td colspan="${totalCols}" style="padding:6px 10px;font-weight:700;font-size:12px;color:#374151;border-top:1px solid #D1D5DB;">${chNumDisplay}. ${chName}</td></tr>`;
+      // Chapter header
+      h += `<tr style="background:#EFF6FF;"><td colspan="${totalCols}" style="padding:7px 10px;font-weight:800;font-size:12px;color:#1D4ED8;border-top:2px solid #BFDBFE;">${chIdx}. ${chName}</td></tr>`;
 
-      chItems.forEach((item,itemIdx)=>{
-        const kinun=(parseFloat(item.qty)||0)*(parseFloat(item.price)||0);
-        const shiput=Math.round(kinun*0.67);
-        const claimVal=parseFloat(item.claim)||0;
-        const zebra = itemIdx%2===1?'background:#FAFAFA;':'';
-        const subNum = `${chNumDisplay}.${String(itemIdx+1).padStart(2,'0')}`;
-        const pal = item.roomHeader?roomColorMap[item.roomHeader]:null;
-        const badge = pal
-          ?`<span style="display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:${pal.bg};color:${pal.color};">${esc(item.roomHeader)}</span>`
-          :`<span style="color:#D1D5DB;font-size:10px;">—</span>`;
-        h += `<tr style="${zebra}">
-          <td style="color:#9CA3AF;font-size:10px;padding-right:16px;">${subNum}</td>
-          <td style="word-break:break-word;">${esc(item.desc)}</td>
-          <td>${badge}</td>
-          <td style="text-align:center;color:#6B7280;">${esc(item.unit)}</td>
-          <td style="text-align:right;">${esc(item.qty)}</td>
-          <td style="text-align:right;color:#6B7280;">${item.price&&!item.zeroPrice?'₪'+fmtNum(parseFloat(item.price)):''}</td>`;
-        if(isIns){
-          h+=`<td style="text-align:right;font-weight:600;color:#185FA5;">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):''}</td>
-              <td style="text-align:right;font-weight:600;color:#0F6E56;">${item.zeroPrice?'—':shiput>0?'₪'+fmtNum(shiput):''}</td>`;
-        } else {
-          h+=`<td style="text-align:right;font-weight:600;color:${item.zeroPrice?'#9CA3AF':'#111'};">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):''}</td>`;
+      let roomIdx = 0;
+      chData.roomOrder.forEach(room => {
+        const roomItems = chData.roomMap[room];
+        const hasRoom = room !== '__none__';
+
+        if(hasRoom){
+          roomIdx++;
+          h += `<tr style="background:#FFFBEB;"><td colspan="${totalCols}" style="padding:5px 10px 5px 20px;font-weight:700;font-size:11px;color:#B45309;border-top:1px solid #FDE68A;">${chIdx}.${roomIdx} ${room}</td></tr>`;
         }
-        if(showClaim) h+=`<td style="text-align:right;font-weight:600;color:#92400E;">${claimVal>0?'₪'+fmtNum(claimVal):'—'}</td>`;
-        h+=`</tr>`;
+
+        roomItems.forEach((item, itemIdx) => {
+          const displayId = hasRoom
+            ? `${chIdx}.${roomIdx}.${itemIdx+1}`
+            : `${chIdx}.${String(itemIdx+1).padStart(2,'0')}`;
+          const kinun=(parseFloat(item.qty)||0)*(parseFloat(item.price)||0);
+          const shiput=Math.round(kinun*0.67);
+          const claimVal=parseFloat(item.claim)||0;
+          const zebra = itemIdx%2===1?'background:#FAFAFA;':'';
+
+          // Strip room name from end of description if it appears there
+          let desc = item.desc || '';
+          if(hasRoom && room && desc.endsWith(`– ${room}`)){
+            desc = desc.slice(0, desc.length - room.length - 2).trim();
+          } else if(hasRoom && room && desc.endsWith(`- ${room}`)){
+            desc = desc.slice(0, desc.length - room.length - 2).trim();
+          }
+
+          h += `<tr style="${zebra}">
+            <td style="color:#9CA3AF;font-size:10px;padding-right:16px;white-space:nowrap;">${displayId}</td>
+            <td style="word-break:break-word;">${esc(desc)}</td>
+            <td style="text-align:center;color:#6B7280;">${esc(item.unit)}</td>
+            <td style="text-align:right;">${esc(item.qty)}</td>
+            <td style="text-align:right;color:#6B7280;">${item.price&&!item.zeroPrice?'₪'+fmtNum(parseFloat(item.price)):''}</td>`;
+          if(isIns){
+            h+=`<td style="text-align:right;font-weight:600;color:#185FA5;">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):''}</td>
+                <td style="text-align:right;font-weight:600;color:#0F6E56;">${item.zeroPrice?'—':shiput>0?'₪'+fmtNum(shiput):''}</td>`;
+          } else {
+            h+=`<td style="text-align:right;font-weight:600;color:${item.zeroPrice?'#9CA3AF':'#111'};">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):''}</td>`;
+          }
+          if(showClaim) h+=`<td style="text-align:right;font-weight:600;color:#92400E;">${claimVal>0?'₪'+fmtNum(claimVal):'—'}</td>`;
+          h+=`</tr>`;
+        });
       });
 
-      if(chapterOrder.length>1 && chTotal>0){
+      // Chapter subtotal (only if multiple chapters)
+      if(chapterOrder.length > 1 && chTotal > 0){
         h+=`<tr style="background:#F9FAFB;border-top:1px solid #E5E7EB;">
-          <td colspan="${fixedCols}" style="text-align:right;padding:5px 10px;font-size:11px;color:#6B7280;">סה"כ ${chNumDisplay}. ${chName}</td>`;
+          <td colspan="5" style="text-align:right;padding:5px 10px;font-size:11px;color:#6B7280;">סה"כ ${chIdx}. ${chName}</td>`;
         if(isIns){
-          h+=`<td style="text-align:right;padding:5px 10px;font-size:11px;color:#185FA5;">₪${fmtNum(chTotal)}</td>
-              <td style="text-align:right;padding:5px 10px;font-size:11px;color:#0F6E56;">₪${fmtNum(chShiput)}</td>`;
+          h+=`<td style="text-align:right;padding:5px 10px;font-size:11px;color:#185FA5;font-weight:700;">₪${fmtNum(chTotal)}</td>
+              <td style="text-align:right;padding:5px 10px;font-size:11px;color:#0F6E56;font-weight:700;">₪${fmtNum(chShiput)}</td>`;
         } else {
-          h+=`<td style="text-align:right;padding:5px 10px;font-size:11px;">₪${fmtNum(chTotal)}</td>`;
+          h+=`<td style="text-align:right;padding:5px 10px;font-size:11px;font-weight:700;">₪${fmtNum(chTotal)}</td>`;
         }
         if(showClaim) h+=`<td style="text-align:right;padding:5px 10px;font-size:11px;color:#92400E;">${chClaim>0?'₪'+fmtNum(chClaim):'—'}</td>`;
         h+=`</tr>`;
       }
     });
 
-    h+=`<tr class="st"><td colspan="${fixedCols}" style="text-align:right;padding:9px 10px;">סה"כ ${sectionTitle}</td>`;
+    // Section total
+    h+=`<tr class="st"><td colspan="5" style="text-align:right;padding:9px 10px;">סה"כ ${sectionTitle}</td>`;
     if(isIns){
       h+=`<td style="text-align:right;padding:9px 10px;color:#185FA5;">₪${fmtNum(secTotal)}</td>
           <td style="text-align:right;padding:9px 10px;color:#0F6E56;">₪${fmtNum(secShiputTotal)}</td>`;
@@ -4553,16 +4613,22 @@ function areaToggleDone(id){
   renderCard(6);
 }
 
-function addBOQItem(section, roomHeader){
+function addBOQItem(section, roomHeader, ch){
   const items = STATE.boq[section];
   const prefix = section==='structItems'?'':section==='contentsItems'?'C':'S';
-  const newId = prefix+(Date.now()%100000); // unique id
+  const newId = prefix+(Date.now()%100000);
   const newItem = {id:newId,desc:'',unit:"קומפ'",qty:'1',price:'',claim:'',zeroPrice:false};
   if(roomHeader) newItem.roomHeader = roomHeader;
-  // Insert after last item with this roomHeader (or at end if no match)
-  if(roomHeader){
+  if(ch) newItem.ch = ch;
+  // Insert after last item with same roomHeader+ch (or at end)
+  if(roomHeader || ch){
     let lastIdx = -1;
-    items.forEach((it,i)=>{ if(it.roomHeader===roomHeader) lastIdx=i; });
+    items.forEach((it,i)=>{
+      const itCh = it.ch || (typeof guessChFromDesc==='function'?guessChFromDesc(it.desc):0) || 0;
+      const matchRoom = roomHeader ? it.roomHeader===roomHeader : true;
+      const matchCh = ch ? itCh==ch : true;
+      if(matchRoom && matchCh) lastIdx=i;
+    });
     if(lastIdx>=0){ items.splice(lastIdx+1,0,newItem); }
     else items.push(newItem);
   } else {
@@ -4958,7 +5024,7 @@ async function benaritTextSearch(){
   if(!window._benaritCache){
     document.getElementById('benaritList').innerHTML = '<div style="padding:40px;text-align:center;color:#9CA3AF;font-size:13px;">⏳ טוען...</div>';
     try {
-      const r = await fetch('./benarit-data.json');
+      const r = await fetch('/benarit-data.json');
       if(!r.ok) throw new Error('not found');
       window._benaritCache = await r.json();
     } catch(e) {
@@ -5030,7 +5096,7 @@ async function benaritSearch(){
 
   try {
     if(!window._benaritCache) {
-      const r = await fetch('./benarit-data.json');
+      const r = await fetch('/benarit-data.json');
       if(!r.ok) throw new Error('not found');
       window._benaritCache = await r.json();
     }

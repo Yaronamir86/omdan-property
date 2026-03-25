@@ -147,6 +147,38 @@
       .toolbar{flex-wrap:wrap;}
       th:nth-child(4),th:nth-child(5),td:nth-child(4),td:nth-child(5){display:none;}
     }
+
+/* ── MOBILE BOTTOM NAV ── */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--primary);border-top:1px solid var(--border);
+  padding:8px 0 max(8px,env(safe-area-inset-bottom));
+  grid-template-columns:repeat(4,1fr);gap:0;}
+.mob-nav a,.mob-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:4px 8px;color:var(--muted);font-family:'Heebo',sans-serif;
+  font-size:9px;font-weight:600;background:none;border:none;cursor:pointer;
+  text-decoration:none;transition:color .15s;}
+.mob-nav a:hover,.mob-nav button:hover,.mob-nav a.active{color:var(--accent);}
+.mob-nav .mn-icon{font-size:20px;line-height:1;}
+@media(max-width:768px){
+  .mob-nav{display:grid;}
+  main{padding-bottom:72px !important;}
+  .stats{grid-template-columns:repeat(2,1fr) !important;}
+  .page-header{flex-direction:column;align-items:flex-start;gap:8px;}
+  .toolbar{flex-wrap:wrap;}
+  .search-wrap{max-width:100% !important;}
+  th:nth-child(3),td:nth-child(3){display:none;}
+  th:nth-child(5),td:nth-child(5){display:none;}
+  .tb-user{display:none;}
+}
+@media(max-width:480px){
+  #topbar{padding:0 12px;}
+  .sc .value{font-size:20px;}
+}
+
+@media(max-width:768px){
+  .tb-right .btn{display:none !important;}
+  .tb-user{display:none !important;}
+}
   </style>
 </head>
 <body>
@@ -229,6 +261,9 @@
   </div>
 </main>
 
+<!-- Billing Gate -->
+<script src="/billing.js"></script>
+<script src="/billing-gate.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -247,6 +282,23 @@ let currentUser=null, allCases=[];
 
 auth.onAuthStateChanged(async u=>{
   if(!u){ window.location.href="/"; return; }
+  // Billing gate check
+  const billingDoc = await db.collection("billing").doc(u.uid).get();
+  if(billingDoc.exists){
+    const billing = billingDoc.data();
+    const now = new Date();
+    let hasAccess = false;
+    if(billing.plan==='trial'){
+      hasAccess = now < new Date(billing.trialEnd);
+    } else if(['starter','pro','office'].includes(billing.plan)){
+      hasAccess = billing.status==='active' && now < new Date(billing.subscriptionEnd);
+    }
+    if(!hasAccess){
+      const reason = billing.plan==='trial' ? 'trial_expired' : 'subscription_expired';
+      window.location.href=`/billing-gate.html?reason=${reason}`;
+      return;
+    }
+  }
   currentUser=u;
   document.getElementById("navUser").textContent=u.displayName||u.email;
   loadProfile(u.uid);
@@ -399,5 +451,21 @@ function goBilling(){ window.location.href='/app/account-billing.html'; }
   <a href="/legal/index.html">מסמכים משפטיים</a>
   <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
 </footer>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mob-nav">
+  <a href="/app/dashboard.html" class="active">
+    <span class="mn-icon">📊</span>תיקים
+  </a>
+  <a href="/app/case.html">
+    <span class="mn-icon">➕</span>תיק חדש
+  </a>
+  <a href="/app/settings.html">
+    <span class="mn-icon">⚙️</span>הגדרות
+  </a>
+  <button onclick="doLogout()">
+    <span class="mn-icon">🚪</span>יציאה
+  </button>
+</nav>
 </body>
 </html>

@@ -146,6 +146,24 @@ footer{border-top:1px solid var(--border);padding:32px 6%;display:flex;align-ite
   footer{flex-direction:column;text-align:center;}
 }
 </style>
+
+<style>
+@media(max-width:768px){
+  nav{padding:10px 4% !important;flex-wrap:nowrap;}
+  .nav-links{display:none;}
+  .hero h1,.hero-title{font-size:28px !important;}
+  .pricing-grid{grid-template-columns:1fr !important;}
+  .pricing-section{padding:0 16px !important;}
+  .plan-card.popular{order:-1;}
+  .faq-section{padding:0 16px !important;}
+}
+@media(max-width:480px){
+  body{font-size:13px;}
+  h1{font-size:24px !important;}
+  .card{padding:24px 16px !important;}
+  .btn{font-size:13px !important;}
+}
+</style>
 </head>
 <body>
 
