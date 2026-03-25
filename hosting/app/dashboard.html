@@ -289,13 +289,14 @@ async function loadProfile(uid){
 async function loadCases(){
   try{
     const snap = await db.collection("cases")
-      .where("createdBy","==",currentUser.uid)
-      .orderBy("createdAt","desc")
+      .where("uid","==",currentUser.uid)
       .limit(100)
       .get();
     allCases = snap.docs.map(d=>({id:d.id,...d.data(),
       createdAt: d.data().createdAt?.toDate?.()?.toISOString() || d.data().createdAt
     }));
+    // מיון בצד לקוח — לא צריך composite index
+    allCases.sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
     renderStats(allCases);
     renderTable(allCases);
     document.getElementById("pageSubtitle").textContent=`${allCases.length} תיקים בסך הכל`;
@@ -308,13 +309,25 @@ async function loadCases(){
 function renderStats(cases){
   const now=new Date();
   const thisMonth=cases.filter(c=>{
-    if(!c.createdAt)return false;
-    const d=new Date(c.createdAt);
-    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    // createdAt is a string like "24.3.2026" or a Firestore timestamp
+    if(!c.createdAt) return false;
+    if(typeof c.createdAt === "string"){
+      const parts = c.createdAt.split(".");
+      if(parts.length===3){
+        const d = new Date(parts[2], parts[1]-1, parts[0]);
+        return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+      }
+    } else if(c.createdAt?.seconds){
+      const d = new Date(c.createdAt.seconds*1000);
+      return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    }
+    return false;
   });
+  const done = cases.filter(c=>c.status==="completed"||(c.state?.summary?.claimTotal||c.state?.summary?.rehabTime));
+  const open = cases.filter(c=>!c.status||c.status==="draft"||c.status==="processing");
   document.getElementById("statTotal").textContent=cases.length;
-  document.getElementById("statOpen").textContent=cases.filter(c=>c.status==="draft"||c.status==="processing").length;
-  document.getElementById("statDone").textContent=cases.filter(c=>c.status==="completed").length;
+  document.getElementById("statOpen").textContent=open.length;
+  document.getElementById("statDone").textContent=done.length;
   document.getElementById("statMonth").textContent=thisMonth.length;
 }
 
@@ -324,24 +337,41 @@ function renderTable(cases){
     tbody.innerHTML=`<tr><td colspan="6"><div class="empty"><div class="icon">📁</div><p>אין תיקים עדיין — <a href="#" onclick="newCase()" style="color:var(--accent)">פתח תיק ראשון</a></p></div></td></tr>`;
     return;
   }
-  tbody.innerHTML=cases.map(c=>`
-    <tr onclick="openCase('${c.id}')">
-      <td><span class="case-num">${c.caseNumber||"—"}</span></td>
-      <td><span class="case-title">${escHtml(c.title||"ללא כותרת")}</span></td>
+  tbody.innerHTML=cases.map(c=>{
+    const caseId = c.id || c.docId;
+    const insuredName = c.state?.base?.fullName || c.name || "";
+    const claimNum = c.state?.insurance?.claimNum || c.state?.base?.claimNum || "";
+    const title = insuredName || claimNum ? 
+      [insuredName, claimNum].filter(Boolean).join(" — ") : "ללא כותרת";
+    const dateStr = typeof c.createdAt === "string" ? c.createdAt :
+      (c.createdAt?.seconds ? new Date(c.createdAt.seconds*1000).toLocaleDateString("he-IL") :
+      (c.updatedAt?.seconds ? new Date(c.updatedAt.seconds*1000).toLocaleDateString("he-IL") : "—"));
+    const isDone = c.status==="completed" || !!(c.state?.summary?.claimTotal || c.state?.summary?.rehabTime);
+    const status = c.status || (isDone ? "completed" : "draft");
+    return `<tr onclick="openCase('${caseId}')">
+      <td><span class="case-num" style="font-size:11px;color:var(--muted);">${caseId?.replace("case_","#")?.slice(-6)||"—"}</span></td>
+      <td><span class="case-title">${escHtml(title)}</span></td>
       <td>${modeTag(c.mode)}</td>
-      <td>${statusBadge(c.status)}</td>
-      <td style="color:var(--muted);font-size:12px;">${fmtDate(c.createdAt)}</td>
-      <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openCase('${c.id}')">פתח ›</button></td>
-    </tr>`).join("");
+      <td>${statusBadge(status)}</td>
+      <td style="color:var(--muted);font-size:12px;">${dateStr}</td>
+      <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openCase('${caseId}')">פתח ›</button></td>
+    </tr>`;
+  }).join("");
 }
 
 function filterCases(){
-  const q=document.getElementById("searchInput").value.toLowerCase();
-  const filtered=allCases.filter(c=>
-    (c.title||"").toLowerCase().includes(q)||
-    (c.caseNumber||"").toLowerCase().includes(q)||
-    (c.summary||"").toLowerCase().includes(q)
-  );
+  const q=document.getElementById("searchInput").value.toLowerCase().trim();
+  if(!q){ renderTable(allCases); return; }
+  const filtered=allCases.filter(c=>{
+    const name   = (c.state?.base?.fullName||c.name||"").toLowerCase();
+    const claim  = (c.state?.insurance?.claimNum||c.state?.base?.claimNum||"").toLowerCase();
+    const policy = (c.state?.insurance?.policyNum||"").toLowerCase();
+    const addr   = (c.state?.base?.city||c.state?.base?.street||"").toLowerCase();
+    const cid    = (c.id||"").toLowerCase();
+    const mode   = (c.mode||"").toLowerCase();
+    return name.includes(q)||claim.includes(q)||policy.includes(q)||
+           addr.includes(q)||cid.includes(q)||mode.includes(q);
+  });
   renderTable(filtered);
 }
 
@@ -364,7 +394,7 @@ function fmtDate(iso){
 
 function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-function openCase(caseId){ window.location.href=`/app/case.html?id=${caseId}`; }
+function openCase(caseId){ window.location.href=`/app/case.html?case=${caseId}`; }
 function newCase(){ window.location.href="/app/case.html"; }
 function goSettings(){ window.location.href="/app/settings.html"; }
 function doLogout(){ auth.signOut().then(()=>window.location.href="/"); }

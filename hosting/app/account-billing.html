@@ -128,7 +128,7 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:14px
       לאחר מכן לא יחויב כרטיסך ותאבד גישה למערכת.
     </p>
     <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()">ביטול</button>
+      <a class="btn btn-outline" onclick="closeModal()">ביטול</button>
       <button class="btn btn-danger" id="confirmCancelBtn" onclick="confirmCancel()">אישור ביטול מנוי</button>
     </div>
   </div>
@@ -303,10 +303,10 @@ async function render(user, billing) {
 
   if(isTrial || !isActive || isCanceled) {
     // הצג שדרוג
-    html += `<button class="btn btn-primary" onclick="alert('עמוד השדרוג יהיה זמין בקרוב. צור קשר לשדרוג מנוי.')">⚡ שדרג מסלול</button>`;
+    html += `<a class="btn btn-primary" href="/pricing.html">⚡ שדרג מסלול</a>`;
   } else {
     // החלף מסלול
-    html += `<button class="btn btn-outline" onclick="alert('צור קשר לשינוי המסלול.')">🔄 שנה מסלול</button>`;
+    html += `<a class="btn btn-outline" href="/pricing.html">🔄 שנה מסלול</a>`;
     // ביטול
     html += `<button class="btn btn-danger" onclick="window._showCancelModal('${fmtDate(subEnd)}')">
       ❌ בטל מנוי
