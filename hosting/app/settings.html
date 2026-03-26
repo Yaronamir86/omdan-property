@@ -334,6 +334,9 @@ body::before{
         <div style="font-size:11px;font-weight:700;color:#F59E0B;letter-spacing:.5px;">רכוש</div>
       </div>
     </a>
+  <!-- Hidden elements that JS references -->
+  <span id="sbLogoName" style="display:none"></span>
+  <span id="sbLogoSq" style="display:none"></span>
   </div>
   <nav class="sb-nav">
     <a href="/app/dashboard.html">
@@ -916,8 +919,8 @@ async function saveAll(){
     toast('✅ הפרופיל נשמר בהצלחה');
 
     // Update sidebar
-    if(profile.nameHe) document.getElementById('sbLogoName').textContent=profile.nameHe;
-    document.getElementById('sbLogoSq').textContent=profile.logoInitials;
+    if(profile.nameHe) const _sn=document.getElementById('sbLogoName'); if(_sn) _sn.textContent=profile.nameHe||'';
+    const _sq=document.getElementById('sbLogoSq'); if(_sq) _sq.textContent=profile.logoInitials||'';
 
   }catch(e){
     setSaveStatus('unsaved');

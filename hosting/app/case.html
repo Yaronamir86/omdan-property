@@ -20,7 +20,8 @@
   --text:#F9FAFB;--muted:#9CA3AF;--subtle:#6B7280;--border:#1F2937;
   --card:#111827;--bg:#030712;
   --shadow:0 4px 20px rgba(0,0,0,0.4);
-  summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''}
+  summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''},
+  propertyDesc:{propertyType:'דירת מגורים',floors:'',area:'',buildingType:'קונבנציונלי',damagedAreas:'',damagedAreaSqm:'',notes:''}
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;}
@@ -1444,13 +1445,14 @@ let currentCard = 1;
 let currentCaseId = null;
 let STATE = {
   base:{fullName:'',idNum:'',phone:'',email:'',eventDate:'',visitDate:'',city:'',street:'',streetNum:'',apartment:''},
-  property:{type:'apartment',usage:'residential',sqm:'',floor:'',yearBuilt:'',material:'',preCondition:''},
-  insurance:{company:'',policyNum:'',claimNum:'',eventReportDate:'',appointmentDate:'',structureSum:'',contentsSum:'',structureActual:'',contentsActual:'',deductStruct:'',deductContents:'',thirdParty:false,lossOfProfits:false,vatBiz:false,arrangementPlumber:false,coverageType:'both',extNaturalDisaster:false,extTerror:false,lastDocDate:''},
+  property:{type:'apartment',usage:'residential',sqm:'',builtSqm:'',floor:'',levels:'',rooms:'',yearBuilt:'',material:'',roofType:'',preCondition:'',freeDesc:''},
+  insurance:{company:'',policyNum:'',claimNum:'',eventReportDate:'',appointmentDate:'',structureSum:'',contentsSum:'',structureActual:'',contentsActual:'',deductStruct:'',deductContents:'',thirdParty:false,lossOfProfits:false,vatBiz:false,arrangementPlumber:false,coverageType:'both',extNaturalDisaster:false,extAllRisks:false,lastDocDate:''},
   event:{eventType:'',eventSubType:'',plumberType:'',requestedBy:'',requesterName:'',visitPurpose:[],policeReport:'',policeNum:'',professionals:[],profDetails:{},appraiserDeclaration:''},
   circ:{infoSource:'',infoName:'',discDate:'',discTime:'',wasOccupied:'',immediateAction:'',ongoingDmg:'',pastEvent:'',waterOrigin:'',waterDuration:'',wallOpened:'',prevRepair:'',prevRepairDate:'',prevRepairBy:'',prevRepairReason:'',recentPlumber:'',recentPlumberDate:'',recentPlumberReason:'',fireLocation:'',fireType:'',fireDept:'',burglaryMethod:'',stolenItems:'',alarmExists:'',camerasExist:'',extraNotes:'',circumOverride:''},
-  findings:{areas:[],labTest:false,matchesStory:'',generalNotes:'',findingsOverride:'',freeAreaName:'',residents:'',habitableStatus:'yes',rentalMonths:'',rentalMonthly:'',_showAllAreas:false},
+  findings:{areas:[],labTest:false,labRows:[],matchesStory:'',generalNotes:'',findingsOverride:'',freeAreaName:'',residents:'',habitableStatus:'yes',rentalMonths:'',rentalMonthly:'',_showAllAreas:false,causeExplanation:''},
   boq:{structItems:[],contentsItems:[],serviceItems:[],vat:false,hasClaim:false,claimAmount:'',restoredState:'',genItems:{cleaning:true,waste:false,container:false,moveContents:false,drying:false},genNote:'',boqOverride:''},
-  summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:''}
+  summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:''},
+    propertyDesc:{propertyType:'דירת מגורים',floors:'',area:'',buildingType:'קונבנציונלי',damagedAreas:'',damagedAreaSqm:'',notes:''}
 };
 
 // ══════════════════════════════════════════════════
@@ -1873,13 +1875,14 @@ function selectMode(m){
   mode = m;
   STATE = {
     base:{fullName:'',idNum:'',phone:'',email:'',eventDate:'',visitDate:'',city:'',street:'',streetNum:'',apartment:''},
-    property:{type:'apartment',usage:'residential',sqm:'',floor:'',yearBuilt:'',material:'',preCondition:''},
-    insurance:{company:'',policyNum:'',claimNum:'',eventReportDate:'',appointmentDate:'',structureSum:'',contentsSum:'',structureActual:'',contentsActual:'',deductStruct:'',deductContents:'',thirdParty:false,lossOfProfits:false,vatBiz:false,arrangementPlumber:false,coverageType:'both',extNaturalDisaster:false,extTerror:false,lastDocDate:''},
+    property:{type:'apartment',usage:'residential',sqm:'',builtSqm:'',floor:'',levels:'',rooms:'',yearBuilt:'',material:'',roofType:'',preCondition:'',freeDesc:''},
+    insurance:{company:'',policyNum:'',claimNum:'',eventReportDate:'',appointmentDate:'',structureSum:'',contentsSum:'',structureActual:'',contentsActual:'',deductStruct:'',deductContents:'',thirdParty:false,lossOfProfits:false,vatBiz:false,arrangementPlumber:false,coverageType:'both',extNaturalDisaster:false,extAllRisks:false,lastDocDate:''},
     event:{eventType:'',eventSubType:'',plumberType:'',requestedBy:'',requesterName:'',visitPurpose:[],policeReport:'',policeNum:'',professionals:[],profDetails:{},appraiserDeclaration:''},
     circ:{infoSource:'',infoName:'',discDate:'',discTime:'',wasOccupied:'',immediateAction:'',ongoingDmg:'',pastEvent:'',waterOrigin:'',waterDuration:'',wallOpened:'',prevRepair:'',prevRepairDate:'',prevRepairBy:'',prevRepairReason:'',recentPlumber:'',recentPlumberDate:'',recentPlumberReason:'',fireLocation:'',fireType:'',fireDept:'',burglaryMethod:'',stolenItems:'',alarmExists:'',camerasExist:'',extraNotes:'',circumOverride:''},
-    findings:{areas:[],labTest:false,matchesStory:'',generalNotes:'',findingsOverride:'',freeAreaName:'',residents:'',habitableStatus:'yes',rentalMonths:'',rentalMonthly:'',_showAllAreas:false},
+    findings:{areas:[],labTest:false,labRows:[],matchesStory:'',generalNotes:'',findingsOverride:'',freeAreaName:'',residents:'',habitableStatus:'yes',rentalMonths:'',rentalMonthly:'',_showAllAreas:false,causeExplanation:''},
     boq:{structItems:[],contentsItems:[],serviceItems:[],vat:false,hasClaim:false,claimAmount:'',restoredState:'',genItems:{cleaning:true,waste:false,container:false,moveContents:false,drying:false},genNote:'',boqOverride:''},
     summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''},
+  propertyDesc:{propertyType:'דירת מגורים',floors:'',area:'',buildingType:'קונבנציונלי',damagedAreas:'',damagedAreaSqm:'',notes:''},
     photos:{main:null,mainCaption:'',items:[]}
   };
   document.getElementById('landing').classList.add('hidden');
@@ -2033,7 +2036,7 @@ function renderCard1(){
     <div class="field span2"><label class="label">דואל</label><input type="email" value="${esc(b.email)}" oninput="STATE.base.email=this.value"></div>
     <div class="divider span2"></div>
     <div class="field"><label class="label">תאריך האירוע *</label><input type="date" value="${esc(b.eventDate)}" oninput="STATE.base.eventDate=this.value"></div>
-    <div class="field"><label class="label">תאריך ביקור *</label><input type="date" value="${esc(b.visitDate)}" min="${STATE.base.eventDate||''}" oninput="STATE.base.visitDate=this.value"></div>
+    <div class="field"><label class="label">תאריך ביקור *</label><input type="date" value="${esc(b.visitDate)}" oninput="STATE.base.visitDate=this.value"></div>
     <div class="divider span2"></div>
     <div class="field"><label class="label">עיר *</label><input type="text" value="${esc(b.city)}" oninput="STATE.base.city=this.value"></div>
     <div class="field"><label class="label">רחוב *</label><input type="text" value="${esc(b.street)}" oninput="STATE.base.street=this.value"></div>
@@ -2047,40 +2050,89 @@ function renderCard1(){
 // ══════════════════════════════════════════════════
 function renderCard2(){
   const p = STATE.property;
-  return `<div class="grid2">
+  const isBiz = ['shop','office','warehouse'].includes(p.type) || p.usage==='business';
+  const isHouse = p.type==='house';
+  const isApt = p.type==='apartment' || p.type==='other' || (!isBiz && !isHouse);
+
+  const fieldStyle = "background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Heebo',sans-serif;width:100%;";
+
+  const materialSelect = `<select onchange="STATE.property.material=this.value" style="${fieldStyle}">
+    <option value="" ${!p.material?'selected':''}>—</option>
+    <option value="concrete" ${p.material==='concrete'?'selected':''}>בטון</option>
+    <option value="blocks" ${p.material==='blocks'?'selected':''}>בנייה קונבנציונלית (בלוקים ובטון)</option>
+    <option value="prefab" ${p.material==='prefab'?'selected':''}>פל-קל</option>
+    <option value="wood" ${p.material==='wood'?'selected':''}>עץ</option>
+    <option value="steel" ${p.material==='steel'?'selected':''}>פלדה</option>
+    <option value="other" ${p.material==='other'?'selected':''}>אחר</option>
+  </select>`;
+
+  const roofSelect = `<select onchange="STATE.property.roofType=this.value" style="${fieldStyle}">
+    <option value="" ${!p.roofType?'selected':''}>—</option>
+    <option value="tiles" ${p.roofType==='tiles'?'selected':''}>רעפים</option>
+    <option value="flat" ${p.roofType==='flat'?'selected':''}>גג שטוח (בטון)</option>
+    <option value="asbestos" ${p.roofType==='asbestos'?'selected':''}>פח / אסבסט</option>
+    <option value="green" ${p.roofType==='green'?'selected':''}>גג ירוק</option>
+    <option value="metal" ${p.roofType==='metal'?'selected':''}>מתכת</option>
+  </select>`;
+
+  const preCondSelect = `<select onchange="STATE.property.preCondition=this.value" style="${fieldStyle}">
+    <option value="" ${!p.preCondition?'selected':''}>—</option>
+    <option value="good" ${p.preCondition==='good'?'selected':''}>תקין</option>
+    <option value="fair" ${p.preCondition==='fair'?'selected':''}>בלאי סביר</option>
+    <option value="poor" ${p.preCondition==='poor'?'selected':''}>ליקויים / בלאי משמעותי</option>
+    <option value="unknown" ${p.preCondition==='unknown'?'selected':''}>לא ידוע</option>
+  </select>`;
+
+  let html = `<div class="grid2">
     <div class="field"><label class="label">סוג נכס</label>
-      <select onchange="STATE.property.type=this.value">
+      <select onchange="STATE.property.type=this.value;renderCard(3)" style="${fieldStyle}">
         ${['apartment:דירה','house:בית פרטי','shop:חנות','office:משרד','warehouse:מחסן','other:אחר'].map(o=>{const[v,l]=o.split(':');return`<option value="${v}" ${p.type===v?'selected':''}>${l}</option>`}).join('')}
       </select></div>
-    <div class="field"><label class="label">שימוש</label>
-      <select onchange="STATE.property.usage=this.value;renderCard(6)">
-        <option value="residential" ${p.usage==='residential'?'selected':''}>מגורים</option>
-        <option value="business" ${p.usage==='business'?'selected':''}>עסקי</option>
-        <option value="mixed" ${p.usage==='mixed'?'selected':''}>מעורב</option>
+    <div class="field"><label class="label">שנת בנייה</label>
+      <input type="number" value="${esc(p.yearBuilt)}" oninput="STATE.property.yearBuilt=this.value" min="1900" max="2030" style="${fieldStyle}" placeholder="2005">
+    </div>`;
+
+  if(isBiz){
+    // ── עסקי — שאלון פשוט עם תיאור חופשי ──
+    html += `
+    <div class="field"><label class="label">שטח כולל (מ"ר)</label>
+      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" style="${fieldStyle}"></div>
+    <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
+    <div class="field span2"><label class="label">תיאור הנכס (יופיע בדוח)</label>
+      <textarea rows="3" oninput="STATE.property.freeDesc=this.value" placeholder='למשל: בית עסק בן 2 קומות, קומת קרקע משמשת אולם סועדים, קומה עליונה כמטבח תעשייתי. שטח כולל 550 מ"ר.' style="${fieldStyle}resize:vertical;">${esc(p.freeDesc||'')}</textarea></div>
+    <div class="field span2"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
+
+  } else if(isHouse){
+    // ── בית פרטי ──
+    html += `
+    <div class="field"><label class="label">שטח מגרש כולל (מ"ר)</label>
+      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" style="${fieldStyle}" placeholder="500"></div>
+    <div class="field"><label class="label">שטח בנוי (מ"ר)</label>
+      <input type="number" value="${esc(p.builtSqm||'')}" oninput="STATE.property.builtSqm=this.value" min="0" style="${fieldStyle}" placeholder="250"></div>
+    <div class="field"><label class="label">מספר מפלסים</label>
+      <select onchange="STATE.property.levels=this.value" style="${fieldStyle}">
+        <option value="" ${!p.levels?'selected':''}>—</option>
+        ${[1,2,3,4].map(n=>`<option value="${n}" ${p.levels==n?'selected':''}>${n} ${n===1?'מפלס':'מפלסים'}</option>`).join('')}
       </select></div>
-    <div class="field"><label class="label">שטח (מ"ר)</label><input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0"></div>
-    <div class="field"><label class="label">קומה</label><input type="text" value="${esc(p.floor)}" oninput="STATE.property.floor=this.value" placeholder="0, 1, 2..."></div>
-    <div class="field"><label class="label">שנת בנייה</label><input type="number" value="${esc(p.yearBuilt)}" oninput="STATE.property.yearBuilt=this.value" min="1900" max="2030"></div>
-    <div class="field"><label class="label">חומר בנייה</label>
-      <select onchange="STATE.property.material=this.value">
-        <option value="" ${!p.material?'selected':''}>—</option>
-        <option value="concrete" ${p.material==='concrete'?'selected':''}>בטון</option>
-        <option value="blocks" ${p.material==='blocks'?'selected':''}>בנייה קונבנציונלית (בלוקים ובטון)</option>
-        <option value="prefab" ${p.material==='prefab'?'selected':''}>פל-קל</option>
-        <option value="wood" ${p.material==='wood'?'selected':''}>עץ</option>
-        <option value="steel" ${p.material==='steel'?'selected':''}>פלדה</option>
-        <option value="other" ${p.material==='other'?'selected':''}>אחר</option>
-      </select></div>
-    <div class="field span2"><label class="label">מצב הנכס לפני האירוע</label>
-      <select onchange="STATE.property.preCondition=this.value">
-        <option value="" ${!p.preCondition?'selected':''}>—</option>
-        <option value="good" ${p.preCondition==='good'?'selected':''}>תקין</option>
-        <option value="fair" ${p.preCondition==='fair'?'selected':''}>בלאי סביר</option>
-        <option value="poor" ${p.preCondition==='poor'?'selected':''}>ליקויים / בלאי משמעותי</option>
-        <option value="unknown" ${p.preCondition==='unknown'?'selected':''}>לא ידוע</option>
-        <option value="na" ${p.preCondition==='na'?'selected':''}>לא רלוונטי</option>
-      </select></div>
-  </div>`;
+    <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
+    <div class="field"><label class="label">סוג גג</label>${roofSelect}</div>
+    <div class="field"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
+
+  } else {
+    // ── דירת מגורים (ברירת מחדל) ──
+    html += `
+    <div class="field"><label class="label">שטח (מ"ר)</label>
+      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" style="${fieldStyle}"></div>
+    <div class="field"><label class="label">מספר חדרים</label>
+      <input type="number" value="${esc(p.rooms||'')}" oninput="STATE.property.rooms=this.value" min="1" max="20" style="${fieldStyle}" placeholder="3"></div>
+    <div class="field"><label class="label">קומה</label>
+      <input type="text" value="${esc(p.floor)}" oninput="STATE.property.floor=this.value" style="${fieldStyle}" placeholder="0, 1, 2..."></div>
+    <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
+    <div class="field span2"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
+  }
+
+  html += `</div>`;
+  return html;
 }
 
 const INSURANCE_COMPANIES = [
@@ -2131,7 +2183,7 @@ function renderCard3(){
       <div class="label" style="font-size:11px;color:var(--muted);margin-bottom:8px;">הרחבות בפוליסה</div>
       <div class="flex flex-wrap gap8">
         <button class="chip ${ins.extNaturalDisaster?'checked':''}" onclick="STATE.insurance.extNaturalDisaster=!STATE.insurance.extNaturalDisaster;this.classList.toggle('checked')">🌪️ נזקי טבע</button>
-        <button class="chip ${ins.extTerror?'checked':''}" onclick="STATE.insurance.extTerror=!STATE.insurance.extTerror;this.classList.toggle('checked')">🏛️ מלחמה/טרור</button>
+        <button class="chip ${ins.extAllRisks?'checked':''}" onclick="STATE.insurance.extAllRisks=!STATE.insurance.extAllRisks;this.classList.toggle('checked')">🔐 כל הסיכונים</button>
         <button class="chip ${ins.thirdParty?'checked':''}" onclick="STATE.insurance.thirdParty=!STATE.insurance.thirdParty;this.classList.toggle('checked')">צד ג'</button>
         <button class="chip ${ins.lossOfProfits?'checked':''}" onclick="STATE.insurance.lossOfProfits=!STATE.insurance.lossOfProfits;this.classList.toggle('checked')">אובדן רווחים</button>
       </div>
@@ -2507,29 +2559,7 @@ function renderCard6(){
       </div>
       <div class="area-body">
 
-        <!-- שלב 1: רמת פגיעה -->
-        <div class="wz-step">
-          <div class="wz-step-head ${step===1?'active':''}" onclick="areaSetStep('${area.id}',1)">
-            <div style="display:flex;align-items:center;">
-              <span class="wz-num ${area.severity&&step>1?'done':step===1?'active':''}">
-                ${area.severity&&step>1?'✓':'1'}
-              </span>
-              רמת פגיעה
-              ${area.severity&&step>1?`<span class="area-done-badge ${sevClass[area.severity]||''}" style="margin-right:8px;">${sevLabels[area.severity]}</span>`:''}
-            </div>
-            <span style="font-size:11px;">${step===1?'▲':'▼'}</span>
-          </div>
-          <div class="wz-step-body ${step===1?'open':''}">
-            <div class="pill-group" id="sev_${area.id}">
-              ${[{v:'none',l:'אין פגיעה'},{v:'light',l:'קלה'},{v:'medium',l:'בינונית'},{v:'severe',l:'משמעותית'}].map(o=>
-                `<button class="pill ${area.severity===o.v?'active':''}" onclick="setAreaField('${area.id}','severity','${o.v}');refreshPills('sev_${area.id}','${o.v}');renderCard(6)">${o.l}</button>`
-              ).join('')}
-            </div>
-            <div class="wz-next">
-              <button class="wz-btn" onclick="areaSetStep('${area.id}',2)" ${!area.severity?'disabled style="opacity:.4;"':''}>הבא ›</button>
-            </div>
-          </div>
-        </div>
+        <!-- שלב 1: תתי-אזורים -->
 
         <!-- שלב 2: תתי-אזורים -->
         <div class="wz-step">
@@ -2642,7 +2672,48 @@ function renderCard6(){
   // ── חלק תחתון ──
   if(et==='water'){
     html += `<div class="flex items-center gap12 mt12">
-      <button class="chip ${f.labTest?'checked':''}" onclick="STATE.findings.labTest=!STATE.findings.labTest;this.classList.toggle('checked')">🔬 בדיקת מעבדה / מכון התקנים</button>
+      <button class="chip ${f.labTest?'checked':''}" onclick="STATE.findings.labTest=!STATE.findings.labTest;if(!STATE.findings.labRows)STATE.findings.labRows=[];renderCard(6)">🔬 בדיקת מעבדה / מכון התקנים</button>
+    ${f.labTest?`
+    <div style="background:var(--primary2);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:14px;margin-top:12px;">
+      <div class="label" style="color:var(--blue);margin-bottom:10px;">🔬 ערכי בדיקת לחות — מכון התקנים</div>
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:var(--primary3);">
+            <th style="padding:6px 8px;text-align:right;font-weight:700;color:var(--muted);">מיקום הדגימה</th>
+            <th style="padding:6px 8px;text-align:center;font-weight:700;color:var(--muted);">תכולת רטיבות %</th>
+            <th style="padding:6px 8px;text-align:center;font-weight:700;color:var(--muted);">מין חזותי</th>
+            <th style="padding:6px 8px;text-align:center;font-weight:700;color:var(--muted);">התאמה לתקן</th>
+            <th style="padding:6px 8px;width:32px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${(f.labRows||[]).map((row,ri)=>`
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:4px 6px;"><input class="boq-input" value="${esc(row.location||'')}" placeholder="מטבח – מתחת למקרר" oninput="STATE.findings.labRows[${ri}].location=this.value" style="width:100%;min-width:120px;"></td>
+            <td style="padding:4px 6px;text-align:center;"><input class="boq-input num" type="number" step="0.01" value="${esc(row.moisture||'')}" placeholder="9.49" oninput="STATE.findings.labRows[${ri}].moisture=this.value" style="width:70px;text-align:center;"></td>
+            <td style="padding:4px 6px;text-align:center;">
+              <select class="boq-input" style="width:80px;" onchange="STATE.findings.labRows[${ri}].soilType=this.value">
+                <option value="חול" ${row.soilType==='חול'?'selected':''}>חול</option>
+                <option value="חרסית" ${row.soilType==='חרסית'?'selected':''}>חרסית</option>
+                <option value="אחר" ${row.soilType==='אחר'?'selected':''}>אחר</option>
+              </select>
+            </td>
+            <td style="padding:4px 6px;text-align:center;">
+              <select class="boq-input" style="width:90px;" onchange="STATE.findings.labRows[${ri}].compliant=this.value">
+                <option value="לא מתאים" ${row.compliant==='לא מתאים'?'selected':''}>לא מתאים</option>
+                <option value="מתאים" ${row.compliant==='מתאים'?'selected':''}>מתאים</option>
+                <option value="גבולי" ${row.compliant==='גבולי'?'selected':''}>גבולי</option>
+              </select>
+            </td>
+            <td style="padding:4px 6px;"><button class="del-btn" onclick="STATE.findings.labRows.splice(${ri},1);renderCard(6)">✕</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      </div>
+      <button class="btn btn-ghost btn-xs mt8" onclick="STATE.findings.labRows.push({location:'',moisture:'',soilType:'חול',compliant:'לא מתאים'});renderCard(6)">+ הוסף שורה</button>
+    </div>`:''}
+    
     </div>`;
   }
   if(mode==='insurance'){
@@ -3173,14 +3244,23 @@ function genOpeningText(){
     third_party:'נזק מדייר/שכן',
   };
   const subStr = ev.eventSubType ? ` (${subTypeMapHe[ev.eventSubType]||ev.eventSubType})` : '';
-  const polStr = ev.policeReport==='yes' ? (ev.policeNum?` הוגשה תלונה במשטרה, מס' אסמכתא ${ev.policeNum}.`:' הוגשה תלונה במשטרה.') : '';
-  const profs = (ev.professionals||[]).filter(p=>ev.profDetails[p]?.name).map(p=>ev.profDetails[p].name);
-  const profStr = profs.length ? ` בנכס הוזמנו: ${profs.join(', ')}.` : '';
+  const polStr = '';
+  const _profLabelMap = {
+    leak:'מאתר נזילות', fire_inv:'חוקר שריפות', electrician:'חשמלאי',
+    plumber:'אינסטלטור', contractor:'קבלן/שיפוצניק', engineer:'מהנדס/קונסטרוקטור', fire_dept:'כבאות'
+  };
+  const profItems = (ev.professionals||[]).filter(p=>ev.profDetails[p]?.name).map(p=>{
+    const name = ev.profDetails[p].name;
+    const label = _profLabelMap[p]||p;
+    const isArrangement = (p==='plumber'||p==='leak') && (STATE.insurance?.arrangementPlumber || ev.plumberType==='arrangement');
+    return `${name} — ${label}${isArrangement?' (הסדר)':''}`;
+  });
+  const profStr = profItems.length ? `\nלנכס הוזמנו:\n${profItems.map(x=>`   • ${x}`).join('\n')}` : '';
   if(mode==='tax'){
     const sub = ev.eventSubType||'פגיעה';
     return `הח"מ התבקש לערוך שומה במסגרת מס רכוש בגין ${sub} שאירעה ביום ${fmtDate(b.eventDate)||'___'} ${addrStr}. הביקור בנכס נערך ביום ${fmtDate(b.visitDate)||'___'}. במהלך הביקור נבדקו הנזקים ותועדו הממצאים לצורך הערכת שיפוי בהתאם לקריטריונים הרלוונטיים.`;
   }
-  return `הח"מ התבקש ע"י ${reqName||'___'} לערוך חוות דעת שמאית בגין ${evName}${subStr} שאירעו ביום ${fmtDate(b.eventDate)||'___'} ${addrStr}. הביקור בנכס נערך ביום ${fmtDate(b.visitDate)||'___'}. במהלך הביקור נבדקו הנזקים, תועדו הממצאים ונערכה בדיקה ראשונית של נסיבות האירוע.${polStr}${profStr}`;
+  return `הח"מ התבקש ע"י ${reqName||'___'} לערוך חוות דעת שמאית בגין ${evName}${subStr} שאירעו ביום ${fmtDate(b.eventDate)||'___'} ${addrStr}. הביקור בנכס נערך ביום ${fmtDate(b.visitDate)||'___'}. במהלך הביקור נבדקו הנזקים, תועדו הממצאים ונערכה בדיקה ראשונית של נסיבות האירוע.${profStr}`;
 }
 
 function genCircumText(){
@@ -3285,24 +3365,27 @@ function genFindingsText(){
     t_secondary:'נזק משני — חדירת רטיבות וקריסה חלקית'
   };
 
-  // Opening sentence per event type
+  // Opening sentence per event type — professional formulation
+  const visitDate = STATE.base?.visitDate ? fmtDate(STATE.base.visitDate) : '';
+  const dateStr = visitDate ? ` ביום ${visitDate}` : '';
+
   const openingByType = {
     water:  (area) => area.causeDesc
-      ? `במהלך ביקורי בנכס נצפו ב${area.label} סימני נזק הנובעים מ${area.causeDesc}.`
-      : `במהלך ביקורי בנכס נצפו ב${area.label} סימני נזק עקב חדירת רטיבות.`,
+      ? `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות ${area.causeDesc}. להלן ממצאי הבדיקה:`
+      : `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות נזקי רטיבות שדווחו. להלן ממצאי הבדיקה:`,
     fire:   (area) => area.causeDesc
-      ? `במהלך ביקורי בנכס נצפו ב${area.label} נזקים הנובעים מ${area.causeDesc}.`
-      : `במהלך ביקורי בנכס נצפו ב${area.label} נזקי אש ועשן.`,
+      ? `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות ${area.causeDesc}. להלן ממצאי הבדיקה:`
+      : `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות נזקי אש ועשן שדווחו. להלן ממצאי הבדיקה:`,
     burglary:(area) => area.causeDesc
-      ? `במהלך ביקורי בנכס נצפו ב${area.label} נזקים הנובעים מ${area.causeDesc}.`
-      : `במהלך ביקורי בנכס נצפו ב${area.label} נזקי פריצה.`,
+      ? `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות ${area.causeDesc}. להלן ממצאי הבדיקה:`
+      : `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות נזקי פריצה שדווחו. להלן ממצאי הבדיקה:`,
     tax:    (area) => area.causeDesc
-      ? `במהלך ביקורי בנכס נצפו ב${area.label} נזקים הנובעים מ${area.causeDesc}.`
-      : `במהלך ביקורי בנכס נצפו ב${area.label} נזקי מס רכוש.`,
+      ? `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות ${area.causeDesc}. להלן ממצאי הבדיקה:`
+      : `בביקורי בנכס${dateStr} בדקתי את ${area.label} בגין נזקי מס רכוש. להלן ממצאי הבדיקה:`,
   };
   const defaultOpening = (area) => area.causeDesc
-    ? `במהלך ביקורי בנכס נצפו ב${area.label} נזקים הנובעים מ${area.causeDesc}.`
-    : `במהלך ביקורי בנכס נצפו ב${area.label} הממצאים הבאים.`;
+    ? `בביקורי בנכס${dateStr} בדקתי את ${area.label} בעקבות ${area.causeDesc}. להלן ממצאי הבדיקה:`
+    : `בביקורי בנכס${dateStr} בדקתי את ${area.label}. להלן ממצאי הבדיקה:`;
 
   // Summarize damage scope in a short phrase
   const scopePhrase = (signs) => {
@@ -3325,54 +3408,25 @@ function genFindingsText(){
 
   const heLetters = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ'];
 
-  const paras = areas.map((area, i) => {
+  // ── ממצאי הביקור — כל הסימנים מכל האזורים ברשימה אחת, ללא שם אזור ──
+  const allRoomItemsFlat = Object.values(ROOM_ITEMS).flatMap(v=>[...(v.struct||[]),...(v.cont||[])]);
+  const allBullets = new Set();
+  const generalNotesList = [];
+  areas.forEach(area => {
     const signs = area.signs||[];
     const roomSigns = area.roomSigns||[];
-    if(!signs.length && !roomSigns.length && !area.notes && !area.causeDesc) return null;
+    signs.forEach(s => { const d=signToDesc[s]||getLabel(s); if(d) allBullets.add(d); });
+    if(area.humidTest==='high') allBullets.add('אינדיקציה ללחות חריגה בשכבות התשתית');
+    if(signs.includes('w_subfloor') && !STATE.findings.labTest) allBullets.add('נמצאה לחות חריגה בשכבות התשתית');
+    roomSigns.forEach(sid => { const item=allRoomItemsFlat.find(x=>x.id===sid); if(item) allBullets.add(item.l); });
+    if(area.notes) generalNotesList.push(area.notes);
+  });
+  let findingsBody = 'במהלך הביקור בנכס נצפו הממצאים הבאים:';
+  allBullets.forEach(b => { findingsBody += `\n   • ${b}`; });
+  if(generalNotesList.length) findingsBody += '\n' + generalNotesList.join('\n');
+  const paras = allBullets.size > 0 ? [findingsBody] : [];
 
-    const letter = heLetters[i] || String(i+1);
-    const opening = (openingByType[et] || defaultOpening)(area);
-    // Build all bullets first, then decide scope phrase
-    const allRoomItems = Object.values(ROOM_ITEMS).flatMap(v=>[...(v.struct||[]),...(v.cont||[])]);
-    const roomSignLabels = roomSigns.map(sid=>{
-      const item = allRoomItems.find(x=>x.id===sid);
-      return item ? item.l : null;
-    }).filter(Boolean);
-
-    const scope = (signs.length || roomSigns.length) ? scopePhrase(signs) : '';
-
-    let txt = `${letter}. ${area.label}\n${opening}`;
-
-    if(signs.length || roomSigns.length || area.humidTest==='high' || area.notes){
-      if(scope) txt += `\n${scope}`;
-      // WATER_SIGNS / FIRE_SIGNS bullets
-      signs.forEach(s => {
-        txt += `\n   • ${signToDesc[s] || getLabel(s)}`;
-      });
-      // Humidity
-      if(area.humidTest==='high'){
-        txt += `\n   • רטיבות חריגה במצע שמתחת לריצוף — חשש לזיהום בקטריאלי עקב שהות מים ממושכת`;
-      }
-      // Room-specific damage items (ROOM_ITEMS)
-      roomSignLabels.forEach(label => {
-        txt += `\n   • ${label}`;
-      });
-      // Notes
-      if(area.notes) txt += `\n${area.notes}`;
-    }
-
-    // Severity closing
-    const sevLabel = {light:'קל',medium:'בינוני',severe:'משמעותי'}[area.severity];
-    if(sevLabel) txt += `\nהיקף הנזק: ${sevLabel}.`;
-
-    return txt;
-  }).filter(Boolean);
-
-  // Story match
-  if(f.matchesStory){
-    const mm={yes:'הממצאים שנצפו בשטח תואמים את גרסת המבוטח.',partial:'הממצאים שנצפו בשטח תואמים חלקית את גרסת המבוטח.',no:'הממצאים שנצפו בשטח אינם תואמים את גרסת המבוטח.',tbd:'ההתאמה לגרסת המבוטח טרם הוכרעה.'};
-    if(mm[f.matchesStory]) paras.push(mm[f.matchesStory]);
-  }
+  // Story match — לא מופיע בגוף הדוח (הוסר לפי הנחיה מקצועית)
   if(f.generalNotes) paras.push(f.generalNotes);
   return paras.join('\n\n');
 }
@@ -3851,7 +3905,7 @@ function _doGenerateReport(){
         <table><tbody>
           ${mkCell('תאריך קרות המקרה', fmtDate(b.eventDate))}
           ${mkCell('תאריך ביקור בנכס', fmtDate(b.visitDate))}
-          ${mkCell('מסמך אחרון מהחברה', fmtDate(ins.lastDocDate))}
+          ${mkCell('קבלת מסמך אחרון', fmtDate(ins.lastDocDate))}
           ${mkCell('תאריך הפקת הדוח', new Date().toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'}))}
         </tbody></table>
       </div>
@@ -3872,8 +3926,97 @@ function _doGenerateReport(){
   const decl = STATE.event.appraiserDeclaration;
   if(decl) rpt += `<div class="rpt-section"><h3>הצהרת שמאי</h3><p class="rpt-p">${esc(decl).replace(/\n/g,'<br>')}</p></div>`;
   
+  // פרק תיאור המקום — שילוב propertyDesc + STATE.property
+  const pd = STATE.propertyDesc||{};
+  const propState2 = STATE.property||{};
+  const propTypeMap2 = {apartment:'דירת מגורים',house:'בית פרטי',shop:'חנות',office:'משרד',warehouse:'מחסן',other:'נכס'};
+  const propTypeLabel2 = propTypeMap2[propState2.type] || pd.propertyType || '';
+  const propSqm2 = propState2.sqm || pd.area || '';
+  const propFloor2 = propState2.floor || pd.floors || '';
+  const propYear2 = propState2.yearBuilt || '';
+  const propBuild2 = pd.buildingType || '';
+  // ── נרטיב תיאור המקום — דינמי לפי סוג נכס ──
+  const propMaterialMap2 = {
+    concrete:'שלד בטון', blocks:'בנייה קונבנציונלית בלוקים ובטון',
+    prefab:'בנייה קלה (פל-קל)', wood:'עץ', steel:'פלדה'
+  };
+  const propRoofMap2 = {tiles:'רעפים',flat:'גג שטוח (בטון)',asbestos:'פח/אסבסט',green:'גג ירוק',metal:'מתכת'};
+  const propRooms2 = STATE.property?.rooms || '';
+  const propLevels2 = STATE.property?.levels || '';
+  const propBuiltSqm2 = STATE.property?.builtSqm || '';
+  const propFreeDesc2 = STATE.property?.freeDesc || '';
+  const propMaterial2 = propMaterialMap2[STATE.property?.material] || '';
+  const propRoof2 = propRoofMap2[STATE.property?.roofType] || '';
+  const isBiz2 = ['shop','office','warehouse'].includes(STATE.property?.type) || STATE.property?.usage==='business';
+  const isHouse2 = STATE.property?.type === 'house';
+
+  let pdSentence = '';
+  if(isBiz2){
+    if(propFreeDesc2){ pdSentence = propFreeDesc2; }
+    else {
+      let s = propTypeLabel2 || 'נכס עסקי';
+      if(propSqm2) s += ` בשטח של ${propSqm2} מ"ר`;
+      if(propMaterial2) s += `, בנוי ${propMaterial2}`;
+      if(propYear2) s += `, שנת בנייה ${propYear2}`;
+      pdSentence = s + '.';
+    }
+  } else if(isHouse2){
+    const addr2 = [STATE.base?.street, STATE.base?.streetNum].filter(Boolean).join(' ');
+    let s = 'בית פרטי';
+    if(propSqm2) s += ` המשתרע על שטח של ${propSqm2} מ"ר`;
+    if(propBuiltSqm2) s += ` מתוכם בנוי ${propBuiltSqm2} מ"ר`;
+    if(addr2) s += ` ברחוב ${addr2}`;
+    if(propLevels2) s += `, הבית בן ${propLevels2} ${propLevels2==1?'מפלס':'מפלסים'}`;
+    if(propMaterial2) s += `, בנוי ${propMaterial2}`;
+    if(propRoof2) s += ` וגג עשוי ${propRoof2}`;
+    if(propYear2) s += `, שנת בנייה ${propYear2}`;
+    pdSentence = s + '.';
+  } else {
+    let s = 'מדובר בדירת מגורים';
+    if(propRooms2) s += ` ${propRooms2} חדרים`;
+    if(propSqm2) s += ` בשטח של ${propSqm2} מ"ר`;
+    if(propFloor2) s += ` בקומה ${propFloor2}`;
+    if(propMaterial2) s += `, בנוי ${propMaterial2}`;
+    if(propYear2) s += `, שנת בנייה ${propYear2}`;
+    pdSentence = s + '.';
+  }
+  const pdParts = pdSentence ? [pdSentence] : [];
+  if(pdSentence || pd.damagedAreas || pd.notes){
+    let pdHtml = '';
+    if(pdSentence) pdHtml += `<p class="rpt-p" style="margin-bottom:8px;">${esc(pdSentence)}</p>`;
+    if(pd.damagedAreas) pdHtml += `<p class="rpt-p" style="margin-bottom:8px;">הנזקים נצפו ב${esc(pd.damagedAreas)}.</p>`;
+    if(pd.damagedAreaSqm) pdHtml += `<p class="rpt-p" style="margin-bottom:8px;">היקף השטח המוערך שנפגע: ${esc(pd.damagedAreaSqm)} מ"ר.</p>`;
+    if(pd.notes) pdHtml += `<p class="rpt-p">${esc(pd.notes)}</p>`;
+    rpt += `<div class="rpt-section"><h3>תיאור המקום</h3>${pdHtml}</div>`;
+  }
   if(circ) rpt += `<div class="rpt-section"><h3>נסיבות המקרה</h3><p class="rpt-p">${esc(circ).replace(/\n/g,'<br>')}</p></div>`;
+  // פרק סיבת הנזק (רק אם מולא)
+  const causeText = STATE.findings?.causeExplanation||'';
+  if(causeText) rpt += `<div class="rpt-section"><h3>סיבת הנזק</h3><p class="rpt-p">${esc(causeText).replace(/\n/g,'<br>')}</p></div>`;
   if(finds) rpt += `<div class="rpt-section"><h3>ממצאי הביקור ותיאור הנזק</h3><p class="rpt-p">${esc(finds).replace(/\n/g,'<br>')}</p></div>`;
+  // Lab test table in report
+  if(STATE.findings.labTest && (STATE.findings.labRows||[]).length>0){
+    const labRows = STATE.findings.labRows;
+    rpt += `<div class="rpt-section"><h3>בדיקת מעבדה — תכולת לחות במצע (מכון התקנים)</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px;">
+        <thead><tr style="background:#EFF6FF;">
+          <th style="padding:7px 10px;text-align:right;font-weight:700;color:#1D4ED8;border:1px solid #BFDBFE;">מיקום הדגימה</th>
+          <th style="padding:7px 10px;text-align:center;font-weight:700;color:#1D4ED8;border:1px solid #BFDBFE;">תכולת רטיבות משקלית %</th>
+          <th style="padding:7px 10px;text-align:center;font-weight:700;color:#1D4ED8;border:1px solid #BFDBFE;">מין חזותי</th>
+          <th style="padding:7px 10px;text-align:center;font-weight:700;color:#1D4ED8;border:1px solid #BFDBFE;">התאמה לדרישות התקן</th>
+        </tr></thead>
+        <tbody>${labRows.map((row,i)=>`
+          <tr style="background:${i%2===1?'#FAFAFA':'#fff'};">
+            <td style="padding:7px 10px;border:1px solid #E5E7EB;">${esc(row.location||'—')}</td>
+            <td style="padding:7px 10px;border:1px solid #E5E7EB;text-align:center;font-weight:600;">${row.moisture?esc(row.moisture)+'%':'—'}</td>
+            <td style="padding:7px 10px;border:1px solid #E5E7EB;text-align:center;">${esc(row.soilType||'חול')}</td>
+            <td style="padding:7px 10px;border:1px solid #E5E7EB;text-align:center;font-weight:700;color:${row.compliant==='מתאים'?'#059669':row.compliant==='גבולי'?'#D97706':'#DC2626'};">${esc(row.compliant||'לא מתאים')}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:#6B7280;">לאור הממצאים יש לבצע פעולות לייבוש המצע.</p>
+    </div>`;
+  }
 
   if(grand>0){
     rpt += `<div class="rpt-section"><h3>כתב כמויות</h3>`;
@@ -3941,6 +4084,10 @@ function _doGenerateReport(){
           <tr><td style="padding:8px 12px;border:1px solid #D1D5DB;">פחות השתתפות עצמית:</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;">${deduct>0?`₪ ${fmtNum(deduct)} לפי פוליסה`:'—'}</td></tr>
           ${rentalTotal>0?`<tr style="background:#EFF6FF;"><td style="padding:8px 12px;border:1px solid #D1D5DB;">שכירות חלופית (${f.rentalMonths} חודשים × ₪${fmtNum(parseCurrency(f.rentalMonthly))}):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;color:#1D4ED8;font-weight:700;">₪ ${fmtNum(rentalTotal)}</td></tr>`:''}
           ${showClaimCol?`<tr style="background:#FFFBEB;"><td style="padding:8px 12px;border:1px solid #D1D5DB;font-weight:900;font-size:13px;color:#92400E;">סה"כ תביעה (שמאי פרטי):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;font-weight:900;font-size:15px;color:#92400E;">${totalClaim>0?'₪ '+fmtNum(totalClaim):'לא צוין'}</td></tr>`:''}
+          <tr style="background:#D1FAE5;border-top:2px solid #16A34A;">
+            <td style="padding:12px 16px;border:1px solid #A7F3D0;font-weight:900;font-size:15px;color:#065F46;">סכום נטו לתשלום:</td>
+            <td style="padding:12px 16px;border:1px solid #A7F3D0;text-align:right;font-weight:900;font-size:18px;color:#15803D;">₪ ${fmtNum(Math.max(0, (boq.vat?Math.round(totalShiput*1.18):totalShiput) - deduct + rentalTotal))}</td>
+          </tr>
         </tbody>
       </table>`;
     } else if(mode==='private'){
@@ -3968,7 +4115,7 @@ function _doGenerateReport(){
 
   if(expl) rpt+=`<div class="rpt-section"><h3>ביאורים והסברים להערכה</h3><p class="rpt-p">${esc(expl).replace(/\n/g,'<br>')}</p></div>`;
   const rehabRec = s.recommendations || genRehabRecommendations();
-  if(rehabRec) rpt+=`<div class="rpt-section"><h3>המלצות לשיקום</h3><p class="rpt-p" style="white-space:pre-line;">${esc(rehabRec)}</p></div>`;
+  // המלצות לשיקום — הוסרו לחלוטין
   if(s.claimTotal) rpt+=`<div class="rpt-section"><h3>הערת סיכום</h3><p class="rpt-p">${esc(s.claimTotal)}</p></div>`;
 
   // ── נספחים ──
@@ -4286,7 +4433,15 @@ function genExplanationsText(){
     if(deduct>0) add(`מסכום השיפוי הופחתה השתתפות עצמית בסך ₪${fmtNum(deduct)} בהתאם לתנאי הפוליסה.`);
 
     add('כל האמור בדו"ח זה נכון למועד הביקור בנכס. ייתכן כי במהלך ביצוע העבודות יתגלו ממצאים נוספים שלא היו גלויים לעין, ובמקרה זה תעודכן ההערכה בהתאם.');
-    if(STATE.findings.labTest) add('בוצעה/תבוצע בדיקת מעבדה (מכון התקנים) לצורך אישור ממצאי לחות – התוצאות ישמשו להמשך הטיפול.');
+    if(STATE.findings.labTest){
+    const rows = STATE.findings.labRows||[];
+    if(rows.length>0){
+      add('בוצעה בדיקת מעבדה (מכון התקנים) לתכולת לחות במצע. להלן ממצאי הבדיקה:');
+      // Lab table will be rendered in report HTML separately
+    } else {
+      add('בוצעה/תבוצע בדיקת מעבדה (מכון התקנים) לצורך אישור ממצאי לחות – התוצאות ישמשו להמשך הטיפול.');
+    }
+  }
   }
 
   // ── שמאות מס רכוש ──
