@@ -21,6 +21,10 @@
   --card:#111827;--bg:#030712;
   --shadow:0 4px 20px rgba(0,0,0,0.4);
   summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''},
+  taxSubMode:'',  // 'residential' | 'business'
+  taxRes:{ familyStatus:'single', numChildren:0, numAdults:0, contentsItems:[], emergencyItems:[] },
+  taxBiz:{ bizName:'', bizId:'', bizType:'', activity:'', equipItems:[], inventoryItems:[], sideExpenses:[] },
+  taxDecision:{ causalLink:'yes', notes:'' },
   propertyDesc:{propertyType:'דירת מגורים',floors:'',area:'',buildingType:'קונבנציונלי',damagedAreas:'',damagedAreaSqm:'',notes:''}
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -964,6 +968,22 @@ window.doForgotPassword = async () => {
       <div class="nav-item" data-card="8" onclick="goCard(8)">
         <span class="ni">✅</span><div><div class="nt">סיכום ומסקנות</div><div class="ns">הערכה סופית</div></div>
       </div>
+      <!-- כרטיסי מס רכוש — מוסתרים כברירת מחדל, מוצגים ע"י updateTaxNavItems -->
+      <div class="nav-item" data-card="10" onclick="goCard(10)" style="display:none">
+        <span class="ni">🛋️</span><div><div class="nt">תכולה ביתית</div><div class="ns">תקרות חוקיות</div></div>
+      </div>
+      <div class="nav-item" data-card="13" onclick="goCard(13)" style="display:none">
+        <span class="ni">🖥️</span><div><div class="nt">ציוד עסקי</div><div class="ns">שווי שוק</div></div>
+      </div>
+      <div class="nav-item" data-card="14" onclick="goCard(14)" style="display:none">
+        <span class="ni">📦</span><div><div class="nt">מלאי</div><div class="ns">פירוט מלאי שנפגע</div></div>
+      </div>
+      <div class="nav-item" data-card="15" onclick="goCard(15)" style="display:none">
+        <span class="ni">💰</span><div><div class="nt">הוצאות נלוות</div><div class="ns">פינוי, אחסון, בדיקות</div></div>
+      </div>
+      <div class="nav-item" data-card="12" onclick="goCard(12)" style="display:none">
+        <span class="ni">⚖️</span><div><div class="nt">החלטת שמאי</div><div class="ns">קשר סיבתי וסיכום</div></div>
+      </div>
       <div class="nav-item" data-card="9" onclick="goCard(9)">
         <span class="ni">📷</span><div><div class="nt">תמונות</div><div class="ns">תיעוד ביקור</div></div>
       </div>
@@ -1004,6 +1024,17 @@ window.doForgotPassword = async () => {
 // STATE
 // ══════════════════════════════════════════════════
 let mode = null;
+
+
+// ── מס רכוש — תקרות תכולה ──
+window.TAX_RATES = {
+  categories:{
+    furniture: {label:'ריהוט',            single:13972, couple:24163, perChild:4885, perAdult:7144},
+    clothing:  {label:'בגדים',            single:5954,  couple:11910, perChild:1786, perAdult:5954},
+    electrical:{label:'חשמל ואלקטרוניקה', single:25536, couple:30954, perChild:519,  perAdult:4062},
+    other:     {label:'חפץ ביתי אחר',     single:8928,  couple:21426, perChild:1964, perAdult:3928},
+  }
+};
 
 // ── שמות פרקי BOQ ──
 const BOQ_CHAPTER_NAMES = {
@@ -1872,7 +1903,7 @@ const ROOM_ITEM_MAP = {
 // MODE SETUP
 // ══════════════════════════════════════════════════
 function selectMode(m){
-  mode = m;
+  mode = m; STATE.taxSubMode='';
   STATE = {
     base:{fullName:'',idNum:'',phone:'',email:'',eventDate:'',visitDate:'',city:'',street:'',streetNum:'',apartment:''},
     property:{type:'apartment',usage:'residential',sqm:'',builtSqm:'',floor:'',levels:'',rooms:'',yearBuilt:'',material:'',roofType:'',preCondition:'',freeDesc:''},
@@ -1882,6 +1913,10 @@ function selectMode(m){
     findings:{areas:[],labTest:false,labRows:[],matchesStory:'',generalNotes:'',findingsOverride:'',freeAreaName:'',residents:'',habitableStatus:'yes',rentalMonths:'',rentalMonthly:'',_showAllAreas:false,causeExplanation:''},
     boq:{structItems:[],contentsItems:[],serviceItems:[],vat:false,hasClaim:false,claimAmount:'',restoredState:'',genItems:{cleaning:true,waste:false,container:false,moveContents:false,drying:false},genNote:'',boqOverride:''},
     summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''},
+  taxSubMode:'',  // 'residential' | 'business'
+  taxRes:{ familyStatus:'single', numChildren:0, numAdults:0, contentsItems:[], emergencyItems:[] },
+  taxBiz:{ bizName:'', bizId:'', bizType:'', activity:'', equipItems:[], inventoryItems:[], sideExpenses:[] },
+  taxDecision:{ causalLink:'yes', notes:'' },
   propertyDesc:{propertyType:'דירת מגורים',floors:'',area:'',buildingType:'קונבנציונלי',damagedAreas:'',damagedAreaSqm:'',notes:''},
     photos:{main:null,mainCaption:'',items:[]}
   };
@@ -1939,7 +1974,13 @@ function prevCard(){
   if(idx > 0) goCard(cards[idx-1]);
 }
 function getVisibleCards(){
-  return mode==='tax'?[1,4,6,7,8,9]:[1,3,4,6,7,8,9];
+  if(mode==='tax'){
+    const sub = STATE.taxSubMode;
+    if(sub==='residential') return [1,4,6,7,10,12,9]; // +תכולה+החלטה
+    if(sub==='business')    return [1,4,6,7,13,14,15,12,9]; // +ציוד+מלאי+הוצ+החלטה
+    return [1,4,6,7,12,9]; // ברירת מחדל — ללא sub mode עדיין
+  }
+  return [1,3,4,6,7,8,9];
 }
 
 // ══════════════════════════════════════════════════
@@ -2010,6 +2051,12 @@ function renderCard(n){
   }
   else if(n===8) html += renderCard8();
   else if(n===9) html += renderCard9();
+  else if(n===10) html += renderTaxContents();   // מגורים — תכולה
+  else if(n===11) html += renderTaxEmergency();  // מגורים — הוצאות חירום
+  else if(n===12) html += renderTaxDecision();   // החלטת שמאי
+  else if(n===13) html += renderTaxEquip();      // עסקי — ציוד
+  else if(n===14) html += renderTaxInventory();  // עסקי — מלאי
+  else if(n===15) html += renderTaxSideExp();    // עסקי — הוצאות נלוות
   html += `</div>`;
   const cards = getVisibleCards();
   const idx = cards.indexOf(n);
@@ -2054,7 +2101,7 @@ function renderCard2(){
   const isHouse = p.type==='house';
   const isApt = p.type==='apartment' || p.type==='other' || (!isBiz && !isHouse);
 
-  const fieldStyle = "background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Heebo',sans-serif;width:100%;";
+  const fieldStyle = "background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Heebo',sans-serif;width:100%;outline:none;transition:border-color .2s;";
 
   const materialSelect = `<select onchange="STATE.property.material=this.value" style="${fieldStyle}">
     <option value="" ${!p.material?'selected':''}>—</option>
@@ -2085,7 +2132,7 @@ function renderCard2(){
 
   let html = `<div class="grid2">
     <div class="field"><label class="label">סוג נכס</label>
-      <select onchange="STATE.property.type=this.value;renderCard(3)" style="${fieldStyle}">
+      <select onchange="STATE.property.type=this.value;renderCard(1)" style="${fieldStyle}">
         ${['apartment:דירה','house:בית פרטי','shop:חנות','office:משרד','warehouse:מחסן','other:אחר'].map(o=>{const[v,l]=o.split(':');return`<option value="${v}" ${p.type===v?'selected':''}>${l}</option>`}).join('')}
       </select></div>
     <div class="field"><label class="label">שנת בנייה</label>
@@ -2099,7 +2146,7 @@ function renderCard2(){
       <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" style="${fieldStyle}"></div>
     <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
     <div class="field span2"><label class="label">תיאור הנכס (יופיע בדוח)</label>
-      <textarea rows="3" oninput="STATE.property.freeDesc=this.value" placeholder='למשל: בית עסק בן 2 קומות, קומת קרקע משמשת אולם סועדים, קומה עליונה כמטבח תעשייתי. שטח כולל 550 מ"ר.' style="${fieldStyle}resize:vertical;">${esc(p.freeDesc||'')}</textarea></div>
+      <textarea rows="3" oninput="STATE.property.freeDesc=this.value" placeholder='למשל: בית עסק בן 2 קומות, קומת קרקע משמשת אולם סועדים, קומה עליונה כמטבח תעשייתי. שטח כולל 550 מ"ר.' style="${fieldStyle};resize:vertical;">${esc(p.freeDesc||'')}</textarea></div>
     <div class="field span2"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
 
   } else if(isHouse){
@@ -2128,7 +2175,7 @@ function renderCard2(){
     <div class="field"><label class="label">קומה</label>
       <input type="text" value="${esc(p.floor)}" oninput="STATE.property.floor=this.value" style="${fieldStyle}" placeholder="0, 1, 2..."></div>
     <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
-    <div class="field span2"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
+    <div class="field"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
   }
 
   html += `</div>`;
@@ -2223,6 +2270,12 @@ function renderCard4(){
   let html = '';
   if(isTax){
     html += `<div class="note note-green mb12">מסלול מס רכוש – סוג הפגיעה מוגדר לפי סיווג מס רכוש</div>`;
+    html += `<div class="field mb16"><label class="label">סוג הנכס לצורך מס רכוש *</label>
+      <div class="pill-group">
+        <button class="pill ${STATE.taxSubMode==='residential'?'active-green':''}" onclick="STATE.taxSubMode='residential';renderCard(4);updateTaxNavItems()">🏠 מגורים</button>
+        <button class="pill ${STATE.taxSubMode==='business'?'active-green':''}" onclick="STATE.taxSubMode='business';renderCard(4);updateTaxNavItems()">🏢 עסקי</button>
+      </div>
+    </div>`;
     html += `<div class="field mb16"><label class="label">סיווג הפגיעה (SubType) *</label><div class="pill-group" id="taxSubPills">`;
     EVENT_SUBTYPES.tax.forEach(s=>{
       html += `<button class="pill ${ev.eventSubType===s?'active-green':''}" onclick="STATE.event.eventSubType='${s}';refreshPills('taxSubPills','${s}','active-green')">${s}</button>`;
@@ -3119,9 +3172,7 @@ function renderCard8(){
     <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">📋 ביאורים והסברים</div><span class="sc-toggle">▼</span></div>
     <div class="sc-body">${editBlock('appraisalNotes', genExplanationsText(), 7)}</div></div>`;
 
-  html += `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">🔧 המלצות לשיקום</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">${editBlock('recommendations', genRehabRecommendations(), 8)}</div></div>`;
+  // המלצות לשיקום — הוסרו
 
   html += `<div class="sc">
     <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">⏱️ זמן שיקום משוער</div><span class="sc-toggle">▼</span></div>
@@ -3431,6 +3482,265 @@ function genFindingsText(){
   return paras.join('\n\n');
 }
 
+
+// ══════════════════════════════════════════════════
+// כרטיסי מס רכוש — מגורים ועסקי
+// ══════════════════════════════════════════════════
+
+// ── תכולה ביתית (כרטיס 10) ──
+function renderTaxContents(){
+  const r = STATE.taxRes;
+  const rates = (window.TAX_RATES||{}).categories||{};
+  const fs = r.familyStatus||'single';
+  const nc = parseInt(r.numChildren)||0;
+  const na = parseInt(r.numAdults)||0;
+  function getCeil(cat){ return (fs==='single'?(cat.single||0):(cat.couple||0)) + nc*(cat.perChild||0) + na*(cat.perAdult||0); }
+
+  let totalClaimed=0, totalApproved=0, ceilTotal=0;
+  Object.values(rates).forEach(cat=>{
+    const ceil = getCeil(cat);
+    ceilTotal += ceil;
+    const item = (r.contentsItems||[]).find(i=>i.key===Object.keys(rates).find(k=>rates[k]===cat))||{};
+    totalClaimed += Math.min(parseFloat(item.claimed)||0, ceil);
+    totalApproved += Math.min(parseFloat(item.approved)||(parseFloat(item.claimed)||0), ceil);
+  });
+
+  let html = `<div class="merged-label">🛋️ תכולה ביתית — תקרות חוקיות (חוק מס רכוש)</div>
+  <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px;margin-bottom:16px;">
+    <div class="label" style="color:var(--green);margin-bottom:10px;">הגדרת הרכב המשפחה</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div class="field"><label class="label">מצב משפחתי</label><div class="pill-group">
+        <button class="pill ${fs==='single'?'active-green':''}" onclick="STATE.taxRes.familyStatus='single';renderCard(10)">יחיד</button>
+        <button class="pill ${fs==='couple'?'active-green':''}" onclick="STATE.taxRes.familyStatus='couple';renderCard(10)">זוג / הורה יחיד</button>
+      </div></div>
+      <div class="field"><label class="label">ילדים (עד 18)</label>
+        <input type="number" min="0" max="15" value="${r.numChildren||0}" oninput="STATE.taxRes.numChildren=parseInt(this.value)||0;renderCard(10)" style="width:70px;background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text);">
+      </div>
+      <div class="field"><label class="label">מבוגרים נוספים</label>
+        <input type="number" min="0" max="10" value="${r.numAdults||0}" oninput="STATE.taxRes.numAdults=parseInt(this.value)||0;renderCard(10)" style="width:70px;background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text);">
+      </div>
+    </div>
+  </div>
+  <table class="boq-table" style="margin-bottom:8px;">
+    <thead><tr>
+      <th>קטגוריה</th><th style="color:var(--green);">תקרה חוקית</th>
+      <th>נטען ע"י תובע</th><th>מוכר ע"י שמאי</th><th>סטטוס</th>
+    </tr></thead><tbody>`;
+
+  Object.entries(rates).forEach(([k,cat])=>{
+    const ceil = getCeil(cat);
+    const item = (r.contentsItems||[]).find(i=>i.key===k)||{};
+    html += `<tr>
+      <td style="font-weight:700;">${cat.label}</td>
+      <td style="color:var(--green);font-weight:600;">₪${fmtNum(ceil)}</td>
+      <td><input type="number" min="0" value="${item.claimed||''}" placeholder="0"
+        oninput="updateTaxContentsItem('${k}','claimed',this.value)" style="width:90px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:6px;color:var(--text);"></td>
+      <td><input type="number" min="0" value="${item.approved||''}" placeholder="לפי תקרה"
+        oninput="updateTaxContentsItem('${k}','approved',this.value)" style="width:90px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:6px;color:var(--text);"></td>
+      <td><select onchange="updateTaxContentsItem('${k}','status',this.value)" style="background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:6px;color:var(--text);">
+        <option value="approved" ${(item.status||'approved')==='approved'?'selected':''}>מוכר</option>
+        <option value="partial" ${item.status==='partial'?'selected':''}>חלקי</option>
+        <option value="rejected" ${item.status==='rejected'?'selected':''}>לא מוכר</option>
+      </select></td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>
+  <div class="note" style="font-size:11px;">⚠️ לא מכוסה: חפצי אומנות, תכשיטים, עתיקות, מזומנים</div>
+  <div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:12px;">
+    <div class="total-row"><span class="c-muted">תקרה כוללת:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(ceilTotal))}</span></div>
+    <div class="total-row"><span class="c-muted">נטען (בגבולות תקרה):</span><span class="fw7">₪${fmtNum(Math.round(totalClaimed))}</span></div>
+    <div class="total-row"><span class="c-muted fw7">מוכר ע"י שמאי:</span><span style="color:var(--green);font-weight:800;font-size:15px;">₪${fmtNum(Math.round(totalApproved))}</span></div>
+  </div>`;
+  return html;
+}
+
+// ── הוצאות חירום (כרטיס 11 — מגורים) ──
+function renderTaxEmergency(){
+  const items = STATE.taxRes.emergencyItems||[];
+  const total = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  const typeOpts=['פינוי זמני','לינה','אחסון','תיקון חירום','אחר'];
+  let html = `<div class="merged-label">🚑 הוצאות חירום</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr>
+      <th>#</th><th>סוג</th><th>תיאור</th><th>נטען</th><th>מוכר</th><th></th>
+    </tr></thead><tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><select onchange="STATE.taxRes.emergencyItems[${i}].type=this.value" style="background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);">
+        ${typeOpts.map(t=>`<option ${item.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input value="${esc(item.desc)}" oninput="STATE.taxRes.emergencyItems[${i}].desc=this.value" style="width:100%;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);" placeholder="פירוט..."></td>
+      <td><input type="number" value="${esc(item.claimed)}" oninput="STATE.taxRes.emergencyItems[${i}].claimed=this.value" style="width:80px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);"></td>
+      <td><input type="number" value="${esc(item.approved)}" oninput="STATE.taxRes.emergencyItems[${i}].approved=this.value;renderCard(11)" style="width:80px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);"></td>
+      <td><button class="del-btn" onclick="STATE.taxRes.emergencyItems.splice(${i},1);renderCard(11)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxRes.emergencyItems.push({type:'אחר',desc:'',claimed:'',approved:''});renderCard(11)">+ הוסף הוצאה</button>
+  ${total>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">סה"כ מוכר — הוצאות חירום:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(total))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── ציוד עסקי (כרטיס 13) ──
+function renderTaxEquip(){
+  const items = STATE.taxBiz.equipItems||[];
+  const totalApproved = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  let html = `<div class="merged-label">🖥️ ציוד עסקי — שווי שוק</div>
+  <div class="note mb12">שווי הציוד נקבע לפי שווי שוק בפועל, תוך התחשבות בגיל, מצב ובלאי.</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr>
+      <th>#</th><th>פריט</th><th>גיל (שנ')</th><th>מצב</th><th>נטען</th><th>מוכר</th><th>סטטוס</th><th></th>
+    </tr></thead><tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><input class="boq-input" value="${esc(item.desc)}" oninput="STATE.taxBiz.equipItems[${i}].desc=this.value" placeholder="תיאור פריט"></td>
+      <td><input class="boq-input num" type="number" min="0" value="${esc(item.age)}" oninput="STATE.taxBiz.equipItems[${i}].age=this.value" style="width:55px;"></td>
+      <td><select class="boq-input" style="width:75px;" onchange="STATE.taxBiz.equipItems[${i}].condition=this.value">
+        ${['חדש','טוב','בינוני','ישן'].map(c=>`<option ${item.condition===c?'selected':''}>${c}</option>`).join('')}
+      </select></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.claimed)}" oninput="STATE.taxBiz.equipItems[${i}].claimed=this.value;renderCard(13)" style="width:80px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.approved)}" oninput="STATE.taxBiz.equipItems[${i}].approved=this.value;renderCard(13)" style="width:80px;"></td>
+      <td><select class="boq-input" style="width:80px;" onchange="STATE.taxBiz.equipItems[${i}].status=this.value">
+        <option value="approved" ${(item.status||'approved')==='approved'?'selected':''}>מוכר</option>
+        <option value="partial" ${item.status==='partial'?'selected':''}>חלקי</option>
+        <option value="rejected" ${item.status==='rejected'?'selected':''}>לא</option>
+      </select></td>
+      <td><button class="del-btn" onclick="STATE.taxBiz.equipItems.splice(${i},1);renderCard(13)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxBiz.equipItems.push({desc:'',age:'',condition:'טוב',claimed:'',approved:'',status:'approved'});renderCard(13)">+ הוסף ציוד</button>
+  ${totalApproved>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">מוכר:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(totalApproved))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── מלאי (כרטיס 14 — עסקי) ──
+function renderTaxInventory(){
+  const items = STATE.taxBiz.inventoryItems||[];
+  const totalApproved = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  let html = `<div class="merged-label">📦 מלאי</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr>
+      <th>#</th><th>סוג מלאי</th><th>כמות</th><th>ערך יחידה</th><th>נטען</th><th>מוכר</th><th>מסמכים</th><th></th>
+    </tr></thead><tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><input class="boq-input" value="${esc(item.desc)}" oninput="STATE.taxBiz.inventoryItems[${i}].desc=this.value" placeholder="תיאור..."></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="STATE.taxBiz.inventoryItems[${i}].qty=this.value;renderCard(14)" style="width:65px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.unitPrice)}" oninput="STATE.taxBiz.inventoryItems[${i}].unitPrice=this.value;renderCard(14)" style="width:75px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.claimed)}" oninput="STATE.taxBiz.inventoryItems[${i}].claimed=this.value" style="width:80px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.approved)}" oninput="STATE.taxBiz.inventoryItems[${i}].approved=this.value;renderCard(14)" style="width:80px;"></td>
+      <td><select class="boq-input" style="width:80px;" onchange="STATE.taxBiz.inventoryItems[${i}].docs=this.value">
+        <option value="yes" ${item.docs==='yes'?'selected':''}>קיימים</option>
+        <option value="partial" ${item.docs==='partial'?'selected':''}>חלקי</option>
+        <option value="no" ${item.docs==='no'?'selected':''}>חסרים</option>
+      </select></td>
+      <td><button class="del-btn" onclick="STATE.taxBiz.inventoryItems.splice(${i},1);renderCard(14)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxBiz.inventoryItems.push({desc:'',qty:'',unitPrice:'',claimed:'',approved:'',docs:'yes'});renderCard(14)">+ הוסף מלאי</button>
+  ${totalApproved>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">מוכר:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(totalApproved))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── הוצאות נלוות (כרטיס 15 — עסקי) ──
+function renderTaxSideExp(){
+  const items = STATE.taxBiz.sideExpenses||[];
+  const total = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  const typeOpts=['פינוי','אחסון','תיקון זמני','בדיקה מקצועית','ייעוץ הנדסי','שמירה','אחר'];
+  let html = `<div class="merged-label">💰 הוצאות נלוות</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr><th>#</th><th>סוג</th><th>תיאור</th><th>נטען</th><th>מוכר</th><th></th></tr></thead>
+    <tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><select class="boq-input" style="width:110px;" onchange="STATE.taxBiz.sideExpenses[${i}].type=this.value">
+        ${typeOpts.map(t=>`<option ${item.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input class="boq-input" value="${esc(item.desc)}" oninput="STATE.taxBiz.sideExpenses[${i}].desc=this.value" placeholder="פירוט..."></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.claimed)}" oninput="STATE.taxBiz.sideExpenses[${i}].claimed=this.value" style="width:80px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.approved)}" oninput="STATE.taxBiz.sideExpenses[${i}].approved=this.value;renderCard(15)" style="width:80px;"></td>
+      <td><button class="del-btn" onclick="STATE.taxBiz.sideExpenses.splice(${i},1);renderCard(15)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxBiz.sideExpenses.push({type:'אחר',desc:'',claimed:'',approved:''});renderCard(15)">+ הוסף הוצאה</button>
+  ${total>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">סה"כ מוכר:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(total))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── החלטת שמאי — מס רכוש (כרטיס 12) ──
+function renderTaxDecision(){
+  const d = STATE.taxDecision;
+  const sub = STATE.taxSubMode;
+
+  // חישוב סיכומים
+  const structItems = STATE.boq.structItems||[];
+  const structApproved = structItems.filter(i=>!i.zeroPrice).reduce((s,i)=>s+(parseFloat(i.qty)||0)*(parseFloat(i.price)||0),0);
+
+  let contentsApproved=0, equipApproved=0, inventoryApproved=0, emergencyApproved=0;
+  if(sub==='residential'){
+    const rates=(window.TAX_RATES||{}).categories||{};
+    const r=STATE.taxRes; const fs=r.familyStatus||'single'; const nc=parseInt(r.numChildren)||0; const na=parseInt(r.numAdults)||0;
+    Object.entries(rates).forEach(([k,cat])=>{
+      const ceil=(fs==='single'?cat.single:cat.couple)+nc*cat.perChild+na*cat.perAdult;
+      const item=(r.contentsItems||[]).find(i=>i.key===k)||{};
+      if(item.status!=='rejected') contentsApproved+=Math.min(parseFloat(item.approved)||(parseFloat(item.claimed)||0),ceil);
+    });
+    emergencyApproved=(STATE.taxRes.emergencyItems||[]).reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  } else if(sub==='business'){
+    equipApproved=(STATE.taxBiz.equipItems||[]).filter(i=>i.status!=='rejected').reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+    inventoryApproved=(STATE.taxBiz.inventoryItems||[]).reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+    emergencyApproved=(STATE.taxBiz.sideExpenses||[]).reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  }
+  const grandApproved = Math.round(structApproved+contentsApproved+equipApproved+inventoryApproved+emergencyApproved);
+
+  let html = `<div class="merged-label">⚖️ החלטת שמאי</div>
+  <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div class="label" style="margin-bottom:10px;">קשר סיבתי</div>
+    <div class="pill-group">
+      <button class="pill ${d.causalLink==='yes'?'active-green':''}" onclick="STATE.taxDecision.causalLink='yes';renderCard(12)">קיים קשר סיבתי</button>
+      <button class="pill ${d.causalLink==='partial'?'active':''}" onclick="STATE.taxDecision.causalLink='partial';renderCard(12)">קשר חלקי</button>
+      <button class="pill ${d.causalLink==='no'?'active-red':''}" onclick="STATE.taxDecision.causalLink='no';renderCard(12)">אין קשר סיבתי</button>
+    </div>
+  </div>
+  <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div class="label" style="margin-bottom:8px;">סיכום סכומים מוכרים</div>
+    ${structApproved>0?`<div class="total-row"><span class="c-muted">מבנה מוכר:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(structApproved))}</span></div>`:''}
+    ${contentsApproved>0?`<div class="total-row"><span class="c-muted">תכולה מוכרת:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(contentsApproved))}</span></div>`:''}
+    ${equipApproved>0?`<div class="total-row"><span class="c-muted">ציוד מוכר:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(equipApproved))}</span></div>`:''}
+    ${inventoryApproved>0?`<div class="total-row"><span class="c-muted">מלאי מוכר:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(inventoryApproved))}</span></div>`:''}
+    ${emergencyApproved>0?`<div class="total-row"><span class="c-muted">הוצאות מוכרות:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(emergencyApproved))}</span></div>`:''}
+    <div class="total-row" style="border-top:2px solid var(--border);padding-top:10px;margin-top:8px;">
+      <span style="font-weight:900;font-size:14px;">סה"כ מוכר ע"י שמאי:</span>
+      <span style="color:var(--green);font-weight:900;font-size:18px;">₪${fmtNum(grandApproved)}</span>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">נימוק ומסקנות שמאי</label>
+    <textarea rows="5" oninput="STATE.taxDecision.notes=this.value" placeholder="פרט את הנימוקים לקביעות, חריגות, דחיות וכל שיקול מקצועי רלוונטי...">${esc(d.notes)}</textarea>
+  </div>`;
+  return html;
+}
+
+// ── עזר: עדכון פריטי תכולה ──
+function updateTaxContentsItem(key,field,val){
+  if(!STATE.taxRes.contentsItems) STATE.taxRes.contentsItems=[];
+  let item=STATE.taxRes.contentsItems.find(i=>i.key===key);
+  if(!item){ item={key}; STATE.taxRes.contentsItems.push(item); }
+  item[field]=val;
+}
+
 // ══════════════════════════════════════════════════
 // BOQ ENGINE
 // ══════════════════════════════════════════════════
@@ -3578,6 +3888,265 @@ function runBOQEngine(){
   STATE.boq.contentsItems = cont;
   STATE.boq.serviceItems = serv;
   renderCard(7);
+}
+
+
+// ══════════════════════════════════════════════════
+// כרטיסי מס רכוש — מגורים ועסקי
+// ══════════════════════════════════════════════════
+
+// ── תכולה ביתית (כרטיס 10) ──
+function renderTaxContents(){
+  const r = STATE.taxRes;
+  const rates = (window.TAX_RATES||{}).categories||{};
+  const fs = r.familyStatus||'single';
+  const nc = parseInt(r.numChildren)||0;
+  const na = parseInt(r.numAdults)||0;
+  function getCeil(cat){ return (fs==='single'?(cat.single||0):(cat.couple||0)) + nc*(cat.perChild||0) + na*(cat.perAdult||0); }
+
+  let totalClaimed=0, totalApproved=0, ceilTotal=0;
+  Object.values(rates).forEach(cat=>{
+    const ceil = getCeil(cat);
+    ceilTotal += ceil;
+    const item = (r.contentsItems||[]).find(i=>i.key===Object.keys(rates).find(k=>rates[k]===cat))||{};
+    totalClaimed += Math.min(parseFloat(item.claimed)||0, ceil);
+    totalApproved += Math.min(parseFloat(item.approved)||(parseFloat(item.claimed)||0), ceil);
+  });
+
+  let html = `<div class="merged-label">🛋️ תכולה ביתית — תקרות חוקיות (חוק מס רכוש)</div>
+  <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px;margin-bottom:16px;">
+    <div class="label" style="color:var(--green);margin-bottom:10px;">הגדרת הרכב המשפחה</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div class="field"><label class="label">מצב משפחתי</label><div class="pill-group">
+        <button class="pill ${fs==='single'?'active-green':''}" onclick="STATE.taxRes.familyStatus='single';renderCard(10)">יחיד</button>
+        <button class="pill ${fs==='couple'?'active-green':''}" onclick="STATE.taxRes.familyStatus='couple';renderCard(10)">זוג / הורה יחיד</button>
+      </div></div>
+      <div class="field"><label class="label">ילדים (עד 18)</label>
+        <input type="number" min="0" max="15" value="${r.numChildren||0}" oninput="STATE.taxRes.numChildren=parseInt(this.value)||0;renderCard(10)" style="width:70px;background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text);">
+      </div>
+      <div class="field"><label class="label">מבוגרים נוספים</label>
+        <input type="number" min="0" max="10" value="${r.numAdults||0}" oninput="STATE.taxRes.numAdults=parseInt(this.value)||0;renderCard(10)" style="width:70px;background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text);">
+      </div>
+    </div>
+  </div>
+  <table class="boq-table" style="margin-bottom:8px;">
+    <thead><tr>
+      <th>קטגוריה</th><th style="color:var(--green);">תקרה חוקית</th>
+      <th>נטען ע"י תובע</th><th>מוכר ע"י שמאי</th><th>סטטוס</th>
+    </tr></thead><tbody>`;
+
+  Object.entries(rates).forEach(([k,cat])=>{
+    const ceil = getCeil(cat);
+    const item = (r.contentsItems||[]).find(i=>i.key===k)||{};
+    html += `<tr>
+      <td style="font-weight:700;">${cat.label}</td>
+      <td style="color:var(--green);font-weight:600;">₪${fmtNum(ceil)}</td>
+      <td><input type="number" min="0" value="${item.claimed||''}" placeholder="0"
+        oninput="updateTaxContentsItem('${k}','claimed',this.value)" style="width:90px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:6px;color:var(--text);"></td>
+      <td><input type="number" min="0" value="${item.approved||''}" placeholder="לפי תקרה"
+        oninput="updateTaxContentsItem('${k}','approved',this.value)" style="width:90px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:6px;color:var(--text);"></td>
+      <td><select onchange="updateTaxContentsItem('${k}','status',this.value)" style="background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:6px;color:var(--text);">
+        <option value="approved" ${(item.status||'approved')==='approved'?'selected':''}>מוכר</option>
+        <option value="partial" ${item.status==='partial'?'selected':''}>חלקי</option>
+        <option value="rejected" ${item.status==='rejected'?'selected':''}>לא מוכר</option>
+      </select></td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>
+  <div class="note" style="font-size:11px;">⚠️ לא מכוסה: חפצי אומנות, תכשיטים, עתיקות, מזומנים</div>
+  <div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:12px;">
+    <div class="total-row"><span class="c-muted">תקרה כוללת:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(ceilTotal))}</span></div>
+    <div class="total-row"><span class="c-muted">נטען (בגבולות תקרה):</span><span class="fw7">₪${fmtNum(Math.round(totalClaimed))}</span></div>
+    <div class="total-row"><span class="c-muted fw7">מוכר ע"י שמאי:</span><span style="color:var(--green);font-weight:800;font-size:15px;">₪${fmtNum(Math.round(totalApproved))}</span></div>
+  </div>`;
+  return html;
+}
+
+// ── הוצאות חירום (כרטיס 11 — מגורים) ──
+function renderTaxEmergency(){
+  const items = STATE.taxRes.emergencyItems||[];
+  const total = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  const typeOpts=['פינוי זמני','לינה','אחסון','תיקון חירום','אחר'];
+  let html = `<div class="merged-label">🚑 הוצאות חירום</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr>
+      <th>#</th><th>סוג</th><th>תיאור</th><th>נטען</th><th>מוכר</th><th></th>
+    </tr></thead><tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><select onchange="STATE.taxRes.emergencyItems[${i}].type=this.value" style="background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);">
+        ${typeOpts.map(t=>`<option ${item.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input value="${esc(item.desc)}" oninput="STATE.taxRes.emergencyItems[${i}].desc=this.value" style="width:100%;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);" placeholder="פירוט..."></td>
+      <td><input type="number" value="${esc(item.claimed)}" oninput="STATE.taxRes.emergencyItems[${i}].claimed=this.value" style="width:80px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);"></td>
+      <td><input type="number" value="${esc(item.approved)}" oninput="STATE.taxRes.emergencyItems[${i}].approved=this.value;renderCard(11)" style="width:80px;background:var(--primary2);border:1px solid var(--border2);border-radius:6px;padding:5px;color:var(--text);"></td>
+      <td><button class="del-btn" onclick="STATE.taxRes.emergencyItems.splice(${i},1);renderCard(11)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxRes.emergencyItems.push({type:'אחר',desc:'',claimed:'',approved:''});renderCard(11)">+ הוסף הוצאה</button>
+  ${total>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">סה"כ מוכר — הוצאות חירום:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(total))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── ציוד עסקי (כרטיס 13) ──
+function renderTaxEquip(){
+  const items = STATE.taxBiz.equipItems||[];
+  const totalApproved = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  let html = `<div class="merged-label">🖥️ ציוד עסקי — שווי שוק</div>
+  <div class="note mb12">שווי הציוד נקבע לפי שווי שוק בפועל, תוך התחשבות בגיל, מצב ובלאי.</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr>
+      <th>#</th><th>פריט</th><th>גיל (שנ')</th><th>מצב</th><th>נטען</th><th>מוכר</th><th>סטטוס</th><th></th>
+    </tr></thead><tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><input class="boq-input" value="${esc(item.desc)}" oninput="STATE.taxBiz.equipItems[${i}].desc=this.value" placeholder="תיאור פריט"></td>
+      <td><input class="boq-input num" type="number" min="0" value="${esc(item.age)}" oninput="STATE.taxBiz.equipItems[${i}].age=this.value" style="width:55px;"></td>
+      <td><select class="boq-input" style="width:75px;" onchange="STATE.taxBiz.equipItems[${i}].condition=this.value">
+        ${['חדש','טוב','בינוני','ישן'].map(c=>`<option ${item.condition===c?'selected':''}>${c}</option>`).join('')}
+      </select></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.claimed)}" oninput="STATE.taxBiz.equipItems[${i}].claimed=this.value;renderCard(13)" style="width:80px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.approved)}" oninput="STATE.taxBiz.equipItems[${i}].approved=this.value;renderCard(13)" style="width:80px;"></td>
+      <td><select class="boq-input" style="width:80px;" onchange="STATE.taxBiz.equipItems[${i}].status=this.value">
+        <option value="approved" ${(item.status||'approved')==='approved'?'selected':''}>מוכר</option>
+        <option value="partial" ${item.status==='partial'?'selected':''}>חלקי</option>
+        <option value="rejected" ${item.status==='rejected'?'selected':''}>לא</option>
+      </select></td>
+      <td><button class="del-btn" onclick="STATE.taxBiz.equipItems.splice(${i},1);renderCard(13)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxBiz.equipItems.push({desc:'',age:'',condition:'טוב',claimed:'',approved:'',status:'approved'});renderCard(13)">+ הוסף ציוד</button>
+  ${totalApproved>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">מוכר:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(totalApproved))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── מלאי (כרטיס 14 — עסקי) ──
+function renderTaxInventory(){
+  const items = STATE.taxBiz.inventoryItems||[];
+  const totalApproved = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  let html = `<div class="merged-label">📦 מלאי</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr>
+      <th>#</th><th>סוג מלאי</th><th>כמות</th><th>ערך יחידה</th><th>נטען</th><th>מוכר</th><th>מסמכים</th><th></th>
+    </tr></thead><tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><input class="boq-input" value="${esc(item.desc)}" oninput="STATE.taxBiz.inventoryItems[${i}].desc=this.value" placeholder="תיאור..."></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="STATE.taxBiz.inventoryItems[${i}].qty=this.value;renderCard(14)" style="width:65px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.unitPrice)}" oninput="STATE.taxBiz.inventoryItems[${i}].unitPrice=this.value;renderCard(14)" style="width:75px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.claimed)}" oninput="STATE.taxBiz.inventoryItems[${i}].claimed=this.value" style="width:80px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.approved)}" oninput="STATE.taxBiz.inventoryItems[${i}].approved=this.value;renderCard(14)" style="width:80px;"></td>
+      <td><select class="boq-input" style="width:80px;" onchange="STATE.taxBiz.inventoryItems[${i}].docs=this.value">
+        <option value="yes" ${item.docs==='yes'?'selected':''}>קיימים</option>
+        <option value="partial" ${item.docs==='partial'?'selected':''}>חלקי</option>
+        <option value="no" ${item.docs==='no'?'selected':''}>חסרים</option>
+      </select></td>
+      <td><button class="del-btn" onclick="STATE.taxBiz.inventoryItems.splice(${i},1);renderCard(14)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxBiz.inventoryItems.push({desc:'',qty:'',unitPrice:'',claimed:'',approved:'',docs:'yes'});renderCard(14)">+ הוסף מלאי</button>
+  ${totalApproved>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">מוכר:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(totalApproved))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── הוצאות נלוות (כרטיס 15 — עסקי) ──
+function renderTaxSideExp(){
+  const items = STATE.taxBiz.sideExpenses||[];
+  const total = items.reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  const typeOpts=['פינוי','אחסון','תיקון זמני','בדיקה מקצועית','ייעוץ הנדסי','שמירה','אחר'];
+  let html = `<div class="merged-label">💰 הוצאות נלוות</div>
+  <table class="boq-table" style="margin-bottom:12px;">
+    <thead><tr><th>#</th><th>סוג</th><th>תיאור</th><th>נטען</th><th>מוכר</th><th></th></tr></thead>
+    <tbody>
+    ${items.map((item,i)=>`<tr>
+      <td style="color:var(--muted);font-size:10px;">${i+1}</td>
+      <td><select class="boq-input" style="width:110px;" onchange="STATE.taxBiz.sideExpenses[${i}].type=this.value">
+        ${typeOpts.map(t=>`<option ${item.type===t?'selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input class="boq-input" value="${esc(item.desc)}" oninput="STATE.taxBiz.sideExpenses[${i}].desc=this.value" placeholder="פירוט..."></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.claimed)}" oninput="STATE.taxBiz.sideExpenses[${i}].claimed=this.value" style="width:80px;"></td>
+      <td><input class="boq-input num" type="number" value="${esc(item.approved)}" oninput="STATE.taxBiz.sideExpenses[${i}].approved=this.value;renderCard(15)" style="width:80px;"></td>
+      <td><button class="del-btn" onclick="STATE.taxBiz.sideExpenses.splice(${i},1);renderCard(15)">✕</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  <button class="btn btn-ghost btn-sm" onclick="STATE.taxBiz.sideExpenses.push({type:'אחר',desc:'',claimed:'',approved:''});renderCard(15)">+ הוסף הוצאה</button>
+  ${total>0?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;">
+    <div class="total-row"><span class="fw7">סה"כ מוכר:</span><span style="color:var(--green);font-weight:800;">₪${fmtNum(Math.round(total))}</span></div>
+  </div>`:''}`;
+  return html;
+}
+
+// ── החלטת שמאי — מס רכוש (כרטיס 12) ──
+function renderTaxDecision(){
+  const d = STATE.taxDecision;
+  const sub = STATE.taxSubMode;
+
+  // חישוב סיכומים
+  const structItems = STATE.boq.structItems||[];
+  const structApproved = structItems.filter(i=>!i.zeroPrice).reduce((s,i)=>s+(parseFloat(i.qty)||0)*(parseFloat(i.price)||0),0);
+
+  let contentsApproved=0, equipApproved=0, inventoryApproved=0, emergencyApproved=0;
+  if(sub==='residential'){
+    const rates=(window.TAX_RATES||{}).categories||{};
+    const r=STATE.taxRes; const fs=r.familyStatus||'single'; const nc=parseInt(r.numChildren)||0; const na=parseInt(r.numAdults)||0;
+    Object.entries(rates).forEach(([k,cat])=>{
+      const ceil=(fs==='single'?cat.single:cat.couple)+nc*cat.perChild+na*cat.perAdult;
+      const item=(r.contentsItems||[]).find(i=>i.key===k)||{};
+      if(item.status!=='rejected') contentsApproved+=Math.min(parseFloat(item.approved)||(parseFloat(item.claimed)||0),ceil);
+    });
+    emergencyApproved=(STATE.taxRes.emergencyItems||[]).reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  } else if(sub==='business'){
+    equipApproved=(STATE.taxBiz.equipItems||[]).filter(i=>i.status!=='rejected').reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+    inventoryApproved=(STATE.taxBiz.inventoryItems||[]).reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+    emergencyApproved=(STATE.taxBiz.sideExpenses||[]).reduce((s,i)=>s+(parseFloat(i.approved)||0),0);
+  }
+  const grandApproved = Math.round(structApproved+contentsApproved+equipApproved+inventoryApproved+emergencyApproved);
+
+  let html = `<div class="merged-label">⚖️ החלטת שמאי</div>
+  <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div class="label" style="margin-bottom:10px;">קשר סיבתי</div>
+    <div class="pill-group">
+      <button class="pill ${d.causalLink==='yes'?'active-green':''}" onclick="STATE.taxDecision.causalLink='yes';renderCard(12)">קיים קשר סיבתי</button>
+      <button class="pill ${d.causalLink==='partial'?'active':''}" onclick="STATE.taxDecision.causalLink='partial';renderCard(12)">קשר חלקי</button>
+      <button class="pill ${d.causalLink==='no'?'active-red':''}" onclick="STATE.taxDecision.causalLink='no';renderCard(12)">אין קשר סיבתי</button>
+    </div>
+  </div>
+  <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div class="label" style="margin-bottom:8px;">סיכום סכומים מוכרים</div>
+    ${structApproved>0?`<div class="total-row"><span class="c-muted">מבנה מוכר:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(structApproved))}</span></div>`:''}
+    ${contentsApproved>0?`<div class="total-row"><span class="c-muted">תכולה מוכרת:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(contentsApproved))}</span></div>`:''}
+    ${equipApproved>0?`<div class="total-row"><span class="c-muted">ציוד מוכר:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(equipApproved))}</span></div>`:''}
+    ${inventoryApproved>0?`<div class="total-row"><span class="c-muted">מלאי מוכר:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(inventoryApproved))}</span></div>`:''}
+    ${emergencyApproved>0?`<div class="total-row"><span class="c-muted">הוצאות מוכרות:</span><span style="color:var(--green);font-weight:700;">₪${fmtNum(Math.round(emergencyApproved))}</span></div>`:''}
+    <div class="total-row" style="border-top:2px solid var(--border);padding-top:10px;margin-top:8px;">
+      <span style="font-weight:900;font-size:14px;">סה"כ מוכר ע"י שמאי:</span>
+      <span style="color:var(--green);font-weight:900;font-size:18px;">₪${fmtNum(grandApproved)}</span>
+    </div>
+  </div>
+  <div class="field">
+    <label class="label">נימוק ומסקנות שמאי</label>
+    <textarea rows="5" oninput="STATE.taxDecision.notes=this.value" placeholder="פרט את הנימוקים לקביעות, חריגות, דחיות וכל שיקול מקצועי רלוונטי...">${esc(d.notes)}</textarea>
+  </div>`;
+  return html;
+}
+
+// ── עזר: עדכון פריטי תכולה ──
+function updateTaxContentsItem(key,field,val){
+  if(!STATE.taxRes.contentsItems) STATE.taxRes.contentsItems=[];
+  let item=STATE.taxRes.contentsItems.find(i=>i.key===key);
+  if(!item){ item={key}; STATE.taxRes.contentsItems.push(item); }
+  item[field]=val;
 }
 
 // ══════════════════════════════════════════════════
@@ -4085,7 +4654,7 @@ function _doGenerateReport(){
           ${rentalTotal>0?`<tr style="background:#EFF6FF;"><td style="padding:8px 12px;border:1px solid #D1D5DB;">שכירות חלופית (${f.rentalMonths} חודשים × ₪${fmtNum(parseCurrency(f.rentalMonthly))}):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;color:#1D4ED8;font-weight:700;">₪ ${fmtNum(rentalTotal)}</td></tr>`:''}
           ${showClaimCol?`<tr style="background:#FFFBEB;"><td style="padding:8px 12px;border:1px solid #D1D5DB;font-weight:900;font-size:13px;color:#92400E;">סה"כ תביעה (שמאי פרטי):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;font-weight:900;font-size:15px;color:#92400E;">${totalClaim>0?'₪ '+fmtNum(totalClaim):'לא צוין'}</td></tr>`:''}
           <tr style="background:#D1FAE5;border-top:2px solid #16A34A;">
-            <td style="padding:12px 16px;border:1px solid #A7F3D0;font-weight:900;font-size:15px;color:#065F46;">סכום נטו לתשלום:</td>
+            <td style="padding:12px 16px;border:1px solid #A7F3D0;font-weight:900;font-size:15px;color:#065F46;">סכום נטו להערכה:</td>
             <td style="padding:12px 16px;border:1px solid #A7F3D0;text-align:right;font-weight:900;font-size:18px;color:#15803D;">₪ ${fmtNum(Math.max(0, (boq.vat?Math.round(totalShiput*1.18):totalShiput) - deduct + rentalTotal))}</td>
           </tr>
         </tbody>
@@ -4503,6 +5072,7 @@ function genRehabRecommendations(){
 // PROGRESS BAR
 // ══════════════════════════════════════════════════
 function updateProgress(){
+  if(typeof updateTaxNavItems === 'function') updateTaxNavItems();
   const checks = [
     STATE.base.fullName, STATE.base.eventDate, STATE.base.visitDate,
     STATE.base.city, STATE.base.street,
@@ -4820,6 +5390,25 @@ function updateBOQItem(section, id, field, val){
   const item = (STATE.boq[section]||[]).find(i=>String(i.id)===String(id));
   if(item){
     item[field]=val;
+    // סנכרון מחיר — אם שונה מחיר, עדכן כל הסעיפים עם תיאור זהה בכל הפרקים
+    if(field==='price' && val && item.desc){
+      const allSections = ['structItems','contentsItems','serviceItems'];
+      allSections.forEach(sec=>{
+        (STATE.boq[sec]||[]).forEach(other=>{
+          if(String(other.id)!==String(id) && other.desc===item.desc && !other.isSupervision){
+            other.price = val;
+            // עדכן תא כינון ושיפוי בDOM
+            const ot = document.querySelector(`[data-total="${sec}_${other.id}"]`);
+            if(ot){ const tot=(parseFloat(other.qty)||0)*(parseFloat(val)||0); ot.textContent=tot>0?'₪'+fmtNum(tot):''; ot.style.color=tot>0?'var(--blue)':'var(--subtle)'; }
+            const os = document.querySelector(`[data-shiput="${sec}_${other.id}"]`);
+            if(os){ const tot=(parseFloat(other.qty)||0)*(parseFloat(val)||0); const sv=Math.round(tot*0.67); os.textContent=sv>0?'₪'+fmtNum(sv):''; os.style.color=sv>0?'var(--green)':'var(--subtle)'; }
+            // עדכן גם את שדה הinput עצמו
+            const inp = document.querySelector(`input[oninput*="${sec}_${other.id}"][oninput*="price"], input[oninput*="'${sec}','${other.id}','price'"]`);
+            if(inp && inp.value !== val) inp.value = val;
+          }
+        });
+      });
+    }
     if(field==='qty'||field==='price'){
       // Update inline total cell (כינון)
       const t = document.querySelector(`[data-total="${section}_${id}"]`);
