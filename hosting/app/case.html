@@ -1505,7 +1505,7 @@ let STATE = {
   event:{eventType:'',eventSubType:'',plumberType:'',requestedBy:'',requesterName:'',visitPurpose:[],policeReport:'',policeNum:'',professionals:[],profDetails:{},appraiserDeclaration:''},
   circ:{infoSource:'',infoName:'',discDate:'',discTime:'',wasOccupied:'',immediateAction:'',ongoingDmg:'',pastEvent:'',waterOrigin:'',waterDuration:'',wallOpened:'',prevRepair:'',prevRepairDate:'',prevRepairBy:'',prevRepairReason:'',recentPlumber:'',recentPlumberDate:'',recentPlumberReason:'',fireLocation:'',fireType:'',fireDept:'',burglaryMethod:'',stolenItems:'',alarmExists:'',camerasExist:'',extraNotes:'',circumOverride:''},
   findings:{areas:[],labTest:false,labRows:[],matchesStory:'',generalNotes:'',findingsOverride:'',freeAreaName:'',residents:'',habitableStatus:'yes',rentalMonths:'',rentalMonthly:'',_showAllAreas:false,causeExplanation:''},
-  boq:{structItems:[],contentsItems:[],serviceItems:[],vat:false,hasClaim:false,claimAmount:'',restoredState:'',genItems:{cleaning:true,waste:false,container:false,moveContents:false,drying:false},genNote:'',boqOverride:''},
+  boq:{structItems:[],contentsItems:[],serviceItems:[],vat:false,hasClaim:false,claimAmount:'',restoredState:'',supervisionRate:5,genNote:'',boqOverride:''},
   summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:''},
     propertyDesc:{propertyType:'דירת מגורים',floors:'',area:'',buildingType:'קונבנציונלי',damagedAreas:'',damagedAreaSqm:'',notes:''}
 };
@@ -1935,7 +1935,7 @@ function selectMode(m){
     event:{eventType:'',eventSubType:'',plumberType:'',requestedBy:'',requesterName:'',visitPurpose:[],policeReport:'',policeNum:'',professionals:[],profDetails:{},appraiserDeclaration:''},
     circ:{infoSource:'',infoName:'',discDate:'',discTime:'',wasOccupied:'',immediateAction:'',ongoingDmg:'',pastEvent:'',waterOrigin:'',waterDuration:'',wallOpened:'',prevRepair:'',prevRepairDate:'',prevRepairBy:'',prevRepairReason:'',recentPlumber:'',recentPlumberDate:'',recentPlumberReason:'',fireLocation:'',fireType:'',fireDept:'',burglaryMethod:'',stolenItems:'',alarmExists:'',camerasExist:'',extraNotes:'',circumOverride:''},
     findings:{areas:[],labTest:false,labRows:[],matchesStory:'',generalNotes:'',findingsOverride:'',freeAreaName:'',residents:'',habitableStatus:'yes',rentalMonths:'',rentalMonthly:'',_showAllAreas:false,causeExplanation:''},
-    boq:{structItems:[],contentsItems:[],serviceItems:[],vat:false,hasClaim:false,claimAmount:'',restoredState:'',genItems:{cleaning:true,waste:false,container:false,moveContents:false,drying:false},genNote:'',boqOverride:''},
+    boq:{structItems:[],contentsItems:[],serviceItems:[],vat:false,hasClaim:false,claimAmount:'',restoredState:'',supervisionRate:5,genNote:'',boqOverride:''},
     summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''},
   taxSubMode:'',  // 'residential' | 'business'
   taxRes:{ familyStatus:'single', numChildren:0, numAdults:0, contentsItems:[], emergencyItems:[] },
@@ -2219,7 +2219,9 @@ function renderCard2(){
     <div class="field"><label class="label">שנת בנייה</label>
       <input type="number" value="${esc(p.yearBuilt)}" oninput="STATE.property.yearBuilt=this.value" min="1900" max="2030" class="prop-input" placeholder="2005"></div>
     <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
-    <div class="field"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
+    <div class="field"><label class="label">👥 מספר דיירים</label>
+      <input type="number" min="0" max="20" value="${esc(STATE.findings?.residents||'')}" oninput="STATE.findings.residents=this.value" class="prop-input" placeholder="0">
+    </div>`;
   }
 
   html += `</div>`;
@@ -2605,24 +2607,7 @@ function renderCard6(){
   const sevLabels = {none:'אין פגיעה', light:'קלה', medium:'בינונית', severe:'משמעותית'};
   const sevClass  = {none:'area-done-sev-none', light:'area-done-sev-light', medium:'area-done-sev-medium', severe:'area-done-sev-severe'};
 
-  // ── חלק עליון: דיירים + מגורים ──
-  let html = `<div class="grid2 mb16">
-    <div class="field"><label class="label">👥 מספר דיירים</label>
-      <input type="number" min="0" max="20" value="${esc(f.residents)}" oninput="STATE.findings.residents=this.value">
-    </div>
-    <div class="field"><label class="label">🏠 ראוי למגורים בזמן תיקון?</label>
-      <div class="pill-group" id="habitPills">
-        ${makePills([{v:'yes',l:'כן'},{v:'no',l:'לא — נדרשת שכירות'}], f.habitableStatus, "STATE.findings.habitableStatus=v;refreshPills('habitPills',v);renderCard(6)")}
-      </div>
-    </div>
-    ${f.habitableStatus==='no'?`
-    <div class="field"><label class="label">תקופת שכירות (חודשים)</label>
-      <input type="number" min="1" max="24" value="${esc(f.rentalMonths)}" oninput="STATE.findings.rentalMonths=this.value">
-    </div>
-    <div class="field"><label class="label">שכירות חודשית (₪)</label>
-      <input type="text" value="${fmtCurrency(f.rentalMonthly)}" oninput="STATE.findings.rentalMonthly=parseCurrency(this.value);this.value=fmtCurrency(this.value)" placeholder="₪">
-    </div>`:''}
-  </div>`;
+  let html = '';
 
   // ── בוחר אזורים ──
   const isBiz = usage === 'business';
@@ -2647,7 +2632,7 @@ function renderCard6(){
       return `<button class="chip area-chip" onclick="addArea('${next.uid}','${next.label}',${room.sqm})">${has?`+ ${room.l} ${parseInt(next.uid.split('_').pop())}`:room.icon||'+'} ${room.l}</button>`;
     }
     const added = f.areas.find(a=>a.id===room.id);
-    if(added) return `<button class="chip checked area-chip" style="cursor:default;">✓ ${room.l}</button>`;
+    if(added) return `<button class="chip checked area-chip" onclick="removeArea('${added.id}')">✓ ${room.l}</button>`;
     return `<button class="chip area-chip" onclick="addArea('${room.id}','${room.l}',${room.sqm})">${room.icon||'+'} ${room.l}</button>`;
   };
 
@@ -2882,38 +2867,39 @@ function renderCard6(){
     
     </div>`;
   }
-  if(mode==='insurance'){
-    html += `<div class="field mt16"><label class="label">ממצאים תואמים גרסת המבוטח?</label>
-      <div class="pill-group" id="matchPills">
-        ${makePills([{v:'yes',l:'תואם'},{v:'partial',l:'תואם חלקית'},{v:'no',l:'לא תואם'},{v:'tbd',l:'טרם הוכרע'}], f.matchesStory, "STATE.findings.matchesStory=v;refreshPills('matchPills',v)")}
-      </div></div>`;
-  }
+  // ממצאים תואמים — הוסר
   html += `<div class="field mt12"><label class="label">הערות כלליות</label>
     <textarea oninput="STATE.findings.generalNotes=this.value" placeholder="הערות מקצועיות נוספות...">${esc(f.generalNotes)}</textarea>
   </div>`;
 
-  if(f.areas.length>0){
-    const findTxt = genFindingsText();
-    if(findTxt){
-      html += `<div class="preview-box mt12">
-        <div class="pb-label" style="display:flex;justify-content:space-between;align-items:center;">
-          <span>תצוגה מקדימה – ממצאים (אוטומטי)</span>
-          <button class="btn btn-ghost btn-xs" onclick="STATE.findings.findingsOverride=genFindingsText();renderCard(6)">✏️ ערוך</button>
-        </div>
-        <div class="pb-text" style="white-space:pre-line;">${esc(findTxt)}</div>
-      </div>`;
+  // ── עטוף בשתי עמודות: ימין=טופס, שמאל=תצוגה מקדימה ──
+  const findTxt = genFindingsText();
+  const previewHtml = `<div style="position:sticky;top:20px;">
+    <div class="label" style="margin-bottom:10px;font-size:12px;color:var(--muted);font-weight:700;">👁️ תצוגה מקדימה — ממצאים</div>
+    ${f.areas.length===0?`<div style="color:var(--subtle);font-size:13px;padding:20px;text-align:center;background:var(--primary2);border-radius:8px;border:1px solid var(--border);">הוסף אזורים כדי לראות את הממצאים</div>`:''}
+    ${findTxt&&!f.findingsOverride?`<div style="background:var(--primary2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:13px;line-height:1.9;white-space:pre-line;color:var(--text);">${esc(findTxt)}</div>
+    <button class="btn btn-ghost btn-xs mt8" onclick="STATE.findings.findingsOverride=genFindingsText();renderCard(6)">✏️ ערוך ידנית</button>`:''}
+    ${f.findingsOverride?`<div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+      <span class="label" style="color:var(--accent);font-size:12px;">✏️ עריכה ידנית</span>
+      <button class="btn btn-ghost btn-xs" onclick="STATE.findings.findingsOverride='';renderCard(6)">↩ אוטומטי</button>
+    </div>
+    <textarea oninput="STATE.findings.findingsOverride=this.value" rows="12" style="width:100%;">${esc(f.findingsOverride)}</textarea>`:''}
+    ${f.generalNotes?`<div style="margin-top:10px;padding:10px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:12px;color:var(--muted);">${esc(f.generalNotes)}</div>`:''}
+  </div>`;
+
+  const finalHtml = `<style>
+    @media(min-width:769px){
+      .findings-grid{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;}
     }
-  }
-  if(STATE.findings.findingsOverride){
-    html += `<div class="field mt12">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <label class="label" style="color:var(--accent);margin-bottom:0;">✏️ עריכה ידנית</label>
-        <button class="btn btn-ghost btn-xs" onclick="STATE.findings.findingsOverride='';renderCard(6)">↩ חזור לאוטומטי</button>
-      </div>
-      <textarea oninput="STATE.findings.findingsOverride=this.value" rows="8">${esc(f.findingsOverride)}</textarea>
-    </div>`;
-  }
-  return html;
+    @media(max-width:768px){
+      .findings-grid{display:flex;flex-direction:column;gap:16px;}
+    }
+  </style>
+  <div class="findings-grid">
+    <div>${html}</div>
+    <div>${previewHtml}</div>
+  </div>`;
+  return finalHtml;
 }
 
 
@@ -2937,33 +2923,12 @@ function renderCard7(){
 
   let html = `<div class="flex flex-wrap gap12 mb16 items-center">
     <button class="btn btn-primary" onclick="runBOQEngine()">⚡ ייצר כתב כמויות אוטומטי</button>
-    <button class="btn btn-secondary" onclick="openBOQLibrary()" style="display:flex;align-items:center;gap:6px;">📚 ספרייה (277)</button>
-    <button class="chip ${boq.vat?'checked':''}" onclick="STATE.boq.vat=!STATE.boq.vat;renderCard(7)">מע"מ 18%</button>`;
-  if(mode==='insurance'){
-    html += `<button class="chip ${boq.hasClaim?'checked':''}" onclick="STATE.boq.hasClaim=!STATE.boq.hasClaim;renderCard(7)">תביעת שמאי פרטי</button>`;
-  }
-  html += `</div>`;
-
-  if(mode==='insurance' && (STATE.event.plumberType==='arrangement' || STATE.insurance.arrangementPlumber)){
-    html += `<div class="field mb16"><label class="label">האם שרברב ההסדר החזיר מצב לקדמות?</label><div class="pill-group" id="restoredPills">
-      ${makePills([{v:'yes',l:'כן – הוחזר לקדמות'},{v:'partial',l:'חלקית'},{v:'no',l:'לא בוצע'}], boq.restoredState, "STATE.boq.restoredState=v;refreshPills('restoredPills',v)")}
-    </div></div>`;
-  }
-
-  // General items checkboxes
-  const gi = boq.genItems||{};
-  html += `<div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
-    <div class="label" style="font-size:11px;color:var(--purple);margin-bottom:10px;">🔧 פרק ג׳ – סעיפים כלליים (בחר לכלול)</div>
-    <div class="gen-items-grid">
-      <label class="gen-item-cb ${gi.cleaning!==false?'checked':''}"><input type="checkbox" ${gi.cleaning!==false?'checked':''} onchange="STATE.boq.genItems.cleaning=this.checked"> ניקיון לאחר שיפוץ</label>
-      <label class="gen-item-cb ${gi.waste?'checked':''}"><input type="checkbox" ${gi.waste?'checked':''} onchange="STATE.boq.genItems.waste=this.checked"> פינוי פסולת בניין</label>
-      <label class="gen-item-cb ${gi.container?'checked':''}"><input type="checkbox" ${gi.container?'checked':''} onchange="STATE.boq.genItems.container=this.checked"> מכולה לאתר מורשה</label>
-      <label class="gen-item-cb ${gi.moveContents?'checked':''}"><input type="checkbox" ${gi.moveContents?'checked':''} onchange="STATE.boq.genItems.moveContents=this.checked"> שינוע תכולה (₪1,500 אם אין ביטוח תכולה)</label>
-      <label class="gen-item-cb ${gi.drying?'checked':''}"><input type="checkbox" ${gi.drying?'checked':''} onchange="STATE.boq.genItems.drying=this.checked"> ייבוש מצעים / החלפת מצעים</label>
-      <label class="gen-item-cb ${gi.supervision?'checked':''}"><input type="checkbox" ${gi.supervision?'checked':''} onchange="STATE.boq.genItems.supervision=this.checked"> פיקוח וניהול עבודות</label>
-    </div>
-    <div class="field mt8"><label class="label" style="font-size:11px;">הערה לסעיפים כלליים</label><input type="text" value="${esc(boq.genNote||'')}" oninput="STATE.boq.genNote=this.value" placeholder="הערה חופשית..."></div>
+    <button class="btn btn-secondary" onclick="openBOQLibrary()" style="display:flex;align-items:center;gap:6px;">📚 ספריה מקומית/בינארית</button>
   </div>`;
+
+  // שרברב הסדר question — הוסר
+
+  // gen-items panel — הוסר, מטופל אוטומטית בפרקים
 
   // ── Arrangement plumber warning ──
   if(mode==='insurance' && STATE.insurance.arrangementPlumber){
@@ -2981,10 +2946,28 @@ function renderCard7(){
   }
   html += renderBOQSection('structItems','פרק א׳ – עבודות מבנה','var(--blue)');
   html += renderBOQSection('contentsItems','פרק ב׳ – עבודות תכולה ונגרות','var(--green)');
+  // הוסף radio לפיקוח לפני renderBOQSection
+  const supItem = (boq.serviceItems||[]).find(i=>i.isSupervision);
+  const supRate = boq.supervisionRate||5;
+  if(supItem){
+    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:8px 12px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:8px;flex-wrap:wrap;">
+      <span style="font-size:12px;color:var(--muted);font-weight:700;">% פיקוח:</span>
+      ${[3,5,7,10].map(p=>`<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;">
+        <input type="radio" name="supRate" value="${p}" ${supRate===p?'checked':''} onchange="STATE.boq.supervisionRate=${p};const si=STATE.boq.serviceItems.find(i=>i.isSupervision);if(si)si.desc='פיקוח וניהול עבודות (${p}% מעלויות תיקון)';renderCard(7);">
+        <span>${p}%</span>
+      </label>`).join('')}
+    </div>`;
+  }
   html += renderBOQSection('serviceItems',"פרק ג׳ – שירותים ותוספות",'var(--purple)');
 
   html += `<div class="boq-total-box">
-    <div class="label mb12" style="color:var(--accent)">סיכום כתב כמויות</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div class="label" style="color:var(--accent);margin:0;">סיכום כתב כמויות</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${mode==='insurance'?`<button class="chip ${boq.hasClaim?'checked':''}" onclick="STATE.boq.hasClaim=!STATE.boq.hasClaim;renderCard(7)" style="font-size:12px;">📋 תביעת שמאי פרטי</button>`:''}
+        <button class="chip ${boq.vat?'checked':''}" onclick="STATE.boq.vat=!STATE.boq.vat;renderCard(7)" style="font-size:12px;">מע"מ 18%</button>
+      </div>
+    </div>
     ${mode==='insurance'?`
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px;font-size:11px;">
       <div style="padding:7px 10px;background:rgba(59,130,246,.08);text-align:center;font-weight:700;color:var(--blue);border-bottom:1px solid var(--border);">כינון</div>
@@ -3021,7 +3004,7 @@ function renderBOQSection(key, title, color){
 
   // Resolve supervision price (5% of ALL repair work)
   const allRepairTotal = calcSectionTotal(STATE.boq.structItems) + calcSectionTotal(STATE.boq.contentsItems);
-  const supervisionAmt = Math.round(allRepairTotal*0.05);
+  const supervisionRate2 = STATE.boq.supervisionRate||5; const supervisionAmt = Math.round(allRepairTotal*(supervisionRate2/100));
   items.forEach(i=>{ if(i.isSupervision) i.price = String(supervisionAmt>0?supervisionAmt:0); });
   const totalSec = calcSectionTotal(items.filter(i=>!i.isRental));
   const totalClaim = isIns ? (items||[]).reduce((s,i)=>s+(parseFloat(i.claim)||0),0) : 0;
@@ -3987,15 +3970,13 @@ function runBOQEngine(){
   if(et==='water'&&STATE.event.plumberType==='arrangement'){
     serv.push({id:'S'+sv++,desc:'תיקון מקור הנזק ע"י שרברב הסדר – ללא תמחור (בטיפול חברת הביטוח)',unit:"קומפ'",qty:'1',price:'0',zeroPrice:true});
   }
+  // פינוי פסולת בניין במכולה — מועבר לפרק א' (structItems) אם יש פירוק
   const hasDemo = struct.some(i=>i.desc.includes('פירוק'));
-  if(hasDemo) serv.push({id:'S'+sv++,desc:'פינוי פסולת בניין',unit:"קומפ'",qty:'1',price:'',zeroPrice:false});
+  if(hasDemo) struct.push({id:sn++,desc:"פינוי פסולת בניין במכולה לאתר מורשה",unit:"קומפ'",qty:'1',price:'',zeroPrice:false});
   if(et==='fire'&&cont.length>0) serv.push({id:'S'+sv++,desc:'פינוי ריהוט ותכולה חרוכה',unit:"קומפ'",qty:'1',price:'',zeroPrice:false});
   serv.push({id:'S'+sv++,desc:'ניקיון לאחר שיפוץ',unit:"קומפ'",qty:'1',price:'',zeroPrice:false});
-  if(struct.length+cont.length>=6){
-    const repairTotalForSupervision = struct.reduce((s,i)=>s+(parseFloat(i.qty)||0)*(parseFloat(i.price)||0),0)+cont.reduce((s,i)=>s+(parseFloat(i.qty)||0)*(parseFloat(i.price)||0),0);
-    const supervisionAmt = repairTotalForSupervision>0?Math.round(repairTotalForSupervision*0.05):0;
-    serv.push({id:'S'+sv++,desc:'פיקוח וניהול עבודות (5% מעלויות תיקון)',unit:"קומפ'",qty:'1',price:'__SUPERVISION__',zeroPrice:false,isSupervision:true,noShiput:true});
-  }
+  const supervisionRate = STATE.boq.supervisionRate||5;
+  serv.push({id:'S'+sv++,desc:`פיקוח וניהול עבודות (${supervisionRate}% מעלויות תיקון)`,unit:"קומפ'",qty:'1',price:'__SUPERVISION__',zeroPrice:false,isSupervision:true,noShiput:true,supervisionRate});
 
   STATE.boq.structItems = struct;
   STATE.boq.contentsItems = cont;
@@ -4724,7 +4705,7 @@ function _doGenerateReport(){
       const contClaim   = (boq.contentsItems||[]).reduce((s,i)=>s+(parseFloat(i.claim)||0),0);
       const servClaim   = (boq.serviceItems||[]).reduce((s,i)=>s+(parseFloat(i.claim)||0),0);
       // supervision is 5% of struct+cont for kinun, 0 for shiput (arrangement), per claim entry
-      const supervisionKinun = boq.serviceItems.find(i=>i.isSupervision) ? Math.round((structKinun+contKinun)*0.05) : 0;
+      const _supRate = boq.supervisionRate||5; const supervisionKinun = boq.serviceItems.find(i=>i.isSupervision) ? Math.round((structKinun+contKinun)*(_supRate/100)) : 0;
       const structPlusSup   = structKinun + supervisionKinun;
       const structPlusSupSh = Math.round(structPlusSup*0.67);
       const totalKinun = grand;
@@ -5405,6 +5386,9 @@ function addArea(id, label, sqm){
   renderCard(6);
 }
 function removeArea(id){
+  const area = STATE.findings.areas.find(a=>a.id===id);
+  const label = area?.label || 'אזור זה';
+  if(!confirm(`האם אתה בטוח?\n\nאזור "${label}" יימחק לצמיתות.`)) return;
   STATE.findings.areas = STATE.findings.areas.filter(a=>a.id!==id);
   renderCard(6);
 }
@@ -5424,8 +5408,6 @@ function toggleSign(areaId, signId, btn){
 function areaSetStep(id, step){
   const area = STATE.findings.areas.find(a=>a.id===id);
   if(!area) return;
-  // only go forward if previous step has required data
-  if(step===2 && !area.severity) return;
   area._step = step;
   renderCard(6);
 }
@@ -5735,8 +5717,8 @@ function attachListeners(n){/* no-op, inline handlers used */}
   if(found?.state){
     currentCaseId=caseId; STATE=found.state; mode=found.mode;
     applyModeUI(mode); goCard(1);
-    // פתח דוח ישירות אם הגיע מהדשבורד עם report=1
-    if(params.get('report')==='1'){
+    // פתח דוח ישירות אם הגיע מהדשבורד עם view=report
+    if(params.get('view')==='report' || params.get('report')==='1'){
       setTimeout(()=>generateReport(), 400);
     }
   } else if(found?.mode){
