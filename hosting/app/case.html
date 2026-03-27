@@ -59,6 +59,23 @@ input[type=text],input[type=number],input[type=tel],input[type=email],input[type
   outline:none;width:100%;transition:border-color .2s,box-shadow .2s;border-radius:10px;
 }
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.12);}
+/* ── property card inputs — exact match to base card style ── */
+.prop-input{
+  background:var(--primary2) !important;
+  border:1.5px solid var(--primary3) !important;
+  border-radius:10px !important;
+  padding:10px 14px !important;
+  color:var(--text) !important;
+  font-size:13px !important;
+  font-family:'Heebo',sans-serif !important;
+  width:100% !important;
+  outline:none !important;
+  transition:border-color .2s, box-shadow .2s !important;
+  display:block;
+  box-sizing:border-box;
+  min-height:42px;
+}
+.prop-input:focus{border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(245,158,11,.12) !important;}
 select{cursor:pointer;}
 select option{background:var(--primary2);}
 textarea{resize:vertical;min-height:80px;}
@@ -243,10 +260,17 @@ textarea{resize:vertical;min-height:80px;}
 .area-group-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
 .area-chip{font-size:12px;padding:5px 10px;}
 
-.merged-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.merged-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;}
 .merged-grid>div:first-child,.merged-grid>div:last-child{background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:18px;}
 .merged-sep{display:none;}
-.merged-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.merged-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+/* צמצם gap בשדות נתוני בסיס */
+.merged-grid>div:first-child .grid2{gap:10px;}
+.merged-grid>div:first-child .field{gap:4px;}
+.merged-grid>div:first-child .divider{margin:10px 0;}
+/* הוסף מרווח בין שדות מאפייני נכס */
+.merged-grid>div:last-child .grid2{gap:14px;}
+.merged-grid>div:last-child .field{gap:4px;}
 @media(max-width:768px){
   .merged-grid{grid-template-columns:1fr;}
 }
@@ -1493,7 +1517,6 @@ const EVENT_TYPES = [
   {id:'water',icon:'💧',label:'נזקי מים'},
   {id:'fire',icon:'🔥',label:'שריפה / עשן'},
   {id:'burglary',icon:'🚪',label:'פריצה / גניבה'},
-  {id:'electrical',icon:'⚡',label:'נזק חשמלי'},
   {id:'storm',icon:'🌪️',label:'סערה / רוח'},
   {id:'thirdparty',icon:'👷',label:"צד ג'"},
   {id:'other',icon:'📋',label:'אחר'}
@@ -1515,7 +1538,8 @@ const PROFESSIONALS = [
   {id:'plumber',label:'אינסטלטור',fireOnly:false},
   {id:'contractor',label:'קבלן/שיפוצניק',fireOnly:false},
   {id:'engineer',label:'מהנדס/קונסטרוקטור',fireOnly:false},
-  {id:'fire_dept',label:'כבאות',fireOnly:true}
+  {id:'fire_dept',label:'כבאות',fireOnly:true},
+  {id:'custom',label:'אחר',fireOnly:false}
 ];
 const WATER_SIGNS = {
   'קירות ותקרות':[
@@ -2077,18 +2101,18 @@ function renderCard(n){
 function renderCard1(){
   const b = STATE.base;
   return `<div class="grid2">
-    <div class="field span2"><label class="label">שם מלא *</label><input type="text" value="${esc(b.fullName)}" oninput="STATE.base.fullName=this.value" placeholder="שם פרטי + שם משפחה"></div>
+    <div class="field"><label class="label">שם מלא *</label><input type="text" value="${esc(b.fullName)}" oninput="STATE.base.fullName=this.value" placeholder="שם פרטי + שם משפחה"></div>
     <div class="field"><label class="label">ת.ז / ח.פ *</label><input type="text" value="${esc(b.idNum)}" oninput="STATE.base.idNum=this.value"></div>
     <div class="field"><label class="label">טלפון</label><input type="tel" value="${esc(b.phone)}" oninput="STATE.base.phone=formatPhone(this.value);this.value=STATE.base.phone" placeholder="050-1234567" maxlength="11"></div>
-    <div class="field span2"><label class="label">דואל</label><input type="email" value="${esc(b.email)}" oninput="STATE.base.email=this.value"></div>
-    <div class="divider span2"></div>
-    <div class="field"><label class="label">תאריך האירוע *</label><input type="date" value="${esc(b.eventDate)}" oninput="STATE.base.eventDate=this.value"></div>
-    <div class="field"><label class="label">תאריך ביקור *</label><input type="date" value="${esc(b.visitDate)}" oninput="STATE.base.visitDate=this.value"></div>
+    <div class="field"><label class="label">דואל</label><input type="email" value="${esc(b.email)}" oninput="STATE.base.email=this.value"></div>
     <div class="divider span2"></div>
     <div class="field"><label class="label">עיר *</label><input type="text" value="${esc(b.city)}" oninput="STATE.base.city=this.value"></div>
     <div class="field"><label class="label">רחוב *</label><input type="text" value="${esc(b.street)}" oninput="STATE.base.street=this.value"></div>
     <div class="field"><label class="label">מספר</label><input type="text" value="${esc(b.streetNum)}" oninput="STATE.base.streetNum=this.value"></div>
     <div class="field"><label class="label">דירה</label><input type="text" value="${esc(b.apartment)}" oninput="STATE.base.apartment=this.value"></div>
+    <div class="divider span2"></div>
+    <div class="field"><label class="label">תאריך האירוע *</label><input type="date" value="${esc(b.eventDate)}" oninput="STATE.base.eventDate=this.value"></div>
+    <div class="field"><label class="label">תאריך ביקור *</label><input type="date" value="${esc(b.visitDate)}" oninput="STATE.base.visitDate=this.value"></div>
   </div>`;
 }
 
@@ -2101,9 +2125,10 @@ function renderCard2(){
   const isHouse = p.type==='house';
   const isApt = p.type==='apartment' || p.type==='other' || (!isBiz && !isHouse);
 
-  const fieldStyle = "background:var(--primary2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Heebo',sans-serif;width:100%;outline:none;transition:border-color .2s;";
+  const fieldStyle = ""; // replaced by .prop-input class
+  const propCls = "prop-input";
 
-  const materialSelect = `<select onchange="STATE.property.material=this.value" style="${fieldStyle}">
+  const materialSelect = `<select onchange="STATE.property.material=this.value" class="prop-input">
     <option value="" ${!p.material?'selected':''}>—</option>
     <option value="concrete" ${p.material==='concrete'?'selected':''}>בטון</option>
     <option value="blocks" ${p.material==='blocks'?'selected':''}>בנייה קונבנציונלית (בלוקים ובטון)</option>
@@ -2113,7 +2138,7 @@ function renderCard2(){
     <option value="other" ${p.material==='other'?'selected':''}>אחר</option>
   </select>`;
 
-  const roofSelect = `<select onchange="STATE.property.roofType=this.value" style="${fieldStyle}">
+  const roofSelect = `<select onchange="STATE.property.roofType=this.value" class="prop-input">
     <option value="" ${!p.roofType?'selected':''}>—</option>
     <option value="tiles" ${p.roofType==='tiles'?'selected':''}>רעפים</option>
     <option value="flat" ${p.roofType==='flat'?'selected':''}>גג שטוח (בטון)</option>
@@ -2122,7 +2147,7 @@ function renderCard2(){
     <option value="metal" ${p.roofType==='metal'?'selected':''}>מתכת</option>
   </select>`;
 
-  const preCondSelect = `<select onchange="STATE.property.preCondition=this.value" style="${fieldStyle}">
+  const preCondSelect = `<select onchange="STATE.property.preCondition=this.value" class="prop-input">
     <option value="" ${!p.preCondition?'selected':''}>—</option>
     <option value="good" ${p.preCondition==='good'?'selected':''}>תקין</option>
     <option value="fair" ${p.preCondition==='fair'?'selected':''}>בלאי סביר</option>
@@ -2130,50 +2155,69 @@ function renderCard2(){
     <option value="unknown" ${p.preCondition==='unknown'?'selected':''}>לא ידוע</option>
   </select>`;
 
-  let html = `<div class="grid2">
-    <div class="field"><label class="label">סוג נכס</label>
-      <select onchange="STATE.property.type=this.value;renderCard(1)" style="${fieldStyle}">
-        ${['apartment:דירה','house:בית פרטי','shop:חנות','office:משרד','warehouse:מחסן','other:אחר'].map(o=>{const[v,l]=o.split(':');return`<option value="${v}" ${p.type===v?'selected':''}>${l}</option>`}).join('')}
-      </select></div>
-    <div class="field"><label class="label">שנת בנייה</label>
-      <input type="number" value="${esc(p.yearBuilt)}" oninput="STATE.property.yearBuilt=this.value" min="1900" max="2030" style="${fieldStyle}" placeholder="2005">
-    </div>`;
+  // סוג נכס — כפתורי בחירה ויזואלית
+  const typeOptions = [
+    {v:'apartment', l:'🏢 דירה'},
+    {v:'house',     l:'🏠 בית פרטי'},
+    {v:'shop',      l:'🏪 חנות'},
+    {v:'office',    l:'💼 משרד'},
+    {v:'warehouse', l:'📦 מחסן'},
+    {v:'other',     l:'🏗️ אחר'},
+  ];
+
+  let html = `<div style="margin-bottom:16px;">
+    <label class="label" style="margin-bottom:8px;display:block;">סוג נכס</label>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${typeOptions.map(o=>`
+        <button onclick="STATE.property.type='${o.v}';renderCard(1)" style="
+          padding:8px 16px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;
+          background:${p.type===o.v?'rgba(245,158,11,.15)':'var(--primary2)'};
+          border:${p.type===o.v?'1.5px solid var(--accent)':'1.5px solid var(--border2)'};
+          color:${p.type===o.v?'var(--accent)':'var(--muted)'};
+        ">${o.l}</button>`).join('')}
+    </div>
+  </div>
+  <div class="grid2">`;
 
   if(isBiz){
-    // ── עסקי — שאלון פשוט עם תיאור חופשי ──
     html += `
     <div class="field"><label class="label">שטח כולל (מ"ר)</label>
-      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" style="${fieldStyle}"></div>
+      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" class="prop-input" placeholder="200"></div>
+    <div class="field"><label class="label">שנת בנייה</label>
+      <input type="number" value="${esc(p.yearBuilt)}" oninput="STATE.property.yearBuilt=this.value" min="1900" max="2030" class="prop-input" placeholder="2005"></div>
     <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
+    <div class="field"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>
     <div class="field span2"><label class="label">תיאור הנכס (יופיע בדוח)</label>
-      <textarea rows="3" oninput="STATE.property.freeDesc=this.value" placeholder='למשל: בית עסק בן 2 קומות, קומת קרקע משמשת אולם סועדים, קומה עליונה כמטבח תעשייתי. שטח כולל 550 מ"ר.' style="${fieldStyle};resize:vertical;">${esc(p.freeDesc||'')}</textarea></div>
-    <div class="field span2"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
+      <textarea rows="3" oninput="STATE.property.freeDesc=this.value" placeholder='למשל: בית עסק בן 2 קומות, קומת קרקע משמשת אולם סועדים וקומה עליונה כמטבח תעשייתי. שטח כולל 550 מ"ר.' class="prop-input" style="resize:vertical;">${esc(p.freeDesc||'')}</textarea></div>`;
 
   } else if(isHouse){
-    // ── בית פרטי ──
     html += `
-    <div class="field"><label class="label">שטח מגרש כולל (מ"ר)</label>
-      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" style="${fieldStyle}" placeholder="500"></div>
+    <div class="field"><label class="label">שטח מגרש (מ"ר)</label>
+      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" class="prop-input" placeholder="500"></div>
     <div class="field"><label class="label">שטח בנוי (מ"ר)</label>
-      <input type="number" value="${esc(p.builtSqm||'')}" oninput="STATE.property.builtSqm=this.value" min="0" style="${fieldStyle}" placeholder="250"></div>
+      <input type="number" value="${esc(p.builtSqm||'')}" oninput="STATE.property.builtSqm=this.value" min="0" class="prop-input" placeholder="250"></div>
     <div class="field"><label class="label">מספר מפלסים</label>
-      <select onchange="STATE.property.levels=this.value" style="${fieldStyle}">
+      <select onchange="STATE.property.levels=this.value" class="prop-input">
         <option value="" ${!p.levels?'selected':''}>—</option>
         ${[1,2,3,4].map(n=>`<option value="${n}" ${p.levels==n?'selected':''}>${n} ${n===1?'מפלס':'מפלסים'}</option>`).join('')}
       </select></div>
+    <div class="field"><label class="label">שנת בנייה</label>
+      <input type="number" value="${esc(p.yearBuilt)}" oninput="STATE.property.yearBuilt=this.value" min="1900" max="2030" class="prop-input" placeholder="2005"></div>
     <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
     <div class="field"><label class="label">סוג גג</label>${roofSelect}</div>
     <div class="field"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
 
   } else {
-    // ── דירת מגורים (ברירת מחדל) ──
+    // דירת מגורים
     html += `
     <div class="field"><label class="label">שטח (מ"ר)</label>
-      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" style="${fieldStyle}"></div>
+      <input type="number" value="${esc(p.sqm)}" oninput="STATE.property.sqm=this.value" min="0" class="prop-input" placeholder="85"></div>
     <div class="field"><label class="label">מספר חדרים</label>
-      <input type="number" value="${esc(p.rooms||'')}" oninput="STATE.property.rooms=this.value" min="1" max="20" style="${fieldStyle}" placeholder="3"></div>
+      <input type="number" value="${esc(p.rooms||'')}" oninput="STATE.property.rooms=this.value" min="1" max="20" class="prop-input" placeholder="3"></div>
     <div class="field"><label class="label">קומה</label>
-      <input type="text" value="${esc(p.floor)}" oninput="STATE.property.floor=this.value" style="${fieldStyle}" placeholder="0, 1, 2..."></div>
+      <input type="text" value="${esc(p.floor)}" oninput="STATE.property.floor=this.value" class="prop-input" placeholder="1"></div>
+    <div class="field"><label class="label">שנת בנייה</label>
+      <input type="number" value="${esc(p.yearBuilt)}" oninput="STATE.property.yearBuilt=this.value" min="1900" max="2030" class="prop-input" placeholder="2005"></div>
     <div class="field"><label class="label">חומר בנייה</label>${materialSelect}</div>
     <div class="field"><label class="label">מצב לפני האירוע</label>${preCondSelect}</div>`;
   }
@@ -2207,58 +2251,118 @@ function renderCard3(){
   const cvg = ins.coverageType||'both';
   const showStruct = cvg==='structure'||cvg==='both';
   const showCont = cvg==='contents'||cvg==='both';
-  return `<div class="grid2">
-    <div class="field ${isIns?'span2':''}"><label class="label">חברת ביטוח ${isIns?'*':''}</label>
-      <select onchange="STATE.insurance.company=this.value">
-        <option value="">-- בחר חברת ביטוח --</option>
-        ${INSURANCE_COMPANIES.map(c=>`<option value="${c}" ${ins.company===c?'selected':''}>${c}</option>`).join('')}
-        ${ins.company && !INSURANCE_COMPANIES.includes(ins.company)?`<option value="${esc(ins.company)}" selected>${esc(ins.company)}</option>`:''}
-      </select>
-    </div>
-    ${isIns?`<div class="field"><label class="label">מספר פוליסה *</label><input type="text" value="${esc(ins.policyNum)}" oninput="STATE.insurance.policyNum=this.value"></div>
-    <div class="field"><label class="label">מספר תביעה *</label><input type="text" value="${esc(ins.claimNum)}" oninput="STATE.insurance.claimNum=this.value"></div>
-    <div class="field"><label class="label">📅 תאריך קבלת הודעת האירוע ע"י חברת הביטוח</label><input type="date" value="${esc(ins.eventReportDate||'')}" min="${STATE.base.eventDate||''}" oninput="STATE.insurance.eventReportDate=this.value" title="מתי חברת הביטוח קיבלה הודעה מהמבוטח"></div>
-    <div class="field"><label class="label">📅 תאריך מינוי השמאי</label><input type="date" value="${esc(ins.appointmentDate||'')}" min="${STATE.base.eventDate||''}" oninput="STATE.insurance.appointmentDate=this.value"></div>`:''}
-    <div class="divider span2"></div>
-    <div class="span2">
-      <div class="label" style="color:var(--accent);font-size:12px;margin-bottom:8px;">📋 סוג כיסוי</div>
-      <div class="pill-group" id="cvgPills">
-        ${[{v:'structure',l:'מבנה בלבד'},{v:'contents',l:'תכולה בלבד'},{v:'both',l:'מבנה + תכולה'}].map(o=>`<button class="pill ${cvg===o.v?'active':''}" onclick="STATE.insurance.coverageType='${o.v}';renderCard(3)">${o.l}</button>`).join('')}
+  return `
+  <style>
+  @media(min-width:769px){
+    .ins-header{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+    .ins-header-col{display:flex;flex-direction:column;gap:16px;}
+    .ins-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+    .ins-row-dates{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+    .ins-bottom{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .ins-amounts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  }
+  @media(max-width:768px){
+    .ins-header{display:flex;flex-direction:column;gap:14px;margin-bottom:16px;}
+    .ins-header-col{display:flex;flex-direction:column;gap:12px;}
+    .ins-row3,.ins-row-dates{display:flex;flex-direction:column;gap:10px;}
+    .ins-bottom{display:flex;flex-direction:column;gap:14px;}
+    .ins-amounts{display:grid;grid-template-columns:1fr;gap:8px;}
+  }
+  </style>
+
+  <div class="ins-header">
+    <!-- צד ימין — פרטי פוליסה ותאריכים -->
+    <div class="ins-header-col">
+      <div class="ins-row3">
+        <div class="field"><label class="label">חברת ביטוח ${isIns?'*':''}</label>
+          <select onchange="STATE.insurance.company=this.value">
+            <option value="">-- בחר --</option>
+            ${INSURANCE_COMPANIES.map(c=>`<option value="${c}" ${ins.company===c?'selected':''}>${c}</option>`).join('')}
+            ${ins.company && !INSURANCE_COMPANIES.includes(ins.company)?`<option value="${esc(ins.company)}" selected>${esc(ins.company)}</option>`:''}
+          </select>
+        </div>
+        <div class="field"><label class="label">מספר פוליסה ${isIns?'*':''}</label>
+          <input type="text" value="${esc(ins.policyNum)}" oninput="STATE.insurance.policyNum=this.value">
+        </div>
+        <div class="field"><label class="label">מספר תביעה ${isIns?'*':''}</label>
+          <input type="text" value="${esc(ins.claimNum)}" oninput="STATE.insurance.claimNum=this.value">
+        </div>
+      </div>
+      <div class="ins-row-dates">
+        <div class="field"><label class="label">תאריך הודעת אירוע</label>
+          <input type="date" value="${esc(ins.eventReportDate||'')}" oninput="STATE.insurance.eventReportDate=this.value">
+        </div>
+        <div class="field"><label class="label">תאריך מינוי שמאי</label>
+          <input type="date" value="${esc(ins.appointmentDate||'')}" oninput="STATE.insurance.appointmentDate=this.value">
+        </div>
+        <div class="field"><label class="label">קבלת מסמך אחרון</label>
+          <input type="date" value="${esc(ins.lastDocDate)}" oninput="STATE.insurance.lastDocDate=this.value">
+        </div>
       </div>
     </div>
-    <div class="span2" style="margin-top:10px;">
-      <div class="label" style="font-size:11px;color:var(--muted);margin-bottom:8px;">הרחבות בפוליסה</div>
-      <div class="flex flex-wrap gap8">
-        <button class="chip ${ins.extNaturalDisaster?'checked':''}" onclick="STATE.insurance.extNaturalDisaster=!STATE.insurance.extNaturalDisaster;this.classList.toggle('checked')">🌪️ נזקי טבע</button>
-        <button class="chip ${ins.extAllRisks?'checked':''}" onclick="STATE.insurance.extAllRisks=!STATE.insurance.extAllRisks;this.classList.toggle('checked')">🔐 כל הסיכונים</button>
-        <button class="chip ${ins.thirdParty?'checked':''}" onclick="STATE.insurance.thirdParty=!STATE.insurance.thirdParty;this.classList.toggle('checked')">צד ג'</button>
-        <button class="chip ${ins.lossOfProfits?'checked':''}" onclick="STATE.insurance.lossOfProfits=!STATE.insurance.lossOfProfits;this.classList.toggle('checked')">אובדן רווחים</button>
+
+    <!-- צד שמאל — כיסוי, הרחבות ואפשרויות -->
+    <div class="ins-header-col">
+      <div>
+        <div class="label" style="color:var(--accent);font-size:12px;font-weight:700;margin-bottom:10px;">📋 סוג כיסוי</div>
+        <div class="pill-group">
+          ${[{v:'structure',l:'מבנה בלבד'},{v:'contents',l:'תכולה בלבד'},{v:'both',l:'מבנה + תכולה'}].map(o=>`<button class="pill ${cvg===o.v?'active':''}" onclick="STATE.insurance.coverageType='${o.v}';renderCard(3)">${o.l}</button>`).join('')}
+        </div>
       </div>
+      <div>
+        <div class="label" style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:10px;">הרחבות בפוליסה</div>
+        <div class="flex flex-wrap gap8">
+          <button class="chip ${ins.extNaturalDisaster?'checked':''}" onclick="STATE.insurance.extNaturalDisaster=!STATE.insurance.extNaturalDisaster;this.classList.toggle('checked')">🌪️ נזקי טבע</button>
+          <button class="chip ${ins.extAllRisks?'checked':''}" onclick="STATE.insurance.extAllRisks=!STATE.insurance.extAllRisks;this.classList.toggle('checked')">🔐 כל הסיכונים</button>
+          <button class="chip ${ins.thirdParty?'checked':''}" onclick="STATE.insurance.thirdParty=!STATE.insurance.thirdParty;this.classList.toggle('checked')">צד ג'</button>
+          <button class="chip ${ins.lossOfProfits?'checked':''}" onclick="STATE.insurance.lossOfProfits=!STATE.insurance.lossOfProfits;this.classList.toggle('checked')">אובדן רווחים</button>
+        </div>
+      </div>
+      <div style="margin-top:auto;padding-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="chip ${ins.vatBiz?'checked':''}" onclick="STATE.insurance.vatBiz=!STATE.insurance.vatBiz;this.classList.toggle('checked')">עסק מקזז מע"מ</button>
+        ${isIns?`<button class="chip ${ins.arrangementPlumber?'checked':''}" onclick="STATE.insurance.arrangementPlumber=!STATE.insurance.arrangementPlumber;renderCard(3)">שרברב הסדר</button>`:''}
+      </div>
+      ${ins.arrangementPlumber&&isIns?`<div class="note" style="margin-top:6px;">שרברב הסדר – סעיף התיקון הישיר יירשם ב-BOQ ללא תמחור (₪0).</div>`:''}
     </div>
-    <div class="divider span2"></div>
-    ${showStruct?`<div class="label span2" style="font-size:11px;color:var(--accent);font-weight:700;">📐 מבנה</div>
-    <div class="field"><label class="label">סכום ביטוח מבנה (₪)</label><input type="text" value="${fmtCurrency(ins.structureSum)}" oninput="STATE.insurance.structureSum=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="0"></div>
-    <div class="field"><label class="label">שווי מבנה בפועל (₪)</label><input type="text" value="${fmtCurrency(ins.structureActual)}" oninput="STATE.insurance.structureActual=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="אומדן שוק / שמאי"></div>
-    ${structUnder?`<div class="span2"><span class="under-badge under-warn">⚠️ תת-ביטוח מבנה: ${Math.round((1-(structSum/structActual))*100)}% מתחת לשווי</span></div>`:''}
-    ${sqmEstUnder&&!structUnder&&!structActual?`<div class="span2"><span class="under-badge under-warn">⚠️ לפי ${sqm} מ"ר × ₪8,500 – שווי מוערך ₪${fmtNum(estStructValue)} מול סכום ₪${fmtNum(structSum)} – בדוק תת-ביטוח</span></div>`:''}
-    ${structSum>0&&structActual>0&&!structUnder?`<div class="span2"><span class="under-badge under-ok">✓ אין תת-ביטוח מבנה</span></div>`:''}
-    <div class="field"><label class="label">השתתפות עצמית מבנה (₪)</label><input type="text" value="${fmtCurrency(ins.deductStruct)}" oninput="STATE.insurance.deductStruct=parseCurrency(this.value);this.value=fmtCurrency(this.value)" placeholder="0"></div>`:''}
-    ${showCont?`<div class="divider span2"></div>
-    <div class="label span2" style="font-size:11px;color:var(--green);font-weight:700;">🛋️ תכולה</div>
-    <div class="field"><label class="label">סכום ביטוח תכולה (₪)</label><input type="text" value="${fmtCurrency(ins.contentsSum)}" oninput="STATE.insurance.contentsSum=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="0"></div>
-    <div class="field"><label class="label">שווי תכולה בפועל (₪)</label><input type="text" value="${fmtCurrency(ins.contentsActual)}" oninput="STATE.insurance.contentsActual=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="הערכת שווי תכולה"></div>
-    ${contUnder?`<div class="span2"><span class="under-badge under-warn">⚠️ תת-ביטוח תכולה: ${Math.round((1-(contSum/contActual))*100)}% מתחת לשווי</span></div>`:''}
-    ${contSum>0&&contActual>0&&!contUnder?`<div class="span2"><span class="under-badge under-ok">✓ אין תת-ביטוח תכולה</span></div>`:''}
-    <div class="field"><label class="label">השתתפות עצמית תכולה (₪)</label><input type="text" value="${fmtCurrency(ins.deductContents)}" oninput="STATE.insurance.deductContents=parseCurrency(this.value);this.value=fmtCurrency(this.value)" placeholder="0"></div>`:''}
-    <div class="divider span2"></div>
-    <div class="field span2"><label class="label">📅 תאריך קבלת מסמך אחרון</label><input type="date" value="${esc(ins.lastDocDate)}" min="${STATE.base.eventDate||''}" oninput="STATE.insurance.lastDocDate=this.value"></div>
-    <div class="span2 flex gap12 flex-wrap mt8">
-      <button class="chip ${ins.vatBiz?'checked':''}" onclick="STATE.insurance.vatBiz=!STATE.insurance.vatBiz;this.classList.toggle('checked')">עסק מקזז מע"מ</button>
-      ${isIns?`<button class="chip ${ins.arrangementPlumber?'checked':''}" onclick="STATE.insurance.arrangementPlumber=!STATE.insurance.arrangementPlumber;renderCard(3)">שרברב הסדר</button>`:''}
-    </div>
-    ${ins.arrangementPlumber&&isIns?`<div class="note span2">שרברב הסדר – סעיף התיקון הישיר יירשם ב-BOQ ללא תמחור (₪0).</div>`:''}
-    ${mode==='private'?'<div class="note span2">שדות ביטוח אינם חובה בשומה פרטית. בדוח יוצגו רק אם רלוונטי.</div>':''}
-  </div>`;
+  </div>
+
+  <div class="divider" style="margin:0 0 20px;"></div>
+  <div class="ins-bottom">
+    ${showStruct?`<div>
+      <div class="label" style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:8px;">📐 מבנה</div>
+      <div class="ins-amounts">
+        <div class="field"><label class="label">סכום ביטוח (₪)</label>
+          <input type="text" value="${fmtCurrency(ins.structureSum)}" oninput="STATE.insurance.structureSum=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="0">
+        </div>
+        <div class="field"><label class="label">שווי בפועל (₪)</label>
+          <input type="text" value="${fmtCurrency(ins.structureActual)}" oninput="STATE.insurance.structureActual=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="הערכת שוק">
+        </div>
+        <div class="field"><label class="label">השתתפות עצמית (₪)</label>
+          <input type="text" value="${fmtCurrency(ins.deductStruct)}" oninput="STATE.insurance.deductStruct=parseCurrency(this.value);this.value=fmtCurrency(this.value)" placeholder="0">
+        </div>
+      </div>
+      ${structUnder?`<span class="under-badge under-warn" style="margin-top:6px;display:inline-block;">⚠️ תת-ביטוח מבנה: ${Math.round((1-(structSum/structActual))*100)}%</span>`:''}
+      ${structSum>0&&structActual>0&&!structUnder?`<span class="under-badge under-ok" style="margin-top:6px;display:inline-block;">✓ אין תת-ביטוח מבנה</span>`:''}
+    </div>`:'<div></div>'}
+    ${showCont?`<div>
+      <div class="label" style="font-size:12px;color:var(--green);font-weight:700;margin-bottom:8px;">🛋️ תכולה</div>
+      <div class="ins-amounts">
+        <div class="field"><label class="label">סכום ביטוח (₪)</label>
+          <input type="text" value="${fmtCurrency(ins.contentsSum)}" oninput="STATE.insurance.contentsSum=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="0">
+        </div>
+        <div class="field"><label class="label">שווי בפועל (₪)</label>
+          <input type="text" value="${fmtCurrency(ins.contentsActual)}" oninput="STATE.insurance.contentsActual=parseCurrency(this.value);this.value=fmtCurrency(this.value)" onchange="renderCard(3)" placeholder="הערכת שווי">
+        </div>
+        <div class="field"><label class="label">השתתפות עצמית (₪)</label>
+          <input type="text" value="${fmtCurrency(ins.deductContents)}" oninput="STATE.insurance.deductContents=parseCurrency(this.value);this.value=fmtCurrency(this.value)" placeholder="0">
+        </div>
+      </div>
+      ${contUnder?`<span class="under-badge under-warn" style="margin-top:6px;display:inline-block;">⚠️ תת-ביטוח תכולה: ${Math.round((1-(contSum/contActual))*100)}%</span>`:''}
+      ${contSum>0&&contActual>0&&!contUnder?`<span class="under-badge under-ok" style="margin-top:6px;display:inline-block;">✓ אין תת-ביטוח תכולה</span>`:''}
+    </div>`:'<div></div>'}
+  </div>
+  ${mode==='private'?'<div class="note" style="margin-top:8px;">שדות ביטוח אינם חובה בשומה פרטית.</div>':''}
+`;
 }
 
 // ══════════════════════════════════════════════════
@@ -2341,14 +2445,23 @@ function renderCard4(){
   PROFESSIONALS.filter(p=>!p.fireOnly || ev.eventType==='fire').forEach(prof=>{
     const isChk = (ev.professionals||[]).includes(prof.id);
     const det = ev.profDetails[prof.id]||{};
-    html += `<div>
-      <button class="chip ${isChk?'checked':''}" onclick="toggleProfessional('${prof.id}',this)">${prof.label}</button>
-      ${isChk?`<div class="grid2 mt8 p12 rounded8" style="background:var(--primary2);border:1px solid var(--primary3);">
-        <div class="field"><label class="label">שם גורם</label><input type="text" value="${esc(det.name||'')}" oninput="setProfDetail('${prof.id}','name',this.value)"></div>
-        <div class="field"><label class="label">נמסר דוח?</label><div class="pill-group">
-          <button class="pill ${det.report==='yes'?'active':''}" onclick="setProfDetail('${prof.id}','report','yes');refreshPillsInParent(this,'yes')">כן</button>
-          <button class="pill ${det.report==='no'?'active':''}" onclick="setProfDetail('${prof.id}','report','no');refreshPillsInParent(this,'no')">לא</button>
-        </div></div>
+    const isCustom = prof.id==='custom';
+    html += `<div style="border-radius:10px;overflow:hidden;margin-bottom:2px;">
+      <div style="display:flex;align-items:center;gap:8px;padding:2px 0;">
+        <button class="chip ${isChk?'checked':''}" onclick="toggleProfessional('${prof.id}',this)">${prof.label}</button>
+        ${isChk&&det.name?`<span style="font-size:11px;color:var(--muted);">${esc(det.name)}${det.role?' — '+esc(det.role):''}</span>`:''}
+        ${isChk?`<button onclick="const b=document.getElementById('prof_body_${prof.id}');b.style.display=b.style.display==='none'?'':'none';this.textContent=b.style.display===''?'▲':'▼';" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;margin-right:auto;">${det.name?'▼':'▲'}</button>`:''}
+      </div>
+      ${isChk?`<div id="prof_body_${prof.id}" style="display:${det.name?'none':''};background:var(--primary2);border:1px solid var(--primary3);border-radius:8px;padding:12px;margin-top:6px;">
+        <div style="display:grid;grid-template-columns:${isCustom?'1fr 1fr 1fr':'1fr 1fr'};gap:10px;margin-bottom:10px;">
+          <div class="field"><label class="label">שם גורם</label><input type="text" value="${esc(det.name||'')}" oninput="setProfDetail('${prof.id}','name',this.value)"></div>
+          ${isCustom?`<div class="field"><label class="label">תפקיד</label><input type="text" value="${esc(det.role||'')}" oninput="setProfDetail('${prof.id}','role',this.value)" placeholder="חוקר שריפות, מהנדס..."></div>`:''}
+          <div class="field"><label class="label">נמסר דוח?</label><div class="pill-group">
+            <button class="pill ${det.report==='yes'?'active':''}" onclick="setProfDetail('${prof.id}','report','yes');refreshPillsInParent(this,'yes')">כן</button>
+            <button class="pill ${det.report==='no'?'active':''}" onclick="setProfDetail('${prof.id}','report','no');refreshPillsInParent(this,'no')">לא</button>
+          </div></div>
+        </div>
+        <button onclick="document.getElementById('prof_body_${prof.id}').style.display='none';this.closest('[style]').previousElementSibling.querySelector('button:last-child').textContent='▼';" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">✓ סיים</button>
       </div>`:''}
     </div>`;
   });
@@ -2468,7 +2581,7 @@ function renderCard5(){
     </div>`;
   }
 
-  html += `<div class="field"><label class="label">הערות נוספות / נסיבות מטעם השמאי</label><textarea oninput="STATE.circ.extraNotes=this.value" placeholder="פרשנות, רושם ראשוני, אי התאמות...">${esc(c.extraNotes)}</textarea></div>`;
+  // הערות נוספות הוסרו
 
   html += `<div class="flex items-center gap12 mt12 mb8">
     <button class="btn btn-primary" onclick="genAndSetCircumText()" style="gap:6px;">✨ צור טקסט נסיבות אוטומטי</button>
