@@ -2909,6 +2909,11 @@ function renderCard6(){
 // ══════════════════════════════════════════════════
 function renderCard7(){
   const boq = STATE.boq;
+  // אתחול אוטומטי: אם לא עסקי — מע"מ דלוק כברירת מחדל
+  const isBizProp = ['shop','office','warehouse'].includes(STATE.property?.type) || STATE.property?.usage==='business' || STATE.insurance?.vatBiz;
+  if(!isBizProp && boq.vat === false && !boq._vatManuallySet){
+    boq.vat = true;
+  }
   const structTotal = calcSectionTotal(boq.structItems);
   const contTotal = calcSectionTotal(boq.contentsItems);
   const servTotal = calcSectionTotal(boq.serviceItems);
@@ -2946,18 +2951,6 @@ function renderCard7(){
   }
   html += renderBOQSection('structItems','פרק א׳ – עבודות מבנה','var(--blue)');
   html += renderBOQSection('contentsItems','פרק ב׳ – עבודות תכולה ונגרות','var(--green)');
-  // הוסף radio לפיקוח לפני renderBOQSection
-  const supItem = (boq.serviceItems||[]).find(i=>i.isSupervision);
-  const supRate = boq.supervisionRate||5;
-  if(supItem){
-    html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:8px 12px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:8px;flex-wrap:wrap;">
-      <span style="font-size:12px;color:var(--muted);font-weight:700;">% פיקוח:</span>
-      ${[3,5,7,10].map(p=>`<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;">
-        <input type="radio" name="supRate" value="${p}" ${supRate===p?'checked':''} onchange="STATE.boq.supervisionRate=${p};const si=STATE.boq.serviceItems.find(i=>i.isSupervision);if(si)si.desc='פיקוח וניהול עבודות (${p}% מעלויות תיקון)';renderCard(7);">
-        <span>${p}%</span>
-      </label>`).join('')}
-    </div>`;
-  }
   html += renderBOQSection('serviceItems',"פרק ג׳ – שירותים ותוספות",'var(--purple)');
 
   html += `<div class="boq-total-box">
@@ -2965,7 +2958,7 @@ function renderCard7(){
       <div class="label" style="color:var(--accent);margin:0;">סיכום כתב כמויות</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         ${mode==='insurance'?`<button class="chip ${boq.hasClaim?'checked':''}" onclick="STATE.boq.hasClaim=!STATE.boq.hasClaim;renderCard(7)" style="font-size:12px;">📋 תביעת שמאי פרטי</button>`:''}
-        <button class="chip ${boq.vat?'checked':''}" onclick="STATE.boq.vat=!STATE.boq.vat;renderCard(7)" style="font-size:12px;">מע"מ 18%</button>
+        <button class="chip ${boq.vat?'checked':''}" onclick="toggleVAT()" style="font-size:12px;">מע"מ 18%</button>
       </div>
     </div>
     ${mode==='insurance'?`
@@ -2981,13 +2974,34 @@ function renderCard7(){
     <div class="total-row" style="font-size:11px;"><span class="c-muted">תכולה (כינון)</span><span class="fw7 c-blue" id="sumCont">₪${fmtNum(contTotal)}</span></div>
     <div class="total-row" style="font-size:11px;"><span class="c-muted">שירותים (כינון)</span><span class="fw7 c-blue" id="sumServ">₪${fmtNum(servTotal)}</span></div>
     ${deduct>0?`<div class="total-row"><span class="c-muted">פחות השתתפות עצמית</span><span class="c-muted">-₪${fmtNum(deduct)}</span></div>`:''}
+    <div class="total-row" style="border-top:1px solid var(--border);padding-top:8px;margin-top:6px;">
+      <span class="c-muted" style="font-size:12px;">סה"כ לפני מע"מ</span>
+      <span class="fw7">₪${fmtNum(grand)}</span>
+    </div>
+    <div class="total-row">
+      <span class="c-muted" style="font-size:12px;">מע"מ 18%</span>
+      <span style="color:${boq.vat?'var(--text)':'var(--subtle)'};">₪${boq.vat?fmtNum(Math.round(vat)):'—'}</span>
+    </div>
+    <div class="total-row grand" style="border-top:2px solid var(--border);margin-top:6px;padding-top:8px;">
+      <span class="fw8">סה"כ כולל מע"מ</span>
+      <span class="fw8 c-accent fs16">₪${fmtNum(Math.round(totalWithVat))}</span>
+    </div>
     `:`
     <div class="total-row"><span class="c-muted">מבנה</span><span class="fw7" id="sumStruct">₪${fmtNum(structTotal)}</span></div>
     <div class="total-row"><span class="c-muted">תכולה</span><span class="fw7" id="sumCont">₪${fmtNum(contTotal)}</span></div>
     <div class="total-row"><span class="c-muted">שירותים</span><span class="fw7" id="sumServ">₪${fmtNum(servTotal)}</span></div>
-    <div class="total-row grand"><span class="fw8">סה"כ לפני מע"מ</span><span class="fw8 c-accent fs16" id="sumGrand">₪${fmtNum(grand)}</span></div>
-    ${boq.vat?`<div class="total-row"><span class="c-muted">מע"מ 18%</span><span>₪${fmtNum(Math.round(vat))}</span></div>
-    <div class="total-row"><span class="fw8">סה"כ כולל מע"מ</span><span class="fw8 c-accent fs16">₪${fmtNum(Math.round(totalWithVat))}</span></div>`:''}
+    <div class="total-row" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;">
+      <span class="c-muted" style="font-size:12px;">סה"כ לפני מע"מ</span>
+      <span class="fw7" id="sumGrand">₪${fmtNum(grand)}</span>
+    </div>
+    <div class="total-row">
+      <span class="c-muted" style="font-size:12px;">מע"מ 18%</span>
+      <span style="color:${boq.vat?'var(--text)':'var(--subtle)'};">₪${boq.vat?fmtNum(Math.round(vat)):'—'}</span>
+    </div>
+    <div class="total-row grand" style="border-top:2px solid var(--border);margin-top:6px;padding-top:8px;">
+      <span class="fw8">סה"כ כולל מע"מ</span>
+      <span class="fw8 c-accent fs16">₪${fmtNum(Math.round(totalWithVat))}</span>
+    </div>
     `}
     ${mode==='insurance'&&grand>0?`
     <div class="divider"></div>
@@ -3106,10 +3120,24 @@ function renderBOQSection(key, title, color){
         if(isIns){
           html += `<tr class="boq-row-draggable ${item.zeroPrice?'row-zero':''} ${item.isRental?'row-rental':''}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader||''}">
             <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
-            <td><textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea></td>
+            <td>${item.isSupervision?
+              `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span style="font-size:12px;font-weight:600;color:var(--muted);">פיקוח וניהול עבודות</span>
+                <div style="display:flex;gap:4px;align-items:center;">
+                  ${[3,5,7,10].map(p=>`<button onclick="STATE.boq.supervisionRate=${p};const si=STATE.boq.serviceItems.find(i=>i.isSupervision);if(si)si.desc='פיקוח וניהול עבודות (${p}% מעלויות תיקון)';renderCard(7);" style="padding:2px 7px;border-radius:6px;border:1px solid ${(STATE.boq.supervisionRate||5)===p?'var(--accent)':'var(--border)'};background:${(STATE.boq.supervisionRate||5)===p?'rgba(245,158,11,.15)':'var(--primary2)'};color:${(STATE.boq.supervisionRate||5)===p?'var(--accent)':'var(--muted)'};font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">${p}%</button>`).join('')}
+                </div>
+              </div>` :
+              `<textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea>`
+            }</td>
             <td><input class="boq-input" style="width:44px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
             <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
-            <td><input class="boq-input num" type="number" value="${item.isSupervision?item.price:esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} ${item.isSupervision?'disabled title="מחושב אוטומטית 5%"':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)"></td>
+            <td>${item.isSupervision?
+              `<div style="display:flex;align-items:center;gap:4px;">
+                <input class="boq-input num" type="number" value="${item.price}" disabled style="opacity:.5;width:60px;">
+                
+              </div>` :
+              `<input class="boq-input num" type="number" value="${item.zeroPrice||item.isRental?'':esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)">`
+            }</td>
             <td class="ta-l" style="background:rgba(59,130,246,.04);color:${kinun>0?'var(--blue)':'var(--subtle)'};font-weight:700;font-size:12px;" data-total="${key}_${item.id}">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):''}</td>
             <td class="ta-l" style="background:rgba(16,185,129,.04);color:${shiput_val>0?'var(--green)':'var(--subtle)'};font-size:12px;" data-shiput="${key}_${item.id}">${item.zeroPrice?'—':shiput_val!=null&&shiput_val>0?'₪'+fmtNum(shiput_val):'—'}</td>
             <td style="background:${STATE.boq.hasClaim?'rgba(252,211,77,.04)':'rgba(0,0,0,.2)'};">
@@ -3119,10 +3147,24 @@ function renderBOQSection(key, title, color){
         } else {
           html += `<tr class="boq-row-draggable ${item.zeroPrice?'row-zero':''} ${item.isRental?'row-rental':''}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader||''}">
             <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
-            <td><textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea></td>
+            <td>${item.isSupervision?
+              `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span style="font-size:12px;font-weight:600;color:var(--muted);">פיקוח וניהול עבודות</span>
+                <div style="display:flex;gap:4px;align-items:center;">
+                  ${[3,5,7,10].map(p=>`<button onclick="STATE.boq.supervisionRate=${p};const si=STATE.boq.serviceItems.find(i=>i.isSupervision);if(si)si.desc='פיקוח וניהול עבודות (${p}% מעלויות תיקון)';renderCard(7);" style="padding:2px 7px;border-radius:6px;border:1px solid ${(STATE.boq.supervisionRate||5)===p?'var(--accent)':'var(--border)'};background:${(STATE.boq.supervisionRate||5)===p?'rgba(245,158,11,.15)':'var(--primary2)'};color:${(STATE.boq.supervisionRate||5)===p?'var(--accent)':'var(--muted)'};font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">${p}%</button>`).join('')}
+                </div>
+              </div>` :
+              `<textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea>`
+            }</td>
             <td><input class="boq-input" style="width:60px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
             <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
-            <td><input class="boq-input num" type="number" value="${item.isSupervision?item.price:esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} ${item.isSupervision?'disabled title="מחושב אוטומטית 5%"':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)"></td>
+            <td>${item.isSupervision?
+              `<div style="display:flex;align-items:center;gap:4px;">
+                <input class="boq-input num" type="number" value="${item.price}" disabled style="opacity:.5;width:60px;">
+                
+              </div>` :
+              `<input class="boq-input num" type="number" value="${item.zeroPrice||item.isRental?'':esc(item.price)}" ${item.zeroPrice||item.isRental?'disabled':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)">`
+            }</td>
             <td class="ta-l fw7" data-total="${key}_${item.id}" style="color:${kinun>0?'var(--accent)':'var(--subtle)'};">${item.zeroPrice?'—':item.isRental?`<span style="color:var(--blue);">₪${fmtNum(kinun)}</span>`:kinun>0?'₪'+fmtNum(kinun):''}</td>
             <td><button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button></td>
           </tr>`;
@@ -3184,172 +3226,215 @@ function renderBOQSection(key, title, color){
 // CARD 8 – SUMMARY
 // ══════════════════════════════════════════════════
 function renderCard8(){
-  const s = STATE.summary;
-  const opening = s.openingOverride || genOpeningText();
-  const circ = STATE.circ.circumOverride || genCircumText();
-  const finds = STATE.findings.findingsOverride || genFindingsText();
-  const expl = s.appraisalNotes || genExplanationsText();
+  const s   = STATE.summary;
   const boq = STATE.boq;
+  const f   = STATE.findings;
+  const b   = STATE.base;
+
   const struct = calcSectionTotal(boq.structItems);
-  const cont = calcSectionTotal(boq.contentsItems);
-  const serv = calcSectionTotal(boq.serviceItems);
-  const grand = struct+cont+serv;
-  const vat = boq.vat ? grand*0.18 : 0;
+  const cont   = calcSectionTotal(boq.contentsItems);
+  const serv   = calcSectionTotal(boq.serviceItems);
+  const grand  = struct+cont+serv;
+  const vat    = boq.vat ? grand*0.18 : 0;
   const totalWithVat = grand+vat;
   const shiput = Math.round((calcShiputBase(boq.structItems)+calcShiputBase(boq.contentsItems)+calcShiputBase(boq.serviceItems))*0.67);
-  const deduct = (parseFloat(String(STATE.insurance.deductStruct).replace(/,/g,'')))||0;
-  const recPayout = Math.max(0,shiput-deduct);
-  const f = STATE.findings;
+  const deduct = (parseFloat(String(STATE.insurance.deductStruct||'').replace(/,/g,'')))||0;
   const rentalTotal = (f.habitableStatus==='no' && parseFloat(f.rentalMonths)>0 && parseFloat(f.rentalMonthly)>0)
     ? Math.round(parseFloat(f.rentalMonths)*parseCurrency(f.rentalMonthly)) : 0;
 
-  window._editBlockVals = window._editBlockVals || {};
-
-  function editBlock(key, autoVal, rows=4){
-    const safeKey = key.replace(/[^a-zA-Z0-9_]/g,'');
-    window._editBlockVals[safeKey] = autoVal;
-    const isEditing = !!s[key];
-    return `<div class="preview-box mb8">
-      <div class="pb-label" style="display:flex;justify-content:space-between;align-items:center;">
-        <span>${isEditing?'✏️ עריכה ידנית':'טקסט אוטומטי'}</span>
-        <div style="display:flex;gap:6px;">
-          ${!isEditing?`<button class="btn btn-ghost btn-xs" onclick="STATE.summary['${key}']=window._editBlockVals['${safeKey}']||'';renderCard(8)">✏️ ערוך</button>`:''}
-          ${isEditing?`<button class="btn btn-ghost btn-xs" onclick="STATE.summary['${key}']='';renderCard(8)">↩ אוטומטי</button>`:''}
-        </div>
+  // ── Helper: editable section for left panel ──
+  function editSec(label, stateKey, autoFn, stateObj, rows=4, icon=''){
+    const obj  = stateObj || STATE.summary;
+    const val  = obj[stateKey];
+    const auto = typeof autoFn==='function' ? autoFn() : autoFn;
+    const text = val || auto || '';
+    const isOverride = !!val;
+    return `<div class="c8-sec">
+      <div class="c8-sec-head">
+        <span class="c8-sec-label">${icon} ${label}</span>
+        ${isOverride
+          ?`<button class="btn btn-ghost btn-xs" onclick="(${stateObj?`STATE.findings`:`STATE.summary`})[\'${stateKey}\']=\'\';renderCard(8)">↩ אוטומטי</button>`
+          :`<button class="btn btn-ghost btn-xs" onclick="(${stateObj?`STATE.findings`:`STATE.summary`})[\'${stateKey}\']=${JSON.stringify(auto||'')};renderCard(8)">✏️ ערוך</button>`
+        }
       </div>
-      ${isEditing
-        ?`<textarea oninput="STATE.summary['${key}']=this.value" rows="${rows}" style="width:100%;background:transparent;border:none;color:var(--text);font-size:13px;line-height:1.6;resize:vertical;padding:0;">${esc(s[key])}</textarea>`
-        :`<div class="pb-text" style="white-space:pre-line;">${esc(autoVal||'(אין נתונים)')}</div>`
+      ${isOverride
+        ?`<textarea class="c8-textarea" rows="${rows}"
+            oninput="${stateObj?`STATE.findings`:`STATE.summary`}['${stateKey}']=this.value;document.getElementById('preview_${stateKey}').textContent=this.value"
+          >${esc(val)}</textarea>`
+        :`<div class="c8-auto-text">${esc(text)||'<span style="color:var(--subtle);font-style:italic;">(ריק — מלא נתונים בכרטיסיות הקודמות)</span>'}</div>`
       }
     </div>`;
   }
 
-  let html = `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">📝 פסקת פתיחה</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">${editBlock('openingOverride', genOpeningText())}</div></div>`;
+  // ── Build preview HTML ──
+  const opening = s.openingOverride || genOpeningText();
+  const circ    = STATE.circ.circumOverride || genCircumText();
+  const finds   = f.findingsOverride || genFindingsText();
+  const expl    = s.appraisalNotes || genExplanationsText();
 
-  html += `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">💬 נסיבות המקרה</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">
-      <div class="preview-box mb8">
-        <div class="pb-label" style="display:flex;justify-content:space-between;align-items:center;">
-          <span>${STATE.circ.circumOverride?'✏️ עריכה ידנית':'טקסט אוטומטי'}</span>
-          <div style="display:flex;gap:6px;">
-            ${!STATE.circ.circumOverride?`<button class="btn btn-ghost btn-xs" onclick="STATE.circ.circumOverride=genCircumText();renderCard(8)">✏️ ערוך</button>`:''}
-            ${STATE.circ.circumOverride?`<button class="btn btn-ghost btn-xs" onclick="STATE.circ.circumOverride='';renderCard(8)">↩ אוטומטי</button>`:''}
-          </div>
-        </div>
-        ${STATE.circ.circumOverride
-          ?`<textarea oninput="STATE.circ.circumOverride=this.value" rows="5" style="width:100%;background:transparent;border:none;color:var(--text);font-size:13px;line-height:1.6;resize:vertical;padding:0;">${esc(STATE.circ.circumOverride)}</textarea>`
-          :`<div class="pb-text" style="white-space:pre-line;">${esc(genCircumText()||'(מלא נסיבות בכרטיס 5)')}</div>`
-        }
-      </div>
-    </div></div>`;
+  const prevStyle = `background:#F9FAFB;border-radius:12px;padding:28px 32px;font-family:'Heebo',sans-serif;color:#111;font-size:13px;line-height:1.9;direction:rtl;text-align:right;`;
+  const secTitle  = (t) => `<div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#374151;border-bottom:2px solid #E5E7EB;padding-bottom:5px;margin:18px 0 10px;">${t}</div>`;
+  const preText   = (t, id='') => `<div style="white-space:pre-line;color:#374151;${id?`" id="preview_${id}`:''}">${esc(t)}</div>`;
 
-  html += `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">🔍 ממצאי הביקור</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">
-      <div class="preview-box mb8">
-        <div class="pb-label" style="display:flex;justify-content:space-between;align-items:center;">
-          <span>${STATE.findings.findingsOverride?'✏️ עריכה ידנית':'טקסט אוטומטי'}</span>
-          <div style="display:flex;gap:6px;">
-            ${!STATE.findings.findingsOverride?`<button class="btn btn-ghost btn-xs" onclick="STATE.findings.findingsOverride=genFindingsText();renderCard(8)">✏️ ערוך</button>`:''}
-            ${STATE.findings.findingsOverride?`<button class="btn btn-ghost btn-xs" onclick="STATE.findings.findingsOverride='';renderCard(8)">↩ אוטומטי</button>`:''}
-          </div>
-        </div>
-        ${STATE.findings.findingsOverride
-          ?`<textarea oninput="STATE.findings.findingsOverride=this.value" rows="8" style="width:100%;background:transparent;border:none;color:var(--text);font-size:13px;line-height:1.6;resize:vertical;padding:0;">${esc(STATE.findings.findingsOverride)}</textarea>`
-          :`<div class="pb-text" style="white-space:pre-line;">${esc(genFindingsText()||'(מלא ממצאים בכרטיס 6)')}</div>`
-        }
-      </div>
-    </div></div>`;
+  let previewHtml = `<div style="${prevStyle}">`;
 
-  html += `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">📋 ביאורים והסברים</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">${editBlock('appraisalNotes', genExplanationsText(), 7)}</div></div>`;
+  // כותרת שמאי
+  previewHtml += `<div style="text-align:center;border-bottom:3px solid #1F2937;padding-bottom:20px;margin-bottom:24px;">
+    <div style="font-size:20px;font-weight:900;">${esc(APPRAISER.nameHe||'שם השמאי')}</div>
+    <div style="font-size:12px;color:#6B7280;">${esc(APPRAISER.title||'שמאי רכוש')} · ${esc(APPRAISER.phone||'')} · ${esc(APPRAISER.email||'')}</div>
+  </div>`;
 
-  // המלצות לשיקום — הוסרו
+  if(opening){ previewHtml += secTitle('מהות הבקשה') + preText(opening, 'openingOverride'); }
+  if(circ)   { previewHtml += secTitle('נסיבות המקרה') + preText(circ); }
+  if(finds)  { previewHtml += secTitle('ממצאי הביקור') + preText(finds, 'findingsOverride'); }
+  if(expl)   { previewHtml += secTitle('ביאורים והסברים') + preText(expl, 'appraisalNotes'); }
 
-  html += `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">⏱️ זמן שיקום משוער</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">
-      <div class="grid2">
-        <div class="field"><label class="label">משך שיקום צפוי</label>
-          <select onchange="STATE.summary.rehabTime=this.value">
-            <option value="">-- בחר --</option>
-            ${['שבוע אחד','שבועיים','3 שבועות','חודש','חודש וחצי','חודשיים','3 חודשים','4–6 חודשים','מעל 6 חודשים'].map(t=>`<option value="${t}" ${s.rehabTime===t?'selected':''}>${t}</option>`).join('')}
-          </select>
-        </div>
-        <div class="field"><label class="label">הערת זמן שיקום</label>
-          <input type="text" value="${esc(s.rehabNotes||'')}" oninput="STATE.summary.rehabNotes=this.value" placeholder="לאחר קבלת אישור, בכפוף לספקים...">
-        </div>
-      </div>
-    </div></div>`;
-
-  // ── Summary Table ──
-  html += `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">📊 טבלת סיכום הערכה</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">`;
-
-  if(mode==='insurance'){
-    html += `<div class="field mb12"><label class="label">התביעה (₪) – סכום שהלקוח תובע</label>
-      <input type="text" value="${fmtCurrency(boq.claimAmount)}" oninput="STATE.boq.claimAmount=parseCurrency(this.value);this.value=fmtCurrency(this.value);renderCard(8)" placeholder="למלא ידנית">
-    </div>`;
-    html += `<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;direction:rtl;">
-      <thead><tr style="background:rgba(245,158,11,.1);">
-        <th style="padding:10px;border:1px solid var(--border);text-align:right;font-weight:700;">התביעה</th>
-        <th style="padding:10px;border:1px solid var(--border);text-align:right;font-weight:700;">הערכה בקינון</th>
-        <th style="padding:10px;border:1px solid var(--border);text-align:right;font-weight:700;">הערכה בשיפוי</th>
-      </tr></thead>
-      <tbody><tr>
-        <td style="padding:10px;border:1px solid var(--border);font-weight:700;font-size:15px;">₪${fmtNum(parseCurrency(boq.claimAmount))}</td>
-        <td style="padding:10px;border:1px solid var(--border);font-weight:700;font-size:15px;color:var(--blue);">₪${fmtNum(grand)}</td>
-        <td style="padding:10px;border:1px solid var(--border);font-weight:700;font-size:15px;color:var(--green);">₪${fmtNum(shiput)}</td>
-      </tr></tbody>
-    </table>
-    <table style="width:100%;border-collapse:collapse;font-size:13px;direction:rtl;">
-      <tbody>
-        <tr><td style="padding:10px;border:1px solid var(--border);font-weight:700;">סך כל הנזקים המוערכים (כינון):</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:700;">₪${fmtNum(grand)}</td></tr>
-        <tr><td style="padding:10px;border:1px solid var(--border);">ערך שיפוי (×0.67):</td><td style="padding:10px;border:1px solid var(--border);text-align:left;color:var(--green);font-weight:700;">₪${fmtNum(shiput)}</td></tr>
-        <tr><td style="padding:10px;border:1px solid var(--border);">פחות השתתפות עצמית:</td><td style="padding:10px;border:1px solid var(--border);text-align:left;">${deduct>0?`₪${fmtNum(deduct)} לפי פוליסה`:'—'}</td></tr>
-        ${rentalTotal>0?`<tr style="background:rgba(59,130,246,.06);"><td style="padding:10px;border:1px solid var(--border);">🏠 שכירות חלופית (${f.rentalMonths} חודשים × ₪${fmtNum(parseCurrency(f.rentalMonthly))}):</td><td style="padding:10px;border:1px solid var(--border);text-align:left;color:var(--blue);">₪${fmtNum(rentalTotal)}<br><span style="font-size:10px;color:var(--muted);">כפוף להסכם שכירות חתום</span></td></tr>`:''}
-        <tr style="background:rgba(252,211,77,.1);"><td style="padding:10px;border:1px solid var(--border);font-weight:900;font-size:14px;color:#92400E;">סה"כ תביעה (שמאי פרטי):</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:900;font-size:16px;color:#92400E;">${boq.claimAmount&&parseFloat(boq.claimAmount)>0?'₪'+fmtNum(parseFloat(boq.claimAmount)):'לא צוין'}</td></tr>
-      </tbody>
-    </table>`;
-  } else if(mode==='private'){
-    html += `<table style="width:100%;border-collapse:collapse;font-size:13px;direction:rtl;">
-      <tbody>
-        <tr><td style="padding:10px;border:1px solid var(--border);">מבנה</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:700;">₪${fmtNum(struct)}</td></tr>
-        <tr><td style="padding:10px;border:1px solid var(--border);">תכולה</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:700;">₪${fmtNum(cont)}</td></tr>
-        <tr><td style="padding:10px;border:1px solid var(--border);">שירותים</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:700;">₪${fmtNum(serv)}</td></tr>
-        ${boq.vat?`<tr><td style="padding:10px;border:1px solid var(--border);">מע"מ 18%</td><td style="padding:10px;border:1px solid var(--border);text-align:left;">₪${fmtNum(Math.round(vat))}</td></tr>`:''}
-        ${rentalTotal>0?`<tr style="background:rgba(59,130,246,.06);"><td style="padding:10px;border:1px solid var(--border);">🏠 שכירות חלופית:</td><td style="padding:10px;border:1px solid var(--border);text-align:left;color:var(--blue);">₪${fmtNum(rentalTotal)}<br><span style="font-size:10px;color:var(--muted);">כפוף להסכם חתום</span></td></tr>`:''}
-        <tr style="background:rgba(59,130,246,.1);"><td style="padding:10px;border:1px solid var(--border);font-weight:900;font-size:14px;">סכום תביעה כולל:</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:900;font-size:16px;color:var(--blue);">₪${fmtNum(Math.round(totalWithVat))}</td></tr>
-      </tbody>
-    </table>`;
-  } else {
-    html += `<table style="width:100%;border-collapse:collapse;font-size:13px;direction:rtl;">
-      <tbody>
-        <tr><td style="padding:10px;border:1px solid var(--border);">נזק מבנה</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:700;">₪${fmtNum(struct)}</td></tr>
-        <tr><td style="padding:10px;border:1px solid var(--border);">נזק תכולה</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:700;">₪${fmtNum(cont)}</td></tr>
-        <tr style="background:rgba(16,185,129,.1);"><td style="padding:10px;border:1px solid var(--border);font-weight:900;font-size:14px;">סה"כ פיצוי:</td><td style="padding:10px;border:1px solid var(--border);text-align:left;font-weight:900;font-size:16px;color:var(--green);">₪${fmtNum(grand)}</td></tr>
-      </tbody>
-    </table>`;
+  // summary table in preview
+  if(grand>0){
+    previewHtml += secTitle('סיכום הערכה');
+    if(mode==='insurance'){
+      previewHtml += `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <tr style="background:#F3F4F6;"><th style="padding:7px 10px;text-align:right;border:1px solid #E5E7EB;">פרק</th><th style="padding:7px 10px;text-align:right;border:1px solid #E5E7EB;">כינון</th><th style="padding:7px 10px;text-align:right;border:1px solid #E5E7EB;">שיפוי</th></tr>
+        ${struct>0?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">א. מבנה</td><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#1D4ED8;font-weight:700;">₪${fmtNum(struct)}</td><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#065F46;font-weight:700;">₪${fmtNum(Math.round(struct*0.67))}</td></tr>`:''}
+        ${cont>0?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">ב. תכולה</td><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#1D4ED8;font-weight:700;">₪${fmtNum(cont)}</td><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#065F46;font-weight:700;">₪${fmtNum(Math.round(cont*0.67))}</td></tr>`:''}
+        ${serv>0?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">ג. שירותים</td><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#1D4ED8;font-weight:700;">₪${fmtNum(serv)}</td><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#065F46;font-weight:700;">₪${fmtNum(Math.round(serv*0.67))}</td></tr>`:''}
+        ${boq.vat?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">מע"מ 18%</td><td style="padding:7px 10px;border:1px solid #E5E7EB;">₪${fmtNum(Math.round(vat))}</td><td style="padding:7px 10px;border:1px solid #E5E7EB;">—</td></tr>`:''}
+        <tr style="background:#F9FAFB;font-weight:900;"><td style="padding:8px 10px;border:2px solid #D1D5DB;">סה"כ</td><td style="padding:8px 10px;border:2px solid #D1D5DB;color:#1D4ED8;font-size:14px;">₪${fmtNum(boq.vat?Math.round(totalWithVat):grand)}</td><td style="padding:8px 10px;border:2px solid #D1D5DB;color:#065F46;font-size:14px;">₪${fmtNum(shiput)}</td></tr>
+        ${deduct>0?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#6B7280;">פחות השתתפות עצמית</td><td style="padding:7px 10px;border:1px solid #E5E7EB;color:#DC2626;">—₪${fmtNum(deduct)}</td><td></td></tr>`:''}
+        <tr style="background:#D1FAE5;"><td style="padding:10px;border:1px solid #A7F3D0;font-weight:900;font-size:14px;color:#065F46;">סכום נטו להערכה</td><td colspan="2" style="padding:10px;border:1px solid #A7F3D0;font-weight:900;font-size:16px;color:#15803D;">₪${fmtNum(Math.max(0,shiput-deduct+rentalTotal))}</td></tr>
+      </table>`;
+    } else {
+      previewHtml += `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+        ${struct>0?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">מבנה</td><td style="padding:7px 10px;border:1px solid #E5E7EB;font-weight:700;">₪${fmtNum(struct)}</td></tr>`:''}
+        ${cont>0?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">תכולה</td><td style="padding:7px 10px;border:1px solid #E5E7EB;font-weight:700;">₪${fmtNum(cont)}</td></tr>`:''}
+        ${serv>0?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">שירותים</td><td style="padding:7px 10px;border:1px solid #E5E7EB;font-weight:700;">₪${fmtNum(serv)}</td></tr>`:''}
+        ${boq.vat?`<tr><td style="padding:7px 10px;border:1px solid #E5E7EB;">מע"מ 18%</td><td style="padding:7px 10px;border:1px solid #E5E7EB;">₪${fmtNum(Math.round(vat))}</td></tr>`:''}
+        <tr style="background:#EFF6FF;"><td style="padding:10px;border:2px solid #BFDBFE;font-weight:900;font-size:14px;">סה"כ</td><td style="padding:10px;border:2px solid #BFDBFE;font-weight:900;font-size:16px;color:#1D4ED8;">₪${fmtNum(Math.round(totalWithVat))}</td></tr>
+      </table>`;
+    }
   }
-  html += `<div class="field mt12"><label class="label">הערת סיכום (חופשי)</label>
-    <input type="text" value="${esc(s.claimTotal||'')}" oninput="STATE.summary.claimTotal=this.value" placeholder="הערה לסכום / תיאור...">
-  </div>
-  </div></div>`;
 
-  html += `<div class="sc">
-    <div class="sc-head" onclick="toggleSection(this)"><div class="sc-title">✍️ חתימה ושם השמאי</div><span class="sc-toggle">▼</span></div>
-    <div class="sc-body">
-      <div class="field"><label class="label">טקסט חתימה / סיום (יופיע בדוח)</label>
-        <textarea oninput="STATE.summary.signature=this.value" rows="2" placeholder="${APPRAISER.nameHe||'שמאי רכוש'}">${esc(s.signature||APPRAISER.nameHe)}</textarea>
+  if(s.rehabTime){
+    previewHtml += secTitle('זמן שיקום משוער') + `<div style="color:#374151;">משך שיקום צפוי: <strong>${esc(s.rehabTime)}</strong>${s.rehabNotes?` — ${esc(s.rehabNotes)}`:''}</div>`;
+  }
+
+  previewHtml += `<div style="border-top:2px solid #E5E7EB;margin-top:24px;padding-top:16px;text-align:left;">
+    <div style="font-size:12px;color:#6B7280;">____________________</div>
+    <div style="font-size:13px;font-weight:700;">${esc(s.signature||APPRAISER.nameHe||'')}</div>
+    <div style="font-size:11px;color:#6B7280;">${esc(APPRAISER.title||'שמאי רכוש')}</div>
+  </div>`;
+
+  previewHtml += `</div>`;
+
+  // ── Left editing panel ──
+  let editHtml = `<style>
+    .c8-sec{background:var(--primary2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+    .c8-sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .c8-sec-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+    .c8-textarea{width:100%;background:transparent;border:none;border-top:1px solid var(--border);color:var(--text);font-size:13px;line-height:1.7;resize:vertical;padding:8px 0 0;font-family:'Heebo',sans-serif;outline:none;}
+    .c8-auto-text{font-size:12px;color:var(--muted);line-height:1.7;white-space:pre-line;max-height:80px;overflow:hidden;mask-image:linear-gradient(to bottom,black 60%,transparent);}
+    @media(min-width:769px){.c8-grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;}}
+    @media(max-width:768px){.c8-grid{display:flex;flex-direction:column;gap:14px;}}
+  </style>
+  <div class="c8-grid">
+    <div style="position:sticky;top:20px;">`;
+
+  // Opening
+  editHtml += `<div class="c8-sec">
+    <div class="c8-sec-head">
+      <span class="c8-sec-label">📝 פסקת פתיחה</span>
+      ${s.openingOverride
+        ?`<button class="btn btn-ghost btn-xs" onclick="STATE.summary.openingOverride='';renderCard(8)">↩ אוטומטי</button>`
+        :`<button class="btn btn-ghost btn-xs" onclick="STATE.summary.openingOverride=genOpeningText()||'';renderCard(8)">✏️ ערוך</button>`
+      }
+    </div>
+    ${s.openingOverride
+      ?`<textarea class="c8-textarea" rows="4" oninput="STATE.summary.openingOverride=this.value;const el=document.getElementById('preview_openingOverride');if(el)el.textContent=this.value;">${esc(s.openingOverride)}</textarea>`
+      :`<div class="c8-auto-text">${esc(genOpeningText()||'(ריק)')}</div>`
+    }
+  </div>`;
+
+  // Circumstances
+  editHtml += `<div class="c8-sec">
+    <div class="c8-sec-head">
+      <span class="c8-sec-label">💬 נסיבות המקרה</span>
+      ${STATE.circ.circumOverride
+        ?`<button class="btn btn-ghost btn-xs" onclick="STATE.circ.circumOverride='';renderCard(8)">↩ אוטומטי</button>`
+        :`<button class="btn btn-ghost btn-xs" onclick="STATE.circ.circumOverride=genCircumText()||'';renderCard(8)">✏️ ערוך</button>`
+      }
+    </div>
+    ${STATE.circ.circumOverride
+      ?`<textarea class="c8-textarea" rows="4" oninput="STATE.circ.circumOverride=this.value;">${esc(STATE.circ.circumOverride)}</textarea>`
+      :`<div class="c8-auto-text">${esc(genCircumText()||'(מלא נסיבות בכרטיס 5)')}</div>`
+    }
+  </div>`;
+
+  // Findings
+  editHtml += `<div class="c8-sec">
+    <div class="c8-sec-head">
+      <span class="c8-sec-label">🔍 ממצאי הביקור</span>
+      ${f.findingsOverride
+        ?`<button class="btn btn-ghost btn-xs" onclick="STATE.findings.findingsOverride='';renderCard(8)">↩ אוטומטי</button>`
+        :`<button class="btn btn-ghost btn-xs" onclick="STATE.findings.findingsOverride=genFindingsText()||'';renderCard(8)">✏️ ערוך</button>`
+      }
+    </div>
+    ${f.findingsOverride
+      ?`<textarea class="c8-textarea" rows="5" oninput="STATE.findings.findingsOverride=this.value;const el=document.getElementById('preview_findingsOverride');if(el)el.textContent=this.value;">${esc(f.findingsOverride)}</textarea>`
+      :`<div class="c8-auto-text">${esc(genFindingsText()||'(הוסף אזורים בכרטיס 6)')}</div>`
+    }
+  </div>`;
+
+  // Explanations
+  editHtml += `<div class="c8-sec">
+    <div class="c8-sec-head">
+      <span class="c8-sec-label">📋 ביאורים והסברים</span>
+      ${s.appraisalNotes
+        ?`<button class="btn btn-ghost btn-xs" onclick="STATE.summary.appraisalNotes='';renderCard(8)">↩ אוטומטי</button>`
+        :`<button class="btn btn-ghost btn-xs" onclick="STATE.summary.appraisalNotes=genExplanationsText()||'';renderCard(8)">✏️ ערוך</button>`
+      }
+    </div>
+    ${s.appraisalNotes
+      ?`<textarea class="c8-textarea" rows="5" oninput="STATE.summary.appraisalNotes=this.value;const el=document.getElementById('preview_appraisalNotes');if(el)el.textContent=this.value;">${esc(s.appraisalNotes)}</textarea>`
+      :`<div class="c8-auto-text">${esc(genExplanationsText()||'(אוטומטי לפי נתונים)')}</div>`
+    }
+  </div>`;
+
+  // Rehab time
+  editHtml += `<div class="c8-sec">
+    <div class="c8-sec-head"><span class="c8-sec-label">⏱️ זמן שיקום</span></div>
+    <div class="grid2" style="gap:8px;margin-top:8px;">
+      <div class="field"><label class="label" style="font-size:11px;">משך צפוי</label>
+        <select onchange="STATE.summary.rehabTime=this.value;renderCard(8)" style="font-size:12px;">
+          <option value="">-- בחר --</option>
+          ${['שבוע','שבועיים','3 שבועות','חודש','חודש וחצי','חודשיים','3 חודשים','4–6 חודשים','מעל 6 חודשים'].map(t=>`<option value="${t}" ${s.rehabTime===t?'selected':''}>${t}</option>`).join('')}
+        </select>
       </div>
-    </div></div>`;
+      <div class="field"><label class="label" style="font-size:11px;">הערה</label>
+        <input type="text" value="${esc(s.rehabNotes||'')}" oninput="STATE.summary.rehabNotes=this.value" placeholder="בכפוף לספקים..." style="font-size:12px;">
+      </div>
+    </div>
+  </div>`;
 
-  return html;
+  // Signature
+  editHtml += `<div class="c8-sec">
+    <div class="c8-sec-head"><span class="c8-sec-label">✍️ חתימה</span></div>
+    <input type="text" value="${esc(s.signature||APPRAISER.nameHe||'')}" oninput="STATE.summary.signature=this.value" placeholder="${esc(APPRAISER.nameHe||'שם השמאי')}" style="margin-top:8px;background:transparent;border:none;border-top:1px solid var(--border);color:var(--text);font-size:13px;width:100%;padding:8px 0 0;font-family:'Heebo',sans-serif;outline:none;">
+  </div>`;
+
+  editHtml += `</div>`; // end sticky
+
+  // Right: live preview
+  editHtml += `<div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">👁️ תצוגה מקדימה — דוח סופי</div>
+      <button class="btn btn-primary btn-sm" onclick="generateReport()" style="font-size:12px;">📄 הפק דוח מלא</button>
+    </div>
+    ${previewHtml}
+  </div>`;
+
+  editHtml += `</div>`; // end grid
+
+  return editHtml;
 }
 
 
@@ -3840,6 +3925,18 @@ function updateTaxContentsItem(key,field,val){
 // ══════════════════════════════════════════════════
 // BOQ ENGINE
 // ══════════════════════════════════════════════════
+function toggleVAT(){
+  if(STATE.boq.vat){
+    // מכבה — מציג אזהרה
+    if(!confirm('כתב הכמויות יחושב ללא תוספת מע"מ.\nהאם להמשיך?')) return;
+    STATE.boq.vat = false;
+    STATE.boq._vatManuallySet = true;
+  } else {
+    STATE.boq.vat = true;
+    STATE.boq._vatManuallySet = false;
+  }
+  renderCard(7);
+}
 function runBOQEngine(){
   const et = STATE.event.eventType;
   const areas = STATE.findings.areas||[];
@@ -4731,7 +4828,7 @@ function _doGenerateReport(){
           ${showClaimCol?TH('תביעה (שמאי פרטי)','text-align:right;background:#FFFBEB;color:#92400E;'):''}
         </tr></thead><tbody>
         ${structKinun>0?mkRow('א. מבנה', structKinun, structShiput, structClaim):''}
-        ${supervisionKinun>0?mkRow('פיקוח 5%', supervisionKinun, Math.round(supervisionKinun*0.67), 0):''}
+        
         ${contKinun>0?mkRow('ב. תכולה', contKinun, contShiput, contClaim):''}
         ${servKinun>0?mkRow('ג. שירותים', servKinun, servShiput, servClaim):''}
         ${boq.vat?mkRow(`מע"מ 18%`, Math.round(totalKinun*0.18), 0, 0):''}
