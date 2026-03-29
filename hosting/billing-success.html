@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>OMDAN | תשלום התקבל</title>
+<title>OMDA | תשלום התקבל</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Heebo',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+body{font-family:'Heebo',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:20px;}
 .card{background:#111827;border-radius:24px;padding:52px 40px;max-width:480px;width:100%;text-align:center;}
 .card.success{border:1px solid rgba(16,185,129,.3);}
 .card.pending{border:1px solid rgba(245,158,11,.3);}
@@ -43,15 +43,13 @@ h1{font-size:28px;font-weight:900;margin-bottom:10px;}
   .btn{font-size:13px !important;}
 }
 </style>
+<link rel="icon" type="image/png" href="/assets/omda-icon.png">
 </head>
 <body>
+
 <div style="text-align:center;margin-bottom:24px;">
       <a href="/" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
-        <img src="/assets/omdan-logo.png" style="height:36px;object-fit:contain;">
-        <div style="line-height:1.15;text-align:right;">
-          <div style="font-size:13px;font-weight:900;color:#F9FAFB;">OMDAN</div>
-          <div style="font-size:12px;font-weight:700;color:#F59E0B;">רכוש</div>
-        </div>
+        <img src="/assets/omda-icon.png" alt="" style="height:34px;width:34px;object-fit:contain;"> </div>
       </a>
     </div>
     <div class="card pending" id="card">
@@ -104,7 +102,7 @@ function showSuccess(planId, billingMode) {
   card.className = 'card success';
   card.innerHTML = `
     <div class="icon pop">🎉</div>
-    <h1>ברוך הבא ל-OMDAN!</h1>
+    <h1>ברוך הבא ל-OMDA!</h1>
     <p class="sub">התשלום התקבל בהצלחה.<br>החשבון שלך מוכן לשימוש מלא.</p>
     <div class="plan-badge">✓ מסלול ${planNames[planId] || planId || 'פעיל'} — ${billingLabels[billingMode] || billingMode || 'פעיל'}</div><br>
     <a href="/app/dashboard.html" class="btn">🚀 כניסה למערכת</a>
@@ -221,7 +219,7 @@ verifySession();
   <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
   <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
   <a href="/legal/index.html">מסמכים משפטיים</a>
-  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
+  <br><span style="margin-top:6px;display:block;">© 2026 OMDA. כל הזכויות שמורות.</span>
 </footer>
 </body>
 </html>

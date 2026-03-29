@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OMDAN | הרשמה</title>
+<title>OMDA | הרשמה</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Heebo',sans-serif;background:#030712;color:#f9fafb;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 .card{background:#0d1117;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:48px 40px;width:440px;max-width:100%;box-shadow:0 32px 80px rgba(0,0,0,.6);}
-.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;}
+.logo-row{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:8px;}
 .subtitle{text-align:center;font-size:12px;color:#6b7280;margin-bottom:28px;}
 .trial-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;margin-bottom:28px;}
 .section-title{font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06);}
@@ -42,18 +42,15 @@ body{font-family:'Heebo',sans-serif;background:#030712;color:#f9fafb;min-height:
 .or-divider span{font-size:11px;color:#4b5563;white-space:nowrap;}
 .or-divider::before,.or-divider::after{content:'';flex:1;border-top:1px solid rgba(255,255,255,.08);}
 </style>
+<link rel="icon" type="image/png" href="/assets/omda-icon.png">
 </head>
 <body>
-<div class="card">
-
-  <div class="logo-row">
-    <img src="/assets/omdan-logo.png" alt="OMDAN" style="height:44px;object-fit:contain;" onerror="this.style.display='none'">
-    <div style="text-align:right;">
-      <div style="font-size:15px;font-weight:900;color:#F9FAFB;">OMDAN</div>
-      <div style="font-size:13px;font-weight:700;color:#F59E0B;">רכוש</div>
-    </div>
+<div class="logo-row" style="margin-bottom:20px;">
+    <img src="/assets/omda-icon.png" alt="" style="height:56px;width:56px;object-fit:contain;">
+    <img src="/assets/omda-logo.png" alt="OMDA רכוש" style="height:42px;object-fit:contain;filter:brightness(0) invert(1);">
   </div>
-  <div class="subtitle">מערכת ניהול תיקי שמאות לשמאי רכוש</div>
+  <div class="subtitle" style="margin-bottom:24px;">מערכת ניהול תיקי שמאות לשמאי רכוש</div>
+  <div class="card">
 
   <div style="text-align:center;margin-bottom:28px;" id="badgeArea">
     <span class="trial-badge" id="trialBadge">✅ ניסיון חינמי 14 יום — ללא כרטיס אשראי</span>
@@ -322,7 +319,7 @@ window.doRegister = async function(){
     btn.textContent = pendingPlan ? 'הירשם ועבור לתשלום ←' : 'התחל ניסיון חינמי ←';
     btn.disabled = false;
     const msgs = {
-      'auth/email-already-in-use': 'אימייל זה כבר רשום. <a href='/index.html' + (pendingPlan ? `?plan=${pendingPlan}&billing=${pendingBilling}` : '') + '" style="color:#f59e0b">כניסה</a>',
+      'auth/email-already-in-use': `אימייל זה כבר רשום. <a href="/index.html${pendingPlan ? '?plan='+pendingPlan+'&billing='+pendingBilling : ''}" style="color:#f59e0b">כניסה</a>`,
       'auth/invalid-email':        'כתובת האימייל אינה תקינה',
       'auth/weak-password':        'הסיסמה חלשה — השתמש ב-8 תווים עם מספרים'
     };
@@ -475,16 +472,7 @@ function checkPW(v){
   <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
   <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
   <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a>
-  <br><br>© 2025 OMDAN. כל הזכויות שמורות.
-</footer>
-
-<style>.omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;}.omdan-footer a:hover{color:#f59e0b;}</style>
-<footer class="omdan-footer">
-  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
-  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
-  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
-  <a href="/legal/index.html">מסמכים משפטיים</a>
-  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
+  <br><br>© 2026 OMDA. כל הזכויות שמורות.
 </footer>
 </body>
 </html>

@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>OMDAN | מערכת שמאות מקצועית</title>
+<title>OMDA | רכוש</title>
 <link rel="manifest" href="../manifest.json">
-<link rel="icon" type="image/png" href="../assets/omdan-favicon.png">
-<link rel="apple-touch-icon" href="../assets/omdan-app-icon.png">
+<link rel="icon" type="image/png" href="../assets/omda-icon.png">
+<link rel="apple-touch-icon" href="../assets/omda-icon.png">
 <meta name="theme-color" content="#1f2a44">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -419,7 +419,7 @@ tr.boq-drag-over{border-top:2px solid #f59e0b!important;}
   #sidebar{display:none;}
 
   /* Layout */
-  #main{padding:14px 12px 100px;}
+  #main{padding:14px 12px 140px;}
   #layout{flex-direction:column;}
 
   /* Topbar — slim on mobile: just logo + mode + save + report */
@@ -451,6 +451,8 @@ tr.boq-drag-over{border-top:2px solid #f59e0b!important;}
     border-top:1px solid var(--border);
   }
   .card-nav .btn{flex:1;justify-content:center;min-width:0;}
+  /* תוספת מרווח תחתון לכרטיסיה — למניעת דריסה ע"י כפתורי ניווט */
+  .card-container{padding-bottom:100px !important;}
   .grid2,.grid3{grid-template-columns:1fr;}
   .event-grid{grid-template-columns:repeat(2,1fr);}
 
@@ -833,7 +835,7 @@ window.doForgotPassword = async () => {
 <body>
 <!-- Loading overlay — shown during Firebase init -->
 <div id="formLoader">
-  <img src="../assets/omdan-logo.png" alt="" style="height:44px;object-fit:contain;margin-bottom:4px;" onerror="this.style.display='none'">
+  <img src="../assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;"> <img src="../assets/omda-logo.png" alt="OMDA רכוש" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
   <div class="loader-spinner"></div>
   <div class="loader-text">טוען מערכת...</div>
 </div>
@@ -842,9 +844,9 @@ window.doForgotPassword = async () => {
 <div id="loginScreen" style="position:fixed;inset:0;background:#0f1117;z-index:99999;display:none;align-items:center;justify-content:center;font-family:'Heebo',sans-serif;direction:rtl;">
   <div style="background:#1a1d2e;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:48px 40px;width:360px;max-width:90vw;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.5);">
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:20px;">
-      <img src="../assets/omdan-logo.png" alt="OMDAN" style="height:56px;object-fit:contain;margin-bottom:8px;" onerror="this.style.display='none';document.getElementById('omdan-fallback').style.display='block'">
-      <div id="omdan-fallback" style="display:none;font-size:28px;font-weight:900;color:#f59e0b;letter-spacing:2px;">OMDAN</div>
-      <div style="font-size:12px;color:#6b7280;margin-top:4px;">מערכת שמאות מקצועית</div>
+      <img src="../assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;"> <img src="../assets/omda-logo.png" alt="OMDA רכוש" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
+      
+      
     </div>
     <div style="margin-bottom:14px;text-align:right;">
       <label style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px;">שם משתמש</label>
@@ -873,10 +875,10 @@ window.doForgotPassword = async () => {
 <div id="landing" class="hidden">
   <a href="dashboard.html" style="position:absolute;top:20px;right:20px;color:var(--muted);font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.04);transition:all .2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">← דשבורד</a>
   <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:center;">
-    <img src="../assets/omdan-logo.png" alt="" style="height:52px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-    <span style="display:none;font-size:28px;font-weight:900;color:#f59e0b;letter-spacing:2px;">OMDAN</span>
+    <img src="../assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;"> <img src="../assets/omda-logo.png" alt="OMDA רכוש" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
+    
   </div>
-  <h1 class="land-title">מערכת שמאות מקצועית</h1>
+  <h1 class="land-title">OMDA רכוש</h1>
   <p class="land-sub">בחר את סוג השומה להתחיל</p>
   <div class="mode-grid">
     <div class="mode-card pm" onclick="selectMode('private')">
@@ -923,8 +925,8 @@ window.doForgotPassword = async () => {
     <div class="tb-left">
       <a href="dashboard.html" class="tb-icon-btn" title="חזרה לדשבורד" style="font-size:13px;font-weight:800;width:auto;padding:0 10px;gap:4px;color:var(--muted);">← דשבורד</a>
       <div class="tb-divider"></div>
-      <img src="../assets/omdan-logo.png" alt="" class="tb-logo-img" onerror="this.style.display='none'">
-      <span class="tb-name">OMDAN</span>
+      <img src="../assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;"> <img src="../assets/omda-logo.png" alt="OMDA רכוש" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
+      
       <span class="tb-mode" id="tbModeLabel"></span>
     </div>
     <!-- Actions -->
@@ -3286,7 +3288,29 @@ function renderCard8(){
 
   if(opening){ previewHtml += secTitle('מהות הבקשה') + preText(opening, 'openingOverride'); }
   if(circ)   { previewHtml += secTitle('נסיבות המקרה') + preText(circ); }
-  if(finds)  { previewHtml += secTitle('ממצאי הביקור') + preText(finds, 'findingsOverride'); }
+  if(finds)  { previewHtml += secTitle('ממצאי הביקור ותיאור הנזק') + preText(finds, 'findingsOverride'); }
+
+  // כתב כמויות — תצוגה מקדימה
+  if(grand>0){
+    previewHtml += secTitle('כתב כמויות');
+    const previewBOQSection = (items, title, color) => {
+      if(!items||!items.length) return '';
+      let s2 = `<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:${color};margin-bottom:6px;">${title}</div>`;
+      s2 += '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+      s2 += '<tr style="background:#F3F4F6;"><th style="padding:5px 8px;text-align:right;border:1px solid #E5E7EB;">תיאור</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:50px;">כמות</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:70px;">מחיר</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:80px;">סה"כ</th></tr>';
+      items.forEach(item=>{
+        if(item.roomHeader){ s2+=`<tr><td colspan="4" style="padding:4px 8px;font-weight:700;font-size:10px;background:#F9FAFB;color:#6B7280;border:1px solid #E5E7EB;">${esc(item.roomHeader)}</td></tr>`; return; }
+        const kinun = Math.round((parseFloat(item.qty)||1)*(parseFloat(item.price)||0));
+        s2+=`<tr><td style="padding:5px 8px;border:1px solid #E5E7EB;">${esc(item.desc)}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;text-align:center;">${esc(item.qty)}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;text-align:left;">${item.price?'₪'+fmtNum(parseFloat(item.price)):''}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;text-align:left;font-weight:700;">${kinun>0?'₪'+fmtNum(kinun):'—'}</td></tr>`;
+      });
+      s2 += '</table></div>';
+      return s2;
+    };
+    previewHtml += previewBOQSection(boq.structItems,'פרק א׳ – עבודות מבנה','#1D4ED8');
+    previewHtml += previewBOQSection(boq.contentsItems,'פרק ב׳ – עבודות תכולה','#15803D');
+    previewHtml += previewBOQSection(boq.serviceItems,'פרק ג׳ – שירותים ותוספות','#7C3AED');
+  }
+
   if(expl)   { previewHtml += secTitle('ביאורים והסברים') + preText(expl, 'appraisalNotes'); }
 
   // summary table in preview
@@ -3315,7 +3339,9 @@ function renderCard8(){
   }
 
   if(s.rehabTime){
-    previewHtml += secTitle('זמן שיקום משוער') + `<div style="color:#374151;">משך שיקום צפוי: <strong>${esc(s.rehabTime)}</strong>${s.rehabNotes?` — ${esc(s.rehabNotes)}`:''}</div>`;
+    const rehabDays = parseInt(s.rehabTime);
+    const rehabDisplay = rehabDays>0 ? `${rehabDays} ימים` : esc(s.rehabTime);
+    previewHtml += secTitle('זמן שיקום משוער') + `<div style="color:#374151;">משך שיקום צפוי: <strong>${rehabDisplay}</strong><br><span style="font-size:11px;color:#9CA3AF;">* הזמן נקבע על פי הספקים בפועל</span></div>`;
   }
 
   previewHtml += `<div style="border-top:2px solid #E5E7EB;margin-top:24px;padding-top:16px;text-align:left;">
@@ -4874,13 +4900,20 @@ function _doGenerateReport(){
   }
 
   if(expl) rpt+=`<div class="rpt-section"><h3>ביאורים והסברים להערכה</h3><p class="rpt-p">${esc(expl).replace(/\n/g,'<br>')}</p></div>`;
+
+  if(s.rehabTime){
+    const rehabDays = parseInt(s.rehabTime);
+    const rehabDisplay = rehabDays>0 ? `${rehabDays} ימים` : esc(s.rehabTime);
+    rpt+=`<div class="rpt-section"><h3>זמן שיקום משוער</h3><p class="rpt-p">משך השיקום המשוער: <strong>${rehabDisplay}</strong>.<br><span style="font-size:12px;color:#6B7280;">* הזמן הסופי ייקבע על פי הספקים בפועל ובכפוף לאישור.</span></p></div>`;
+  }
+
   const rehabRec = s.recommendations || genRehabRecommendations();
   // המלצות לשיקום — הוסרו לחלוטין
   if(s.claimTotal) rpt+=`<div class="rpt-section"><h3>הערת סיכום</h3><p class="rpt-p">${esc(s.claimTotal)}</p></div>`;
 
   // ── נספחים ──
   const appendices = [];
-  const hasPhotos = ph.main || (ph.items||[]).length > 0;
+  const hasPhotos = (ph.items||[]).length > 0;
   if(hasPhotos) appendices.push('תיעוד צילומי מביקור הבדיקה בנכס');
   const _profLabels = {
     leak:'מאתר נזילות', fire_inv:'חוקר שריפות', electrician:'חשמלאי',
@@ -4919,7 +4952,7 @@ function _doGenerateReport(){
   // Append digital signature from profile
   // ── All photos at end of report ──
   const allPhotos = [];
-  if(ph.main) allPhotos.push({src:ph.main, caption:ph.mainCaption||''});
+  // main photo removed
   (ph.items||[]).forEach(img=>allPhotos.push(img));
   if(allPhotos.length>0){
     rpt += `<div class="rpt-section"><h3>תיעוד תמונות</h3>
@@ -4946,7 +4979,7 @@ function _doGenerateReport(){
 
   // ── Legal disclaimer (required) ──
   rpt += `<div style="margin-top:32px;padding:12px 16px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;font-size:10px;color:#6B7280;line-height:1.7;text-align:center;">
-    הדוח הופק באמצעות מערכת OMDAN ככלי טכנולוגי בלבד.
+    הדוח הופק באמצעות מערכת OMDA ככלי טכנולוגי בלבד.
     האחריות המקצועית, העובדתית והמשפטית על תוכן הדוח, הנתונים, ההערכות, התמונות והמסקנות הינה של עורך הדוח בלבד.
   </div>`;
 
@@ -5055,23 +5088,7 @@ function shareReport(){
 function renderCard9(){
   const ph = STATE.photos||{main:null,mainCaption:'',items:[]};
   STATE.photos = ph;
-  let html = `<div class="label" style="font-size:13px;font-weight:700;margin-bottom:16px;color:var(--accent);">📷 תמונה ראשית</div>`;
-  html += `<div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;">`;
-  if(ph.main){
-    html += `<div class="photo-thumb" style="width:200px;flex-shrink:0;"><img src="${ph.main}" alt="ראשית">
-      <button class="photo-del" onclick="STATE.photos.main=null;renderCard(9)">✕</button></div>`;
-  } else {
-    html += `<label class="photo-add-btn" style="width:160px;height:120px;flex-shrink:0;">
-      <span style="font-size:24px;">📷</span><span>תמונה ראשית</span>
-      <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="loadPhoto(this,'main')">
-    </label>`;
-  }
-  html += `<div class="flex-col gap8" style="flex:1;min-width:200px;">
-    <label class="label">כיתוב לתמונה הראשית</label>
-    <input type="text" value="${esc(ph.mainCaption||'')}" oninput="STATE.photos.mainCaption=this.value" placeholder="כיתוב...">
-  </div></div>`;
-
-  html += `<div class="label" style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--accent);">🖼️ תמונות ביקור (עד 8)</div>`;
+  let html = `<div class="label" style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--accent);">🖼️ תמונות ביקור (עד 8)</div>`;
   html += `<div class="photo-grid">`;
   (ph.items||[]).forEach((img,i)=>{
     html += `<div>
@@ -5381,7 +5398,7 @@ function loadPhoto(input, target){
   const reader = new FileReader();
   reader.onload = e => {
     if(!STATE.photos) STATE.photos={main:null,mainCaption:'',items:[]};
-    if(target==='main') STATE.photos.main = e.target.result;
+    // main photo removed
     renderCard(9);
   };
   reader.readAsDataURL(file);

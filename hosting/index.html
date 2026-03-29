@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OMDAN | כניסה</title>
-  <link rel="icon" type="image/png" href="assets/omdan-favicon.png">
+  <title>OMDA | כניסה</title>
+  <link rel="icon" type="image/png" href="/assets/omda-icon.png">
   <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/png" href="/assets/omdan-favicon.png">
-  <link rel="apple-touch-icon" href="/assets/omdan-app-icon.png">
+  
+  <link rel="apple-touch-icon" href="/assets/omda-icon.png">
   <meta name="theme-color" content="#F59E0B">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="OMDAN">
+  <meta name="apple-mobile-web-app-title" content="OMDA">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
   <style>
     :root{
@@ -23,15 +23,15 @@
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
-    body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(245,158,11,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+    /* grid removed */
     body::after{content:"";position:fixed;top:-20%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(245,158,11,.07) 0%,transparent 70%);pointer-events:none;}
-    .wrap{width:100%;max-width:420px;padding:24px;position:relative;z-index:1;animation:fadeUp .45s ease both;}
+    .wrap{width:100%;max-width:520px;padding:24px;position:relative;z-index:1;animation:fadeUp .45s ease both;}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    .logo-row{text-align:center;margin-bottom:36px;}
+    .logo-row{display:flex;flex-direction:column;align-items:center;margin-bottom:36px;gap:8px;}
     .logo-img{height:52px;object-fit:contain;}
     .logo-fallback{font-size:28px;font-weight:900;color:var(--accent);letter-spacing:2px;display:none;}
     .tagline{font-size:13px;color:var(--muted);margin-top:8px;}
-    .card{background:var(--primary);border:1px solid var(--border);border-radius:18px;padding:32px;box-shadow:0 24px 80px rgba(0,0,0,.5);}
+    .card{background:var(--primary);border:1px solid var(--border);border-radius:18px;padding:36px 40px;box-shadow:0 24px 80px rgba(0,0,0,.5);}
     .card h2{font-size:20px;font-weight:800;margin-bottom:4px;}
     .card>p{font-size:13px;color:var(--muted);margin-bottom:24px;}
     .field{margin-bottom:14px;}
@@ -83,14 +83,9 @@
 <body>
 <div class="wrap">
   <div class="logo-row">
-    <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-        <img src="/assets/omdan-logo.png" alt="OMDAN" style="height:52px;object-fit:contain;" onerror="this.style.display='none'">
-        <div style="line-height:1.15;">
-          <div style="font-size:20px;font-weight:900;color:#F9FAFB;letter-spacing:.5px;">OMDAN</div>
-          <div style="font-size:16px;font-weight:700;color:#F59E0B;letter-spacing:.5px;">רכוש</div>
-        </div>
-      </a>
-    <div class="tagline" style="margin-top:8px;">מערכת ניהול תיקי שמאות מקצועית</div>
+    <img src="/assets/omda-icon.png" alt="" style="height:60px;width:60px;object-fit:contain;">
+    <img src="/assets/omda-logo.png" alt="OMDA רכוש" style="height:44px;object-fit:contain;filter:brightness(0) invert(1);">
+    <div class="tagline">מערכת ניהול תיקי שמאות מקצועית</div>
   </div>
   <div class="card">
     <h2 id="fTitle">כניסה למערכת</h2>
@@ -217,7 +212,7 @@ if('serviceWorker' in navigator){
   <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
   <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
   <a href="/legal/index.html">מסמכים משפטיים</a>
-  <br><span style="margin-top:6px;display:block;">© 2026 OMDAN. כל הזכויות שמורות.</span>
+  <br><span style="margin-top:6px;display:block;">© 2026 OMDA. כל הזכויות שמורות.</span>
 </footer>
 </body>
 </html>
