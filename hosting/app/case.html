@@ -21,6 +21,7 @@
   --card:#111827;--bg:#030712;
   --shadow:0 4px 20px rgba(0,0,0,0.4);
   summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''},
+  reportTheme:'classic',
   taxSubMode:'',  // 'residential' | 'business'
   taxRes:{ familyStatus:'single', numChildren:0, numAdults:0, contentsItems:[], emergencyItems:[] },
   taxBiz:{ bizName:'', bizId:'', bizType:'', activity:'', equipItems:[], inventoryItems:[], sideExpenses:[] },
@@ -377,17 +378,17 @@ tr.boq-drag-over{border-top:2px solid #f59e0b!important;}
 .del-btn:hover{opacity:1;}
 
 /* ── SUMMARY / REPORT ── */
-#reportView{display:none;background:#F9FAFB;min-height:100vh;color:#111;font-family:'Heebo',sans-serif;}
+#reportView{display:none;background:var(--rpt-bg,#F9FAFB);min-height:100vh;color:#111;font-family:'Heebo',sans-serif;}
 #reportView *{box-sizing:border-box;}
 .rpt-topbar{background:#fff;border-bottom:2px solid #E5E7EB;padding:11px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.07);}
 .rpt-body{max-width:820px;margin:0 auto;padding:40px 24px;}
-.rpt-header{text-align:center;border-bottom:3px solid #1F2937;padding-bottom:24px;margin-bottom:32px;}
+.rpt-header{text-align:center;border-bottom:3px solid var(--rpt-header-border,#1F2937);padding-bottom:24px;margin-bottom:32px;}
 .rpt-header h1{font-size:26px;font-weight:900;color:#111;margin-bottom:4px;}
 .rpt-header h2{font-size:16px;font-weight:600;color:#6B7280;}
 .rpt-section{margin-bottom:28px;}
-.rpt-section h3{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#374151;border-bottom:2px solid #E5E7EB;padding-bottom:6px;margin-bottom:12px;}
+.rpt-section h3{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--rpt-h3,#374151);border-bottom:2px solid var(--rpt-h3-border,#E5E7EB);padding-bottom:6px;margin-bottom:12px;}
 .rpt-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:6px;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;}
-.rpt-table th{background:#F3F4F6;padding:9px 10px;text-align:right;font-weight:700;color:#374151;font-size:11px;border-bottom:2px solid #D1D5DB;border-left:1px solid #E5E7EB;}
+.rpt-table th{background:var(--rpt-th-bg,#F3F4F6);padding:9px 10px;text-align:right;font-weight:700;color:var(--rpt-th-color,#374151);font-size:11px;border-bottom:2px solid #D1D5DB;border-left:1px solid #E5E7EB;}
 .rpt-table td{padding:8px 10px;border-bottom:1px solid #F3F4F6;border-left:1px solid #F3F4F6;vertical-align:middle;}
 .rpt-table tbody tr:nth-child(even) td{background:#FAFAFA;}
 .rpt-table .st{background:#F3F4F6!important;border-top:2px solid #D1D5DB;font-weight:800;}
@@ -395,7 +396,7 @@ tr.boq-drag-over{border-top:2px solid #f59e0b!important;}
 .rpt-summary-box{background:#F9FAFB;border:2px solid #1F2937;border-radius:8px;padding:18px;margin-top:12px;}
 .rpt-summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:14px;}
 .rpt-summary-row+.rpt-summary-row{border-top:1px solid #E5E7EB;}
-.rpt-signature{border-top:2px solid #1F2937;padding-top:24px;margin-top:32px;text-align:center;color:#6B7280;font-size:12px;}
+.rpt-signature{border-top:2px solid var(--rpt-sig-border,#1F2937);padding-top:24px;margin-top:32px;text-align:center;color:#6B7280;font-size:12px;}
 .rpt-p{line-height:1.9;font-size:14px;color:#374151;}
 
 /* ── PREVIEW BOX ── */
@@ -701,6 +702,8 @@ onAuthStateChanged(_auth, async user => {
         APPRAISER.logoImageUrl  = prof.logoImageData || null;
         APPRAISER.logoMode      = prof.logoType    || 'initials';
         APPRAISER.signatureUrl  = prof.signature   || null;
+        // טעינת נושא צבע דוח
+        if(prof.reportTheme) STATE.reportTheme = prof.reportTheme;
       }
     } catch(e){ console.warn('profile load error', e); }
 
@@ -1929,6 +1932,11 @@ const ROOM_ITEM_MAP = {
 // MODE SETUP
 // ══════════════════════════════════════════════════
 function selectMode(m){
+  // מס רכוש → tax-form.html עם מסך בחירה
+  if(m==='tax'){
+    window.location.href = '/app/tax-form.html';
+    return;
+  }
   mode = m; STATE.taxSubMode='';
   STATE = {
     base:{fullName:'',idNum:'',phone:'',email:'',eventDate:'',visitDate:'',city:'',street:'',streetNum:'',apartment:''},
@@ -2617,7 +2625,7 @@ function renderCard6(){
   const allRooms = [...interiorRooms, ...ROOMS_EXT];
   const quickPickIds = AREA_QUICK_PICKS[et] || AREA_QUICK_PICKS.default;
   const showAll = f._showAllAreas || false;
-  const addedIds = f.areas.map(a => a.id.replace(/_\d+$/, ''));
+  const addedIds = f.areas.map(a => (a.id||a.name||'').replace(/_\d+$/, ''));
 
   const nextRepId = (room) => {
     for(let n=1;n<=5;n++){
@@ -3290,25 +3298,107 @@ function renderCard8(){
   if(circ)   { previewHtml += secTitle('נסיבות המקרה') + preText(circ); }
   if(finds)  { previewHtml += secTitle('ממצאי הביקור ותיאור הנזק') + preText(finds, 'findingsOverride'); }
 
+  // הצהרת שמאי
+  const decl = STATE.event.appraiserDeclaration || '';
+  if(decl){ previewHtml += secTitle('הצהרת שמאי') + preText(decl); }
+
+  // תיאור המקום
+  const pd = STATE.findings.propertyDesc || STATE.propertyDesc || {};
+  if(pd && (pd.propertyType||pd.notes||pd.damagedAreas)){
+    let pdH = '';
+    if(pd.propertyType) pdH += `<p style="margin-bottom:6px;">${esc(pd.propertyType)}${pd.floors?', קומה '+esc(pd.floors):''}${pd.area?', שטח '+esc(pd.area)+' מ"ר':''}.</p>`;
+    if(pd.damagedAreas) pdH += `<p style="margin-bottom:6px;">הנזקים נצפו ב${esc(pd.damagedAreas)}.</p>`;
+    if(pd.notes) pdH += `<p>${esc(pd.notes)}</p>`;
+    if(pdH) previewHtml += secTitle('תיאור המקום') + `<div style="color:#374151;">${pdH}</div>`;
+  }
+
+  // סיבת הנזק
+  const causeText = STATE.findings.causeExplanation || '';
+  if(causeText){ previewHtml += secTitle('סיבת הנזק') + preText(causeText); }
+
+  // בדיקת מעבדה
+  if(STATE.findings.labTest && (STATE.findings.labRows||[]).length>0){
+    const labRows = STATE.findings.labRows||[];
+    let labH = '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+    labH += '<tr style="background:#F3F4F6;"><th style="padding:5px 8px;border:1px solid #E5E7EB;">מיקום</th><th style="padding:5px 8px;border:1px solid #E5E7EB;">% לחות</th><th style="padding:5px 8px;border:1px solid #E5E7EB;">מצב</th></tr>';
+    labRows.forEach(r=>{ labH+=`<tr><td style="padding:5px 8px;border:1px solid #E5E7EB;">${esc(r.location||'')}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;text-align:center;">${esc(r.moisture||'')}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;">${esc(r.status||'')}</td></tr>`; });
+    labH += '</table>';
+    previewHtml += secTitle('בדיקת מעבדה — תכולת לחות (מכון התקנים)') + labH;
+  }
+
   // כתב כמויות — תצוגה מקדימה
   if(grand>0){
     previewHtml += secTitle('כתב כמויות');
     const previewBOQSection = (items, title, color) => {
       if(!items||!items.length) return '';
-      let s2 = `<div style="margin-bottom:12px;"><div style="font-size:11px;font-weight:700;color:${color};margin-bottom:6px;">${title}</div>`;
-      s2 += '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
-      s2 += '<tr style="background:#F3F4F6;"><th style="padding:5px 8px;text-align:right;border:1px solid #E5E7EB;">תיאור</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:50px;">כמות</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:70px;">מחיר</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:80px;">סה"כ</th></tr>';
+      // קבץ לפי פרק → חדר — זהה לסדר בדוח הסופי
+      const chapterOrder = [];
+      const chapterMap = {};
       items.forEach(item=>{
-        if(item.roomHeader){ s2+=`<tr><td colspan="4" style="padding:4px 8px;font-weight:700;font-size:10px;background:#F9FAFB;color:#6B7280;border:1px solid #E5E7EB;">${esc(item.roomHeader)}</td></tr>`; return; }
-        const kinun = Math.round((parseFloat(item.qty)||1)*(parseFloat(item.price)||0));
-        s2+=`<tr><td style="padding:5px 8px;border:1px solid #E5E7EB;">${esc(item.desc)}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;text-align:center;">${esc(item.qty)}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;text-align:left;">${item.price?'₪'+fmtNum(parseFloat(item.price)):''}</td><td style="padding:5px 8px;border:1px solid #E5E7EB;text-align:left;font-weight:700;">${kinun>0?'₪'+fmtNum(kinun):'—'}</td></tr>`;
+        const ch = item.ch || (typeof guessChFromDesc==='function' ? guessChFromDesc(item.desc) : 0) || 0;
+        const room = item.roomHeader || '';
+        if(!chapterMap[ch]){ chapterMap[ch]={roomOrder:[],roomMap:{}}; chapterOrder.push(ch); }
+        if(!chapterMap[ch].roomMap[room]){ chapterMap[ch].roomMap[room]=[]; chapterMap[ch].roomOrder.push(room); }
+        chapterMap[ch].roomMap[room].push(item);
       });
+      let s2 = `<div style="margin-bottom:14px;"><div style="font-size:11px;font-weight:700;color:${color};margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid ${color}20;">${title}</div>`;
+      s2 += '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+      s2 += `<tr style="background:#F3F4F6;"><th style="padding:5px 8px;text-align:right;border:1px solid #E5E7EB;">#</th><th style="padding:5px 8px;text-align:right;border:1px solid #E5E7EB;">תיאור עבודה</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:36px;text-align:center;">יח'</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:46px;text-align:center;">כמות</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:68px;text-align:right;">מחיר</th><th style="padding:5px 8px;border:1px solid #E5E7EB;width:76px;text-align:right;">סה"כ</th></tr>`;
+      let rowNum = 0;
+      chapterOrder.forEach((chNum,ci)=>{
+        const chName = chNum ? (BOQ_CHAPTER_NAMES[chNum]||`פרק ${chNum}`) : 'כללי';
+        const chData = chapterMap[chNum];
+        // כותרת פרק
+        s2+=`<tr style="background:#EFF6FF;"><td colspan="6" style="padding:5px 8px;font-weight:800;font-size:11px;color:${color};border:1px solid #BFDBFE;">${ci+1}. ${chName}</td></tr>`;
+        chData.roomOrder.forEach(room=>{
+          if(room) s2+=`<tr><td colspan="6" style="padding:3px 8px;font-size:10px;font-weight:700;color:#6B7280;background:#FAFAFA;border:1px solid #F3F4F6;">📍 ${esc(room)}</td></tr>`;
+          chData.roomMap[room].forEach(item=>{
+            rowNum++;
+            const qty = item.qty!==undefined&&item.qty!=='' ? item.qty : '';
+            const price = parseFloat(item.price)||0;
+            const kinun = qty!=='' ? Math.round((parseFloat(qty)||0)*price) : 0;
+            s2+=`<tr>
+              <td style="padding:5px 8px;border:1px solid #F3F4F6;color:#9CA3AF;font-size:10px;">${rowNum}</td>
+              <td style="padding:5px 8px;border:1px solid #F3F4F6;">${item.desc ? esc(item.desc) : '<span style="color:#D1D5DB;font-size:10px;">ריק</span>'}</td>
+              <td style="padding:5px 8px;border:1px solid #F3F4F6;text-align:center;color:#6B7280;">${esc(item.unit||'')}</td>
+              <td style="padding:5px 8px;border:1px solid #F3F4F6;text-align:center;font-weight:700;">${qty!==''?esc(String(qty)):'<span style="color:#D1D5DB;">—</span>'}</td>
+              <td style="padding:5px 8px;border:1px solid #F3F4F6;text-align:right;">${price>0?'₪'+fmtNum(price):''}</td>
+              <td style="padding:5px 8px;border:1px solid #F3F4F6;text-align:right;font-weight:700;">${kinun>0?'₪'+fmtNum(kinun):'<span style="color:#D1D5DB;">—</span>'}</td>
+            </tr>`;
+          });
+        });
+      });
+      const total = items.reduce((s,i)=>s+Math.round((parseFloat(i.qty)||0)*(parseFloat(i.price)||0)),0);
+      s2+=`<tr style="background:#F0FDF4;border-top:2px solid ${color};"><td colspan="5" style="padding:6px 8px;border:1px solid #D1FAE5;font-weight:800;font-size:11px;">סה"כ ${title}</td><td style="padding:6px 8px;border:1px solid #D1FAE5;text-align:right;font-weight:900;color:${color};">${total>0?'₪'+fmtNum(total):'—'}</td></tr>`;
       s2 += '</table></div>';
       return s2;
     };
     previewHtml += previewBOQSection(boq.structItems,'פרק א׳ – עבודות מבנה','#1D4ED8');
     previewHtml += previewBOQSection(boq.contentsItems,'פרק ב׳ – עבודות תכולה','#15803D');
-    previewHtml += previewBOQSection(boq.serviceItems,'פרק ג׳ – שירותים ותוספות','#7C3AED');
+    previewHtml += previewBOQSection(boq.serviceItems,"פרק ג׳ – שירותים ותוספות",'#7C3AED');
+
+    // סיכום כולל — זהה לדוח הסופי
+    const pStruct = calcSectionTotal(boq.structItems);
+    const pCont   = calcSectionTotal(boq.contentsItems);
+    const pServ   = calcSectionTotal(boq.serviceItems);
+    const pGrand  = pStruct+pCont+pServ;
+    const pVat    = boq.vat ? Math.round(pGrand*0.18) : 0;
+    const pTotal  = pGrand+pVat;
+    const pShiput = Math.round((calcShiputBase(boq.structItems)+calcShiputBase(boq.contentsItems)+calcShiputBase(boq.serviceItems))*0.67);
+    if(pGrand>0){
+      let sumHtml = '<div style="margin-top:12px;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;font-size:12px;">';
+      sumHtml += '<div style="background:#1F2937;padding:8px 12px;font-weight:700;font-size:11px;color:#F9FAFB;">סיכום כתב כמויות</div>';
+      sumHtml += '<table style="width:100%;border-collapse:collapse;">';
+      if(pStruct>0) sumHtml += `<tr><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;">מבנה</td><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:700;">₪${fmtNum(pStruct)}</td></tr>`;
+      if(pCont>0)   sumHtml += `<tr><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;">תכולה</td><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:700;">₪${fmtNum(pCont)}</td></tr>`;
+      if(pServ>0)   sumHtml += `<tr><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;">שירותים</td><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:700;">₪${fmtNum(pServ)}</td></tr>`;
+      sumHtml += `<tr><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;">סה"כ לפני מע"מ</td><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;text-align:right;font-weight:700;">₪${fmtNum(pGrand)}</td></tr>`;
+      if(boq.vat) sumHtml += `<tr><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;">מע"מ 18%</td><td style="padding:6px 12px;border-bottom:1px solid #F3F4F6;text-align:right;">₪${fmtNum(pVat)}</td></tr>`;
+      sumHtml += `<tr style="background:#D1FAE5;"><td style="padding:8px 12px;font-weight:900;font-size:13px;">סה"כ כולל מע"מ</td><td style="padding:8px 12px;text-align:right;font-weight:900;font-size:14px;color:#065F46;">₪${fmtNum(pTotal)}</td></tr>`;
+      if(pShiput>0) sumHtml += `<tr style="background:#EFF6FF;"><td style="padding:6px 12px;font-size:11px;color:#1D4ED8;">שיפוי (2/3 כינון)</td><td style="padding:6px 12px;text-align:right;font-size:11px;font-weight:700;color:#1D4ED8;">₪${fmtNum(pShiput)}</td></tr>`;
+      sumHtml += '</table></div>';
+      previewHtml += sumHtml;
+    }
   }
 
   if(expl)   { previewHtml += secTitle('ביאורים והסברים') + preText(expl, 'appraisalNotes'); }
@@ -3342,6 +3432,34 @@ function renderCard8(){
     const rehabDays = parseInt(s.rehabTime);
     const rehabDisplay = rehabDays>0 ? `${rehabDays} ימים` : esc(s.rehabTime);
     previewHtml += secTitle('זמן שיקום משוער') + `<div style="color:#374151;">משך שיקום צפוי: <strong>${rehabDisplay}</strong><br><span style="font-size:11px;color:#9CA3AF;">* הזמן נקבע על פי הספקים בפועל</span></div>`;
+  }
+
+  // הערת סיכום
+  if(s.claimTotal){ previewHtml += secTitle('הערת סיכום') + preText(s.claimTotal, 'claimTotal'); }
+
+  // תמונות — מיניאטורות
+  const photos = (STATE.photos?.items||[]).filter(p=>p.src);
+  if(photos.length){
+    previewHtml += secTitle(`תיעוד תמונות (${photos.length})`);
+    previewHtml += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px;">`;
+    photos.slice(0,8).forEach(ph=>{
+      previewHtml += `<div style="border-radius:6px;overflow:hidden;border:1px solid #E5E7EB;aspect-ratio:4/3;"><img src="${ph.src}" style="width:100%;height:100%;object-fit:cover;"></div>`;
+    });
+    if(photos.length>8) previewHtml += `<div style="display:flex;align-items:center;justify-content:center;font-size:11px;color:#6B7280;border:1px dashed #E5E7EB;border-radius:6px;">+${photos.length-8} נוספות</div>`;
+    previewHtml += `</div>`;
+  }
+
+  // נספחים
+  const appendices = [];
+  if(photos.length) appendices.push('תיעוד צילומי מביקור הבדיקה');
+  const _pl = {leak:'מאתר נזילות',fire_inv:'חוקר שריפות',electrician:'חשמלאי',plumber:'אינסטלטור',contractor:'קבלן',engineer:'מהנדס',fire_dept:'כבאות'};
+  (STATE.event.professionals||[]).forEach(pid=>{
+    const det=(STATE.event.profDetails||{})[pid]||{};
+    if(det.report==='yes') appendices.push(`דו"ח ${_pl[pid]||pid}${det.name?' — '+det.name:''}`);
+  });
+  if(appendices.length){
+    previewHtml += secTitle('נספחים');
+    previewHtml += `<ol style="margin-right:16px;color:#374151;font-size:12px;line-height:2;">${appendices.map(a=>`<li>${esc(a)}</li>`).join('')}</ol>`;
   }
 
   previewHtml += `<div style="border-top:2px solid #E5E7EB;margin-top:24px;padding-top:16px;text-align:left;">
@@ -4370,6 +4488,58 @@ function updateTaxContentsItem(key,field,val){
 // BOQ ENGINE – hierarchical per-room
 // ══════════════════════════════════════════════════
 // ══════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════
+// REPORT THEMES
+// ══════════════════════════════════════════════════
+const REPORT_THEMES = {
+  classic: {
+    name:'קלאסי', emoji:'⚫',
+    headerBorder:'#1F2937', headerColor:'#111',
+    h3Color:'#374151', h3Border:'#E5E7EB',
+    thBg:'#F3F4F6', thColor:'#374151',
+    sectionBg:'#FAFAFA', accentColor:'#1D4ED8',
+    greenColor:'#065F46', summaryBg:'#D1FAE5', summaryBorder:'#A7F3D0',
+    sigBorder:'#1F2937', rptBg:'#F9FAFB', sectionBg:'#FAFAFA',
+  },
+  navy: {
+    name:'נייבי', emoji:'🔵',
+    headerBorder:'#1e3a5f', headerColor:'#0f172a',
+    h3Color:'#1e3a5f', h3Border:'#bfdbfe',
+    thBg:'#dbeafe', thColor:'#1e3a5f',
+    sectionBg:'#eff6ff', accentColor:'#1e40af',
+    greenColor:'#166534', summaryBg:'#dcfce7', summaryBorder:'#86efac',
+    sigBorder:'#1e3a5f', rptBg:'#f0f9ff', sectionBg:'#EFF6FF',
+  },
+  elegant: {
+    name:'אלגנטי', emoji:'🟤',
+    headerBorder:'#78350f', headerColor:'#1c1917',
+    h3Color:'#78350f', h3Border:'#fde68a',
+    thBg:'#fef3c7', thColor:'#78350f',
+    sectionBg:'#fffbeb', accentColor:'#92400e',
+    greenColor:'#14532d', summaryBg:'#dcfce7', summaryBorder:'#86efac',
+    sigBorder:'#78350f', rptBg:'#fffdf7', sectionBg:'#FFFBEB',
+  },
+  clean: {
+    name:'מינימל', emoji:'⚪',
+    headerBorder:'#9ca3af', headerColor:'#111',
+    h3Color:'#374151', h3Border:'#d1d5db',
+    thBg:'#f9fafb', thColor:'#374151',
+    sectionBg:'#ffffff', accentColor:'#374151',
+    greenColor:'#166534', summaryBg:'#f0fdf4', summaryBorder:'#bbf7d0',
+    sigBorder:'#9ca3af', rptBg:'#ffffff', sectionBg:'#F9FAFB',
+  },
+  emerald: {
+    name:'אזמרגד', emoji:'🟢',
+    headerBorder:'#065f46', headerColor:'#022c22',
+    h3Color:'#065f46', h3Border:'#a7f3d0',
+    thBg:'#d1fae5', thColor:'#065f46',
+    sectionBg:'#ecfdf5', accentColor:'#047857',
+    greenColor:'#065f46', summaryBg:'#d1fae5', summaryBorder:'#6ee7b7',
+    sigBorder:'#065f46', rptBg:'#f0fdf4', sectionBg:'#ECFDF5',
+  },
+};
+
 function generateReport(){
   saveCurrentCase();
   // Ensure profile is loaded (in case auth resolved after page load)
@@ -4399,6 +4569,7 @@ function generateReport(){
 
 function _doGenerateReport(){
   const modeLabels={private:'שומה פרטית',insurance:'שומה מטעם חברת ביטוח',tax:'שמאות מס רכוש'};
+  const T = REPORT_THEMES[STATE.reportTheme||'classic'] || REPORT_THEMES.classic;
   document.getElementById('rptModeLabel').textContent = modeLabels[mode];
   const b = STATE.base, ins = STATE.insurance, boq = STATE.boq, s = STATE.summary, ph = STATE.photos||{};
   const opening = s.openingOverride || genOpeningText() || '';
@@ -4439,15 +4610,15 @@ function _doGenerateReport(){
     let secTotal=0, secShiputTotal=0, secClaimTotal=0;
 
     let h = `<div style="margin-bottom:28px;">
-      <h4 style="font-size:13px;font-weight:800;color:#111827;margin-bottom:10px;padding:8px 0;border-bottom:2px solid #E5E7EB;">${sectionTitle}</h4>
+      <h4 style="font-size:13px;font-weight:800;color:${T.h3Color};margin-bottom:10px;padding:8px 0;border-bottom:2px solid ${T.h3Border};">${sectionTitle}</h4>
       <table class="rpt-table" style="width:100%;"><thead><tr style="font-size:11px;">
         <th style="width:42px">מס'</th><th>תיאור עבודה</th>
         <th style="width:36px;text-align:center">יח'</th>
         <th style="width:46px;text-align:right">כמות</th>
         <th style="width:62px;text-align:right">מחיר יח'</th>`;
     if(isIns){
-      h += `<th style="width:68px;text-align:right;color:#185FA5">כינון ₪</th>
-            <th style="width:68px;text-align:right;color:#0F6E56">שיפוי ₪</th>`;
+      h += `<th style="width:68px;text-align:right;color:${T.accentColor}">כינון ₪</th>
+            <th style="width:68px;text-align:right;color:${T.greenColor}">שיפוי ₪</th>`;
     } else {
       h += `<th style="width:78px;text-align:right">סה"כ ₪</th>`;
     }
@@ -4466,7 +4637,7 @@ function _doGenerateReport(){
       secTotal+=chTotal; secShiputTotal+=chShiput; secClaimTotal+=chClaim;
 
       // Chapter header
-      h += `<tr style="background:#EFF6FF;"><td colspan="${totalCols}" style="padding:7px 10px;font-weight:800;font-size:12px;color:#1D4ED8;border-top:2px solid #BFDBFE;">${chIdx}. ${chName}</td></tr>`;
+      h += `<tr style="background:${T.thBg}15;"><td colspan="${totalCols}" style="padding:7px 10px;font-weight:800;font-size:12px;color:${T.accentColor};border-top:2px solid ${T.h3Border};">${chIdx}. ${chName}</td></tr>`;
 
       let roomIdx = 0;
       chData.roomOrder.forEach(room => {
@@ -4849,8 +5020,8 @@ function _doGenerateReport(){
       rpt += `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:6px;border:1px solid #D1D5DB;border-radius:8px;overflow:hidden;">
         <thead><tr style="background:#F3F4F6;">
           ${TH('פרק','text-align:right;')}
-          ${TH('הערכה בכינון','text-align:right;background:#EFF6FF;color:#1D4ED8;')}
-          ${TH('הערכה בשיפוי','text-align:right;background:#ECFDF5;color:#065F46;')}
+          ${TH('הערכה בכינון','text-align:right;background:'+T.thBg+'1A;color:'+T.accentColor+';')}
+          ${TH('הערכה בשיפוי','text-align:right;background:'+T.summaryBg+'1A;color:'+T.greenColor+';')}
           ${showClaimCol?TH('תביעה (שמאי פרטי)','text-align:right;background:#FFFBEB;color:#92400E;'):''}
         </tr></thead><tbody>
         ${structKinun>0?mkRow('א. מבנה', structKinun, structShiput, structClaim):''}
@@ -4860,7 +5031,7 @@ function _doGenerateReport(){
         ${boq.vat?mkRow(`מע"מ 18%`, Math.round(totalKinun*0.18), 0, 0):''}
         <tr style="background:#F9FAFB;font-weight:900;">
           ${TD('<strong>סה"כ כללי</strong>','font-weight:900;font-size:13px;')}
-          ${TD('₪ '+fmtNum(boq.vat?Math.round(totalKinun*1.18):totalKinun),'text-align:right;background:#DBEAFE;color:#1D4ED8;font-weight:900;font-size:13px;')}
+          ${TD('₪ '+fmtNum(boq.vat?Math.round(totalKinun*1.18):totalKinun),'text-align:right;background:'+T.thBg+';color:'+T.accentColor+';font-weight:900;font-size:13px;')}
           ${TD('₪ '+fmtNum(boq.vat?Math.round(totalShiput*1.18):totalShiput),'text-align:right;background:#D1FAE5;color:#065F46;font-weight:900;font-size:13px;')}
           ${showClaimCol?TD(totalClaim>0?'₪ '+fmtNum(totalClaim):'—','text-align:right;background:#FEF3C7;color:#92400E;font-weight:900;font-size:13px;'):''}
         </tr>
@@ -4870,7 +5041,7 @@ function _doGenerateReport(){
           <tr><td style="padding:8px 12px;border:1px solid #D1D5DB;">פחות השתתפות עצמית:</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;">${deduct>0?`₪ ${fmtNum(deduct)} לפי פוליסה`:'—'}</td></tr>
           ${rentalTotal>0?`<tr style="background:#EFF6FF;"><td style="padding:8px 12px;border:1px solid #D1D5DB;">שכירות חלופית (${f.rentalMonths} חודשים × ₪${fmtNum(parseCurrency(f.rentalMonthly))}):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;color:#1D4ED8;font-weight:700;">₪ ${fmtNum(rentalTotal)}</td></tr>`:''}
           ${showClaimCol?`<tr style="background:#FFFBEB;"><td style="padding:8px 12px;border:1px solid #D1D5DB;font-weight:900;font-size:13px;color:#92400E;">סה"כ תביעה (שמאי פרטי):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;font-weight:900;font-size:15px;color:#92400E;">${totalClaim>0?'₪ '+fmtNum(totalClaim):'לא צוין'}</td></tr>`:''}
-          <tr style="background:#D1FAE5;border-top:2px solid #16A34A;">
+          <tr style="background:${T.summaryBg};border-top:2px solid "${T.summaryBorder}";">
             <td style="padding:12px 16px;border:1px solid #A7F3D0;font-weight:900;font-size:15px;color:#065F46;">סכום נטו להערכה:</td>
             <td style="padding:12px 16px;border:1px solid #A7F3D0;text-align:right;font-weight:900;font-size:18px;color:#15803D;">₪ ${fmtNum(Math.max(0, (boq.vat?Math.round(totalShiput*1.18):totalShiput) - deduct + rentalTotal))}</td>
           </tr>
@@ -4985,7 +5156,24 @@ function _doGenerateReport(){
 
   document.getElementById('rptContent').innerHTML = rpt;
   document.getElementById('appShell').classList.add('hidden');
-  document.getElementById('reportView').style.display = 'block';
+  // Inject theme styles directly — more reliable than CSS variables
+  const rptEl = document.getElementById('reportView');
+  // Remove old theme style if exists
+  const oldStyle = document.getElementById('rpt-theme-style');
+  if(oldStyle) oldStyle.remove();
+  const themeStyle = document.createElement('style');
+  themeStyle.id = 'rpt-theme-style';
+  themeStyle.textContent = `
+    #reportView { background: ${T.rptBg} !important; }
+    #reportView .rpt-header { border-bottom-color: ${T.headerBorder} !important; }
+    #reportView .rpt-section h3 { color: ${T.h3Color} !important; border-bottom-color: ${T.h3Border} !important; }
+    #reportView .rpt-table th { background: ${T.thBg} !important; color: ${T.h3Color} !important; }
+    #reportView .rpt-table tbody tr:nth-child(even) td { background: ${T.sectionBg || '#FAFAFA'} !important; }
+    #reportView .rpt-signature { border-top-color: ${T.sigBorder} !important; }
+    #reportView .rpt-table .st, #reportView .rpt-table .st td { background: ${T.thBg} !important; }
+  `;
+  document.head.appendChild(themeStyle);
+  rptEl.style.display = 'block';
   window.scrollTo(0,0);
 }
 
@@ -5144,81 +5332,144 @@ function genExplanationsText(){
     if(grand>0) add(`סכום הנזק הכולל מוערך ב-₪${fmtNum(Math.round(grand))}${boq.vat?' (כולל מע"מ)':' (לפני מע"מ)'}.`);
   }
 
-  // ── שומה ביטוח ──
+  // ── שומה ביטוח — הסבר ישיר לכתב הכמויות ──
   else if(mode==='insurance'){
-    // סעיף א – ראינו בעין
+
+    // ── א: פתיחה ממצאית ──
     const hasCont = calcSectionTotal(boq.contentsItems)>0;
-    const hasStock = parseFloat(ins.stockValue)>0;
-    const hasLoss = parseFloat(ins.lossProfit)>0;
-    let seen = 'נזקי מבנה';
-    if(hasCont) seen += ', תכולה';
-    if(hasStock) seen += ', מלאי עסקי';
-    if(hasLoss) seen += ', אובדן רווחים';
-    add(`בזמן בדיקתנו במקום ראינו בעין את הנזקים המתוארים לעיל הכוללים בין היתר ${seen}.`);
+    const hasServ = calcSectionTotal(boq.serviceItems)>0;
+    const visitDate = STATE.base.visitDate ? new Date(STATE.base.visitDate).toLocaleDateString('he-IL') : 'מועד הבדיקה';
+    let seenParts = ['נזקי מבנה'];
+    if(hasCont) seenParts.push('תכולה');
+    if(isBiz) seenParts.push('ציוד עסקי');
+    add(`בבדיקתנו בנכס ביום ${visitDate} נבדקו כלל חלקי הנכס שנפגעו מ${evLabel}. הנזקים שנצפו כוללים ${seenParts.join(', ')} כמפורט בכתב הכמויות שלהלן.`);
 
-    // סעיף ב – נזקים ספציפיים לפי סוג אירוע
-    if(et==='fire'){
-      add('כתוצאה מהדליקה נגרמו נזקים ניכרים למבנה ובין היתר נזקי פיח, עשן, מי כיבוי, תקרות משניות, מערכות חשמל ותאורה, מערכות מים (אינסטלציה), מערכות מתח נמוך, מערכות גז, מערכות תקשורת, מצלמות אבטחה ואזעקה.');
-    } else if(et==='water'){
-      add('כתוצאה מנזקי המים נגרמו נזקים לרצפה, קירות ותקרות, כולל התנפחות ריצוף, קילופי צבע, פגיעה בטיח ובחומרי גמר, וכן נזקים לנגרות, חשמל ואלמנטים נוספים כמפורט בדוח.');
-    } else if(et==='burglary'){
-      add('כתוצאה מאירוע הפריצה נגרמו נזקים למנגנוני נעילה, דלתות, חלונות ואלמנטים נוספים, וכן נזקי ונדליזם כמפורט בדוח.');
-    } else {
-      add(`כתוצאה מ${evLabel} נגרמו נזקים כמפורט בדוח זה.`);
+    // ── ב: הסבר פרק א׳ – תתי-פרקים לפי סיבה ותוצאה ──
+    if(boq.structItems && boq.structItems.length){
+      // קבץ לפי פרק → איסוף פריטים וחדרים
+      const chDetailMap = {};
+      boq.structItems.forEach(item=>{
+        const ch = item.ch||guessChFromDesc(item.desc)||0;
+        const chName = ch ? (BOQ_CHAPTER_NAMES[ch]||`פרק ${ch}`) : 'כללי';
+        if(!chDetailMap[chName]) chDetailMap[chName]={items:[],rooms:new Set()};
+        if(item.desc) chDetailMap[chName].items.push(item.desc);
+        if(item.roomHeader) chDetailMap[chName].rooms.add(item.roomHeader);
+      });
+
+      // הגדרת סיבה לפי פרק + אירוע
+      const chCause = {
+        'פירוק, הריסה ופינוי': {
+          fire:'כתוצאה מהשריפה נשרפו ונהרסו חלקי גמר ורכיבים שלא ניתן לשקמם.',
+          water:'כתוצאה מנזקי המים נסדקו ונהרסו חלקי גמר שנרטבו וניפחו.',
+          burglary:'כתוצאה מאירוע הפריצה נהרסו אלמנטים שלא ניתן לתקנם.'
+        },
+        'ריצוף ואריחים':{
+          fire:'הריצוף ניזוק בלתי הפיך עקב חום ומי כיבוי.',
+          water:'הריצוף התנפח ונסדק כתוצאה מחדירת מים לתשתית.',
+          burglary:'הריצוף ניזוק עקב פעולות הפורצים.'
+        },
+        'טיח, שפכטל וצבע':{
+          fire:'קירות ותקרות ספגו פיח ועשן לעומקם ונפגעו מחום ומי כיבוי.',
+          water:'קירות ותקרות ספגו רטיבות וקילופי צבע.',
+          burglary:'קירות ניזוקו עקב נזקי ונדליזם ופריצה.'
+        },
+        'נגרות ועץ':{
+          fire:'רכיבי הנגרות נשרפו ונהרסו, אינם ניתנים לשיקום.',
+          water:'נגרות ספגה רטיבות ועיוות — אינה ניתנת לשיקום.',
+          burglary:'נגרות ניזוקה פיזית עקב הפריצה.'
+        },
+        'אינסטלציה וצנרת':{
+          fire:'הצנרת ניזוקה עקב חום קיצוני ומי כיבוי.',
+          water:'מקור הנזק הינו פגם בצנרת — נדרש תיקון/החלפה.',
+          burglary:'צנרת ניזוקה עקב פעולות הפורצים.'
+        },
+        'חשמל ותאורה':{
+          fire:'מערכת החשמל ניזוקה כתוצאה מהשריפה, בהתאם לדו"ח חשמלאי מוסמך שהועבר למשרדנו.',
+          water:'מערכת החשמל ניזוקה עקב חדירת מים.',
+          burglary:'מערכת החשמל ניזוקה עקב הפריצה.'
+        },
+        'דלתות ומשקופים':{
+          fire:'דלתות ומסגרות נשרפו/ניזוקו מחום.',
+          water:'דלתות עץ ספגו רטיבות ועיוות.',
+          burglary:'דלתות ומנגנוני נעילה פורצו ונהרסו.'
+        },
+      };
+
+      const subResult = [];
+      let subIdx = 1;
+      Object.entries(chDetailMap).forEach(([chName, data])=>{
+        const causeObj = chCause[chName];
+        const cause = causeObj ? (causeObj[et]||causeObj.fire||'') : '';
+        const roomList = [...data.rooms].slice(0,3).join(', ');
+        const roomStr = roomList ? ` (${roomList})` : '';
+        const result = 'נדרש שיקום מלא בהתאם לממצאי הבדיקה.';
+        subResult.push(`א.${subIdx} ${chName}${roomStr} — ${cause} ${result}`);
+        subIdx++;
+      });
+
+      if(subResult.length) add(`פרק א׳ — עבודות מבנה:\n${subResult.join('\n')}`);
     }
 
-    // סעיף ג – מסמכי התביעה
-    const docParts = [];
-    docParts.push('הצעות מחיר');
-    if(isBiz){ docParts.push('חשבוניות רכישה'); docParts.push('מלאי עסקי'); }
-    if(hasStock) docParts.push('רשימת מלאי'); 
-    add('תביעת המבוטח נסמכת על '+docParts.join(', ')+'.');
-
-    // סעיף ד – בדיקת התביעה
-    const claimAmt = parseCurrency(ins.claimAmount||'0');
-    if(claimAmt>grand*1.05 && grand>0){
-      add('תביעת המבוטח נבדקה על ידינו ונמצאה גבוהה מהנזקים שנגרמו בפועל ולאור כך הערכתנו בהתאם.');
-    } else {
-      add('תביעת המבוטח נבדקה על ידינו ונמצאה סבירה ומתאימה לנזקים שנגרמו בפועל.');
+    // ── ג: הסבר פרק ב׳ – תכולה ──
+    if(hasCont && boq.contentsItems.length){
+      const contRooms = [...new Set(boq.contentsItems.filter(i=>i.roomHeader).map(i=>i.roomHeader))];
+      const contDesc = boq.contentsItems.slice(0,3).map(i=>i.desc).filter(Boolean).join(', ');
+      const contRoomStr = contRooms.length ? `ב${contRooms.slice(0,3).join(', ')}` : 'בנכס';
+      add(`פרק ב׳ (תכולה) — נכללו פריטי תכולה שנפגעו ${contRoomStr}, ובהם ${contDesc}${boq.contentsItems.length>3?` ועוד ${boq.contentsItems.length-3} פריטים נוספים`:''}, בהתאם לרשימת התביעה שנבדקה ואומתה על ידינו.`);
     }
 
-    // סעיף ה – בסיס הערכה
+    // ── ד: הסבר פרק ג׳ – שירותים ──
+    if(hasServ && boq.serviceItems.length){
+      const servDescs = boq.serviceItems.slice(0,4).map(i=>i.desc).filter(Boolean).join(', ');
+      add(`פרק ג׳ (שירותים ותוספות) — כולל ${servDescs}, הנדרשים לביצוע מלאכת השיקום כמפורט.`);
+    }
+
+    // ── ה: בסיס הכמויות ──
+    const areas = STATE.findings.areas||[];
+    const totalArea = areas.reduce((s,a)=>s+(parseFloat(a.sqm)||0),0);
+    if(totalArea>0){
+      add(`הכמויות בכתב הכמויות נקבעו על בסיס מדידות בשטח שבוצעו במהלך הבדיקה (שטח כולל שנפגע: כ-${Math.round(totalArea)} מ"ר), ובהתאם להיקף הנזק שנמצא.`);
+    } else {
+      add('הכמויות נקבעו על בסיס מדידות בשטח שבוצעו במהלך הבדיקה ובהתאם להיקף הנזק שנמצא.');
+    }
+
+    // ── ו: בסיס המחירים ──
     if(isBiz){
-      add('הערכתנו הכספית נסמכת בהתאם לחוות דעת הנדסית ו/או בהתאם לעלויות הציוד הנתבע על פי חשבוניות מס שהועברו למשרדנו, ובהתבסס על טופס י"א (טופס פחת) שהועבר למשרדנו מאת רו"ח המבוטח.');
+      add('המחירים נקבעו על פי חשבוניות מס שהועברו למשרדנו, ובהתאם לעלויות שוק עדכניות.');
     } else {
-      add('הערכתנו הכספית נסמכת על מחירי שוק, הצעות מחיר שהתקבלו ועל מחירון דקל שיפוצים.');
+      add('המחירים נקבעו על פי מחירי שוק עדכניים ומחירון דקל שיפוצים, וכוללים חומר, עבודה ופיקוח.');
     }
 
-    // סעיף ו – ערכי כינון ושיפוי
+    // ── ז: ערכי כינון ושיפוי ──
     const struct = calcSectionTotal(boq.structItems);
-    const cont = calcSectionTotal(boq.contentsItems);
-    const serv = calcSectionTotal(boq.serviceItems);
-    const grandAll = struct+cont+serv;
+    const cont2  = calcSectionTotal(boq.contentsItems);
+    const serv2  = calcSectionTotal(boq.serviceItems);
+    const grandAll = struct+cont2+serv2;
     const shiput = Math.round((calcShiputBase(boq.structItems)+calcShiputBase(boq.contentsItems)+calcShiputBase(boq.serviceItems))*0.67);
-    if(grand>0) add(`הערכתנו נקבעה בערכי כינון בסכום ₪${fmtNum(Math.round(grandAll))} ובמקביל בערכי שיפוי (2/3 מהכינון) בסכום ₪${fmtNum(shiput)} בהתאם לתנאי הפוליסה.`);
+    if(grandAll>0) add(`סכום כתב הכמויות בערכי כינון: ₪${fmtNum(Math.round(grandAll))}${boq.vat?` (כולל מע"מ)`:''}. ערך השיפוי (2/3 כינון) בהתאם לתנאי הפוליסה: ₪${fmtNum(shiput)}.`);
 
-    // תת-ביטוח
+    // ── ח: תת-ביטוח ──
     const structSum = parseFloat(ins.structureSum)||0;
     const structActual = parseFloat(ins.structureActual)||0;
     if(structSum>0 && structActual>0 && structActual > structSum*1.1){
       const ratio = Math.round((structSum/structActual)*100);
-      add(`נמצא תת-ביטוח מבנה – יחס ביטוח: ${ratio}%. השיפוי יחושב יחסית בהתאם לסעיף תת-ביטוח בפוליסה.`);
+      add(`נמצא תת-ביטוח מבנה: יחס ביטוח ${ratio}% — השיפוי מחושב יחסית בהתאם לסעיף תת-ביטוח בפוליסה.`);
     }
 
-    // השתתפות עצמית
-    const deduct = parseFloat(String(ins.deductStruct||'').replace(/,/g,''))||0;
+    // ── ט: השתתפות עצמית ──
+    const deduct = parseCurrency(ins.deductStruct||'0');
     if(deduct>0) add(`מסכום השיפוי הופחתה השתתפות עצמית בסך ₪${fmtNum(deduct)} בהתאם לתנאי הפוליסה.`);
 
-    add('כל האמור בדו"ח זה נכון למועד הביקור בנכס. ייתכן כי במהלך ביצוע העבודות יתגלו ממצאים נוספים שלא היו גלויים לעין, ובמקרה זה תעודכן ההערכה בהתאם.');
+    // ── י: סייג כלל ──
+    add('כל הנתונים נכונים למועד הביקור. ייתכן כי בעת ביצוע העבודות יתגלו ממצאים נוספים שלא היו גלויים בבדיקה הויזואלית, ובמקרה כזה תעודכן ההערכה בהתאם ובכפוף לאישור חברת הביטוח.');
+
+    // מעבדה
     if(STATE.findings.labTest){
-    const rows = STATE.findings.labRows||[];
-    if(rows.length>0){
-      add('בוצעה בדיקת מעבדה (מכון התקנים) לתכולת לחות במצע. להלן ממצאי הבדיקה:');
-      // Lab table will be rendered in report HTML separately
-    } else {
-      add('בוצעה/תבוצע בדיקת מעבדה (מכון התקנים) לצורך אישור ממצאי לחות – התוצאות ישמשו להמשך הטיפול.');
+      const rows = STATE.findings.labRows||[];
+      add(rows.length>0
+        ? 'בוצעה בדיקת מעבדה (מכון התקנים) לתכולת לחות במצע — הממצאים משמשים אסמכתא לעבודות הייבוש הכלולות בכתב הכמויות.'
+        : 'תבוצע בדיקת מעבדה (מכון התקנים) לאימות ממצאי הלחות — התוצאות ישמשו להמשך הטיפול ועדכון הכ"כ אם יידרש.');
     }
-  }
   }
 
   // ── שמאות מס רכוש ──

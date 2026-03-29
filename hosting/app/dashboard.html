@@ -440,9 +440,19 @@ function fmtDate(iso){
 
 function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
-function openCase(caseId){ window.location.href=`/app/case.html?case=${caseId}`; }
+function openCase(caseId){
+  // בדוק אם תיק מס רכוש
+  const c = allCases.find(x=>x.id===caseId);
+  const mode = c?.mode||c?.state?.taxMode||'';
+  if(mode==='residential'||mode==='business'||mode==='tax-res'||mode==='tax-biz'){
+    window.location.href=`/app/tax-form.html?case=${caseId}`;
+  } else {
+    window.location.href=`/app/case.html?case=${caseId}`;
+  }
+}
 function openCaseReport(caseId){ window.location.href=`/app/case.html?case=${caseId}&view=report`; }
 function newCase(){ window.location.href="/app/case.html"; }
+function newTaxCase(mode){ window.location.href=`/app/tax-form.html?mode=${mode}`; }
 function goSettings(){ window.location.href="/app/settings.html"; }
 function doLogout(){ auth.signOut().then(()=>window.location.href="/"); }
 function goBilling(){ window.location.href='/app/account-billing.html'; }

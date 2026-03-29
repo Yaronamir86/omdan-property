@@ -158,14 +158,14 @@ body::before{
 .field{display:flex;flex-direction:column;gap:6px;}
 .field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
 .field input,.field textarea,.field select{
-  background:#0f1117;border:1px solid var(--border2);border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
   padding:10px 13px;color:var(--text);font-size:14px;font-family:'Heebo',sans-serif;
   transition:border-color .2s,box-shadow .2s;outline:none;width:100%;
 }
 .field input:focus,.field textarea:focus,.field select:focus{
   border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.12);
 }
-.field input::placeholder,.field textarea::placeholder{color:#374151;}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted);}
 .field textarea{resize:vertical;min-height:80px;}
 .field select{cursor:pointer;}
 .field-hint{font-size:11px;color:var(--subtle);margin-top:2px;}
@@ -205,6 +205,13 @@ body::before{
 .logo-initials-input{
   display:flex;gap:8px;align-items:center;flex-wrap:wrap;
 }
+.logo-initials-input input{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:8px;padding:8px 12px;color:var(--text);
+  font-size:18px;font-weight:900;width:90px;text-align:center;
+  font-family:'Heebo',sans-serif;outline:none;letter-spacing:2px;
+}
+.logo-initials-input input:focus{border-color:var(--accent);}
 .color-swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
 .swatch{
   width:24px;height:24px;border-radius:6px;cursor:pointer;
@@ -216,7 +223,7 @@ body::before{
 .sig-wrap{position:relative;}
 .sig-canvas{
   width:100%;height:120px;border-radius:10px;
-  background:#0f1117;border:1px solid var(--border2);
+  background:#ffffff;border:2px solid #d1d5db;
   cursor:crosshair;display:block;touch-action:none;
 }
 .sig-actions{display:flex;gap:8px;margin-top:8px;}
@@ -271,6 +278,8 @@ body::before{
   display:flex;align-items:center;justify-content:space-between;
   backdrop-filter:blur(10px);z-index:200;
 }
+/* הוסף padding לתוכן העיקרי כדי שלא יכסה ה-save-bar */
+.main{padding-bottom:90px !important;}
 .save-status{font-size:13px;color:var(--muted);}
 .save-status.saved{color:var(--green);}
 .save-status.saving{color:var(--accent);}
@@ -388,7 +397,7 @@ body::before{
           <div class="logo-tab-content active" id="logoTab-initials">
             <div class="logo-initials-input">
               <input type="text" id="logoInitials" maxlength="3" placeholder="YA"
-                style="width:70px;background:#0f1117;border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:#fff;font-size:16px;font-weight:900;text-align:center;outline:none;"
+                style="width:70px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:14px;font-weight:900;text-align:center;outline:none;font-family:'Heebo',sans-serif;"
                 oninput="updateLogoPreview()">
             </div>
             <div style="font-size:11px;color:var(--subtle);margin-top:6px;">עד 3 תווים — ראשי תיבות מהשם</div>
@@ -495,7 +504,14 @@ body::before{
         <canvas id="sigCanvas" class="sig-canvas" width="700" height="120"></canvas>
         <img id="sigPreview" class="sig-preview-img" style="display:none">
       </div>
-      <div class="sig-actions">
+      <div class="sig-actions" style="align-items:center;">
+        <div style="display:flex;gap:6px;align-items:center;margin-left:auto;">
+          <span style="font-size:11px;color:var(--muted);">צבע:</span>
+          <button onclick="setSigColor('#111827',this)" title="שחור"
+            style="width:26px;height:26px;border-radius:50%;background:#111827;border:2px solid #374151;cursor:pointer;"></button>
+          <button onclick="setSigColor('#1d4ed8',this)" title="כחול"
+            style="width:26px;height:26px;border-radius:50%;background:#1d4ed8;border:2px solid #3b82f6;cursor:pointer;"></button>
+        </div>
         <button class="btn-sm" onclick="clearSignature()">🗑️ נקה</button>
         <button class="btn-sm" onclick="saveSignaturePreview()">💾 שמור חתימה</button>
         <span id="sigStatus" style="font-size:12px;color:var(--muted);align-self:center;"></span>
@@ -535,7 +551,22 @@ body::before{
   </div>
 
   <div style="height:80px;"></div>
+  <!-- ══ SECTION 6: Report Theme ══ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="icon">🎨</span> נושא צבע לדוח</div>
+    </div>
+    <div class="section-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">בחר נושא צבע שיחול על כל הדוחות שלך. השינוי ישמר בפרופיל.</div>
+      <div id="themeGrid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+        <!-- נוצר ב-JS -->
+      </div>
+    </div>
+  </div>
+
 </main>
+
+</div><!-- .content or similar wrapper -->
 
 <!-- ── Save bar ── -->
 <div class="save-bar">
@@ -660,6 +691,8 @@ function loadProfile(p){
     document.getElementById('sigStatus').textContent='✅ חתימה שמורה';
   }
 
+  // Report theme
+  if(p.reportTheme){ currentReportTheme = p.reportTheme; renderThemeGrid(); }
   // Templates
   if(p.fieldDefaults) fieldDefaults = p.fieldDefaults;
   if(p.textSnippets)  textSnippets  = p.textSnippets;
@@ -681,10 +714,11 @@ function updateLogoPreview(){
 
   if(logoMode === 'upload' && logoImageUrl){
     preview.innerHTML = `<img src="${logoImageUrl}"><div class="logo-overlay">📷</div>`;
+    preview.style.background = '';
   } else {
-    preview.style.background = logoColor;
-    preview.style.color = logoTextColor;
-    preview.innerHTML = `<span id="logoInitialsDisplay" style="color:${logoTextColor};font-size:${initials.length>2?'20':'26'}px;font-weight:900;">${initials}</span><div class="logo-overlay">📷</div>`;
+    preview.style.background = logoColor || '#1a2332';
+    preview.style.color = logoTextColor || '#f59e0b';
+    preview.innerHTML = `<span id="logoInitialsDisplay" style="color:${logoTextColor||'#f59e0b'};font-size:${initials.length>2?'20':'26'}px;font-weight:900;">${initials}</span><div class="logo-overlay">📷</div>`;
   }
 }
 
@@ -730,8 +764,11 @@ function clearLogoImage(){
 (function initSigCanvas(){
   const canvas = document.getElementById('sigCanvas');
   const ctx = canvas.getContext('2d');
-  ctx.strokeStyle='#f59e0b';
-  ctx.lineWidth=2.5;
+  // מלא רקע לבן
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle=window._sigColor||'#111827';
+  ctx.lineWidth=2;
   ctx.lineCap='round';
   ctx.lineJoin='round';
   let drawing=false, lastX=0, lastY=0;
@@ -768,9 +805,23 @@ function clearLogoImage(){
   canvas.addEventListener('touchend',   stop);
 })();
 
+function setSigColor(color, btn){
+  window._sigColor = color;
+  const canvas=document.getElementById('sigCanvas');
+  const ctx=canvas.getContext('2d');
+  ctx.strokeStyle=color;
+  // הדגש כפתור נבחר
+  document.querySelectorAll('.sig-actions button[onclick^="setSigColor"]').forEach(b=>{
+    b.style.boxShadow = b===btn ? '0 0 0 3px rgba(245,158,11,.5)' : 'none';
+  });
+}
 function clearSignature(){
   const canvas=document.getElementById('sigCanvas');
-  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Fill white background after clear
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
   sigDataUrl=null;
   document.getElementById('sigStatus').textContent='';
 }
@@ -894,6 +945,7 @@ async function saveAll(){
       email:    v('email'),    website: v('website'),
       linkedin: v('linkedin'), social:  v('social'),
       logoMode, logoColor, logoTextColor,
+      reportTheme: currentReportTheme,
       logoInitials: v('logoInitials') || '',
       fieldDefaults, textSnippets
     };
@@ -932,6 +984,84 @@ async function saveAll(){
 
 // Mark unsaved on any change
 document.addEventListener('input', ()=>setSaveStatus('unsaved'));
+
+// ══════════════════════════════════════════════════
+// REPORT THEMES
+// ══════════════════════════════════════════════════
+const REPORT_THEMES_SETTINGS = {
+  classic: {
+    name:'קלאסי', emoji:'⚫',
+    headerBorder:'#1F2937', h3Color:'#374151', thBg:'#F3F4F6',
+    accentColor:'#1D4ED8', summaryBg:'#D1FAE5', rptBg:'#F9FAFB',
+    sampleLines:['#1D4ED8','#374151','#374151'],
+  },
+  navy: {
+    name:'נייבי', emoji:'🔵',
+    headerBorder:'#1e3a5f', h3Color:'#1e3a5f', thBg:'#dbeafe',
+    accentColor:'#1e40af', summaryBg:'#dcfce7', rptBg:'#f0f9ff',
+    sampleLines:['#1e40af','#1e3a5f','#374151'],
+  },
+  elegant: {
+    name:'אלגנטי', emoji:'🟤',
+    headerBorder:'#78350f', h3Color:'#78350f', thBg:'#fef3c7',
+    accentColor:'#92400e', summaryBg:'#dcfce7', rptBg:'#fffdf7',
+    sampleLines:['#92400e','#78350f','#374151'],
+  },
+  clean: {
+    name:'מינימל', emoji:'⚪',
+    headerBorder:'#9ca3af', h3Color:'#374151', thBg:'#f9fafb',
+    accentColor:'#374151', summaryBg:'#f0fdf4', rptBg:'#ffffff',
+    sampleLines:['#374151','#374151','#6b7280'],
+  },
+  emerald: {
+    name:'אזמרגד', emoji:'🟢',
+    headerBorder:'#065f46', h3Color:'#065f46', thBg:'#d1fae5',
+    accentColor:'#047857', summaryBg:'#d1fae5', rptBg:'#f0fdf4',
+    sampleLines:['#047857','#065f46','#374151'],
+  },
+};
+
+let currentReportTheme = 'classic';
+
+function renderThemeGrid(){
+  const grid = document.getElementById('themeGrid');
+  if(!grid) return;
+  grid.innerHTML = Object.entries(REPORT_THEMES_SETTINGS).map(([key, t]) => {
+    const sel = currentReportTheme === key;
+    return `<div onclick="selectTheme('${key}')" style="
+      cursor:pointer;border-radius:10px;overflow:hidden;
+      border:2px solid ${sel ? '#f59e0b' : 'rgba(255,255,255,.1)'};
+      transition:all .2s;display:flex;flex-direction:column;
+    ">
+      <div style="background:${t.rptBg};padding:8px;direction:rtl;flex:1;">
+        <div style="border-bottom:2px solid ${t.headerBorder};padding-bottom:4px;margin-bottom:5px;text-align:center;">
+          <div style="font-size:8px;font-weight:900;color:${t.headerBorder};">שמאי רכוש</div>
+        </div>
+        <div style="font-size:7px;font-weight:800;color:${t.h3Color};border-bottom:1px solid ${t.thBg};padding-bottom:2px;margin-bottom:4px;">מהות הבקשה</div>
+        <div style="font-size:6px;color:#374151;line-height:1.4;margin-bottom:5px;">ח"מ התבקש לערוך חוות דעת שמאית...</div>
+        <table style="width:100%;border-collapse:collapse;font-size:6px;">
+          <tr style="background:${t.thBg};"><th style="padding:2px 4px;text-align:right;color:${t.h3Color};border:1px solid rgba(0,0,0,.1);">תיאור</th><th style="padding:2px 4px;color:${t.h3Color};border:1px solid rgba(0,0,0,.1);">סה"כ</th></tr>
+          <tr><td style="padding:2px 4px;border:1px solid rgba(0,0,0,.07);">תיקון טיח</td><td style="padding:2px 4px;border:1px solid rgba(0,0,0,.07);color:${t.accentColor};font-weight:700;">₪3,200</td></tr>
+          <tr style="background:${t.summaryBg};"><td style="padding:2px 4px;font-weight:800;">סה"כ</td><td style="padding:2px 4px;font-weight:800;color:${t.accentColor};">₪8,500</td></tr>
+        </table>
+      </div>
+      <div style="background:${sel?'#f59e0b':'#1F2937'};padding:5px;text-align:center;">
+        <span style="font-size:11px;font-weight:700;color:${sel?'#000':'#F9FAFB'};">${t.emoji} ${t.name}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectTheme(key){
+  currentReportTheme = key;
+  renderThemeGrid();
+  setSaveStatus('unsaved');
+}
+
+// Render on load
+document.addEventListener('DOMContentLoaded', ()=> renderThemeGrid());
+
+
 
 // Init
 updateLogoPreview();
