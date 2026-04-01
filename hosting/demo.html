@@ -210,12 +210,35 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
 <section class="hero" id="step0">
   <div>
     <div class="hero-badge">🎬 סיור מודרך — 3 דקות</div>
-    <h1>תראה איך OMDAN<br>עובד <em>בשבילך</em></h1>
-    <p class="hero-sub">גלול למטה וגלה איך תוך דקות מקבלים דוח שמאות מקצועי — מממצאים לכתב כמויות לדוח מוכן.</p>
-    <div class="hero-cta">
-      <a href="#step1" class="btn-primary">🚀 התחל סיור</a>
-      <a href="/register.html" class="btn-ghost">התחל ניסיון חינם →</a>
+    <h1>תראה איך OMDA<br>עובד <em>בשבילך</em></h1>
+    <p class="hero-sub">מממצאים לכתב כמויות לדוח מוכן — בפחות מ-10 דקות.</p>
+
+    <!-- 3-step flow -->
+    <div style="display:flex;justify-content:center;gap:0;margin:28px auto 32px;max-width:460px;">
+      <div style="flex:1;text-align:center;position:relative;">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(245,158,11,.15);border:2px solid var(--accent);color:var(--accent);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">1</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);">צור תיק</div>
+        <div style="font-size:11px;color:var(--muted);">בחר סוג שמאות</div>
+        <div style="position:absolute;top:18px;left:calc(50% + 20px);right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--border));"></div>
+      </div>
+      <div style="flex:1;text-align:center;position:relative;">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(245,158,11,.08);border:1px solid var(--border);color:var(--muted);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">2</div>
+        <div style="font-size:12px;font-weight:700;color:var(--muted);">מלא נתונים</div>
+        <div style="font-size:11px;color:var(--subtle);">ממצאים + BOQ</div>
+        <div style="position:absolute;top:18px;left:calc(50% + 20px);right:0;height:2px;background:var(--border);"></div>
+      </div>
+      <div style="flex:1;text-align:center;">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);color:var(--green);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">3</div>
+        <div style="font-size:12px;font-weight:700;color:var(--muted);">הפק דוח</div>
+        <div style="font-size:11px;color:var(--subtle);">PDF מוכן לשליחה</div>
+      </div>
     </div>
+
+    <div class="hero-cta">
+      <a href="/register.html" class="btn-primary">🚀 התחל ניסיון חינם</a>
+      <a href="/pricing.html" class="btn-ghost">ראה מחירים →</a>
+    </div>
+    <div style="margin-top:14px;font-size:12px;color:var(--subtle);">✓ 14 ימי ניסיון חינם — ללא כרטיס אשראי</div>
     <div class="hero-stats">
       <div class="stat"><div class="stat-n">3</div><div class="stat-l">סוגי שמאות</div></div>
       <div class="stat"><div class="stat-n">277</div><div class="stat-l">סעיפי BOQ</div></div>
@@ -233,14 +256,14 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
     <div>
       <div class="step-label">
         <div class="step-num" style="background:rgba(245,158,11,.15);color:var(--accent);">1</div>
-        <span style="color:var(--accent);">שלב ראשון</span>
+        <span style="color:var(--accent);font-weight:800;">שלב 1 מתוך 6</span>
       </div>
       <h2 class="step-title">3 מסלולי שמאות — כל אחד שונה</h2>
-      <p class="step-desc">OMDAN מותאם לשלושה סוגי שמאות שונים לחלוטין. כשאתה בוחר מסלול — הטופס, הדוח, וה-BOQ מותאמים אוטומטית.</p>
+      <p class="step-desc">כשאתה בוחר מסלול — הטופס, הדוח וכתב הכמויות מותאמים אוטומטית לסוג השמאות.</p>
       <ul class="step-features">
-        <li><strong>שמאות ביטוח</strong> — כולל פרטי פוליסה, תת-ביטוח, מינוי שמאי, שרברב הסדר. הדוח כולל פנל ביטוח מבנה מול תכולה.</li>
-        <li><strong>שמאות פרטית</strong> — לחיזוק תביעה מול ביטוח. ממוקד בהיקף נזק ועדויות, ללא שדות ביטוח.</li>
-        <li><strong>מס רכוש</strong> — קריטריונים ממשלתיים, סיווגי פגיעה (רקטה/טיל/נזק עקיף), טופס מותאם לרשויות.</li>
+        <li><strong>שמאות ביטוח</strong> — פוליסה, תת-ביטוח, שרברב הסדר. דוח מבנה מול תכולה.</li>
+        <li><strong>שמאות פרטית</strong> — לחיזוק תביעה. ממוקד בנזק ועדויות.</li>
+        <li><strong>מס רכוש</strong> — קריטריונים ממשלתיים, סיווגי פגיעה, טופס לרשויות.</li>
       </ul>
     </div>
     <div class="mockup">
@@ -331,15 +354,15 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
     <div>
       <div class="step-label">
         <div class="step-num" style="background:rgba(59,130,246,.15);color:var(--blue);">2</div>
-        <span style="color:var(--blue);">שלב שני</span>
+        <span style="color:var(--blue);font-weight:800;">שלב 2 מתוך 6</span>
       </div>
       <h2 class="step-title">טופס חכם — כל הפרטים במקום אחד</h2>
-      <p class="step-desc">הטופס מחולק לכרטיסיות לוגיות — נתוני בסיס, פרטי ביטוח, פרטי האירוע, ממצאים. כל שדה מקצועי ומדויק.</p>
+      <p class="step-desc">כרטיסיות לוגיות — נתוני בסיס, ביטוח, אירוע, ממצאים. שמירה אוטומטית לענן.</p>
       <ul class="step-features">
-        <li>שני לוחות זמנים בכרטיסייה אחת — תאריך אירוע ותאריך ביקור. הגנה: לא ניתן לבחור תאריך לפני האירוע</li>
-        <li>שדות ביטוח חכמים — חישוב תת-ביטוח אוטומטי בזמן אמת</li>
-        <li>סוגי אירוע עם תת-סיווגים — מים, אש, פריצה, מס רכוש — כל אחד פותח שאלות ספציפיות</li>
-        <li>שמירה אוטומטית לענן בכל שינוי</li>
+        <li>תאריך אירוע + ביקור — עם הגנה שמונעת בחירה שגויה</li>
+        <li>חישוב תת-ביטוח אוטומטי בזמן אמת</li>
+        <li>סוגי אירוע עם תת-סיווגים — כל אחד פותח שאלות ייעודיות</li>
+        
       </ul>
     </div>
   </div>
@@ -353,14 +376,14 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
     <div>
       <div class="step-label">
         <div class="step-num" style="background:rgba(139,92,246,.15);color:var(--purple);">3</div>
-        <span style="color:var(--purple);">הכי מרשים</span>
+        <span style="color:var(--purple);font-weight:800;">שלב 3 מתוך 6</span>
       </div>
       <h2 class="step-title">ממצאים → טקסט מנוסח אוטומטי</h2>
-      <p class="step-desc">מסמן חדרים, רמת נזק, וסיבת הנזק — המערכת כותבת את פסקאות הממצאים לדוח בעצמה. שפה מקצועית, מנוסחת נכון.</p>
+      <p class="step-desc">בחר חדר, רמת נזק וסיבה — המערכת כותבת את פסקת הממצאים בעצמה, בשפה מקצועית.</p>
       <ul class="step-features">
-        <li>Quick Picks לפי סוג אירוע — בחירה מהירה של האזורים הנפוצים לכל סוג נזק</li>
-        <li>12 אזורי חוץ — חזית בניין, גג, חדר מדרגות, חניה, גדר/חומה ועוד</li>
-        <li>כל אזור מקבל: רמת חומרה, סיבת הנזק, סימני פגיעה, הערת שמאי</li>
+        <li>Quick Picks לפי אירוע — בחירת אזורים נפוצים בשנייה</li>
+        <li>12 אזורי חוץ + כל חדרי הדירה</li>
+        <li>כל אזור — חומרה, סיבה, סימני פגיעה, הערת שמאי</li>
         <li>לחיצה אחת → פסקת ממצאים מנוסחת מקצועית לדוח</li>
       </ul>
     </div>
@@ -431,22 +454,22 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
         <div class="boq-row">
           <div class="boq-num">S2</div>
           <div class="boq-desc">פיקוח וניהול עבודות (5%)</div>
-          <div class="boq-unit">—</div>
+          <div class="boq-unit">%</div>
         </div>
       </div>
     </div>
     <div>
       <div class="step-label">
         <div class="step-num" style="background:rgba(16,185,129,.15);color:var(--green);">4</div>
-        <span style="color:var(--green);">ליבת המערכת</span>
+        <span style="color:var(--green);font-weight:800;">שלב 4 מתוך 6</span>
       </div>
       <h2 class="step-title">BOQ — כתב כמויות בלחיצה אחת</h2>
-      <p class="step-desc">מהממצאים לכתב כמויות מלא תוך שניות. 277 סעיפים מקצועיים בספרייה הפנימית, וגישה ישירה למאגר בנארית.</p>
+      <p class="step-desc">לחיצה אחת — כתב כמויות מלא לפי הממצאים. 277 סעיפים בספרייה, וגישה למאגר בנארית.</p>
       <ul class="step-features">
-        <li><strong>יצירה אוטומטית</strong> — לחץ "⚡ יצר כתב כמויות אוטומטי" — המערכת ממלאת לפי הממצאים</li>
+        <li><strong>יצירה אוטומטית</strong> — המערכת ממלאת לפי הממצאים בלחיצה</li>
         <li><strong>ספרייה פנימית</strong> — 277 סעיפים ב-15 פרקים, מסוננים לפי סוג נזק</li>
-        <li><strong>מאגר בנארית</strong> — מלל מקצועי ממכרזי אמת, ישירות לתוך הBOQ</li>
-        <li><strong>ספרייה אישית</strong> — שמור סעיפים מבנארית לשימוש חוזר בתיקים עתידיים</li>
+        <li><strong>בנארית</strong> — מלל ממכרזי אמת, ישירות ל-BOQ</li>
+        <li><strong>ספרייה אישית</strong> — שמור סעיפים לשימוש חוזר</li>
       </ul>
     </div>
   </div>
@@ -460,14 +483,14 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
     <div>
       <div class="step-label">
         <div class="step-num" style="background:rgba(245,158,11,.15);color:var(--accent);">5</div>
-        <span style="color:var(--accent);">חדש</span>
+        <span style="color:var(--accent);font-weight:800;">שלב 5 מתוך 6</span>
       </div>
       <h2 class="step-title">ספרייה אישית — הידע שלך</h2>
-      <p class="step-desc">מצאת סעיף מושלם בבנארית שמשמש אותך שוב ושוב? שמור אותו לספרייה האישית — יהיה זמין בכל תיק.</p>
+      <p class="step-desc">שמור סעיפים חוזרים לספרייה האישית — זמינים בכל תיק, מכל מכשיר.</p>
       <ul class="step-features">
-        <li>שמור מבנארית ישירות לספרייה שלך בלחיצה אחת</li>
-        <li>הספרייה האישית מסונכרנת בענן — זמינה מכל מכשיר</li>
-        <li>סעיפים אישיים מופיעים בקטגוריה ⭐ נפרדת בתוך ספריית ה-BOQ</li>
+        <li>שמירה מבנארית בלחיצה אחת</li>
+        
+        <li>מופיע בקטגוריה ⭐ נפרדת בספריית ה-BOQ</li>
         <li>מחיקה וניהול — כל סעיף ניתן למחיקה בלחיצה</li>
       </ul>
     </div>
@@ -552,15 +575,15 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
     <div>
       <div class="step-label">
         <div class="step-num" style="background:rgba(16,185,129,.15);color:var(--green);">6</div>
-        <span style="color:var(--green);">הסוף המושלם</span>
+        <span style="color:var(--green);font-weight:800;">שלב 6 מתוך 6</span>
       </div>
       <h2 class="step-title">דוח מקצועי מוכן לשליחה</h2>
-      <p class="step-desc">לחיצה אחת מייצרת דוח מלא עם כל הפרטים — מבנה, ממצאים, כתב כמויות, סיכום, חתימה ולוגו.</p>
+      <p class="step-desc">לחיצה אחת — דוח מלא: ממצאים, כ"כ, סיכום, חתימה ולוגו.</p>
       <ul class="step-features">
-        <li>מבנה הדוח מותאם לסוג השמאות — ביטוח, פרטי, ומס רכוש כל אחד בפורמט שלו</li>
-        <li>כותרת משנה אוטומטית לפי מטרת הביקור שהוגדרה</li>
-        <li>חישוב שיפוי / כינון אוטומטי — מבנה, תכולה, שירותים, פיקוח</li>
-        <li>שמירה ל-PDF, שיתוף, הדפסה — הכל בלחיצה אחת</li>
+        <li>פורמט דוח מותאם לסוג השמאות — ביטוח, פרטי, מס רכוש</li>
+        <li>כותרות וסיכום אוטומטיים לפי המטרה שהוגדרה</li>
+        <li>חישוב שיפוי/כינון אוטומטי — מבנה, תכולה, שירותים</li>
+        <li>PDF, שיתוף, הדפסה — בלחיצה אחת</li>
       </ul>
     </div>
   </div>
@@ -571,18 +594,19 @@ nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:12px 5%;display:flex
 <!-- ══ CTA ══ -->
 <section class="cta-section reveal">
   <div class="cta-box">
-    <div style="font-size:40px;margin-bottom:16px;">🚀</div>
-    <div class="cta-title">מוכן לנסות?</div>
-    <p class="cta-sub">14 יום ניסיון מלא — ללא כרטיס אשראי, ללא התחייבות. מתחיל תוך 30 שניות.</p>
+    <div style="font-size:44px;margin-bottom:16px;">🏆</div>
+    <div class="cta-title">פתח חשבון והתחל לעבוד</div>
+    <p class="cta-sub">14 ימי ניסיון חינמי — ללא כרטיס אשראי, ללא התחייבות.</p>
     <div class="cta-features">
-      <span class="cta-feat">14 יום חינם</span>
-      <span class="cta-feat">ללא כרטיס</span>
-      <span class="cta-feat">תיקים ללא הגבלה</span>
-      <span class="cta-feat">ביטול בכל עת</span>
+      <span class="cta-feat">✓ 14 יום חינם</span>
+      <span class="cta-feat">✓ ללא כרטיס</span>
+      <span class="cta-feat">✓ ביטול בכל עת</span>
+      <span class="cta-feat">✓ תמיכה בעברית</span>
     </div>
-    <a href="/register.html" class="btn-primary" style="font-size:16px;padding:16px 40px;">התחל ניסיון חינם ←</a>
-    <div style="margin-top:16px;">
-      <a href="saas-landing.html" style="font-size:13px;color:var(--muted);text-decoration:none;">חזרה לדף הבית</a>
+    <a href="/register.html" class="btn-primary" style="font-size:17px;padding:17px 48px;margin-bottom:12px;">פתח חשבון חינמי →</a>
+    <div style="margin-top:4px;">
+      <a href="/pricing.html" style="font-size:13px;color:var(--muted);text-decoration:none;margin-left:16px;">ראה מחירים</a>
+      <a href="/app/case.html" style="font-size:13px;color:var(--accent);text-decoration:none;">או נסה ישירות ←</a>
     </div>
   </div>
 </section>

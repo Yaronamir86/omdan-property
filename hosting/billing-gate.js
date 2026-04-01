@@ -5,19 +5,20 @@
  *
  *  שימוש:
  *  <script src="billing-gate.js"></script>
- *  BillingGate.init('appraiser-pro');
+ *  BillingGate.init('omdan-property');
  * ═══════════════════════════════════════════════════════
  */
 
 const BillingGate = {
 
-  productId: null,
+  productId: 'omdan-property',
   token: null,
   access: null,
   PRICING_URL: '/pricing.html',
 
   async init(productId) {
-    this.productId = productId;
+    this.productId = productId || 'omdan-property';
+    console.log('[BillingGate] init:', this.productId);
 
     // Wait for Firebase auth
     return new Promise((resolve) => {

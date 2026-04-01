@@ -27,22 +27,22 @@ const FieldValue = admin.firestore.FieldValue;
 
 // ── Secrets ──────────────────────────────────────────────
 const CARDCOM_TERMINAL = defineSecret("CARDCOM_TERMINAL");
-const CARDCOM_USERNAME  = defineSecret("CARDCOM_USERNAME");
+const CARDCOM_USERNAME = defineSecret("CARDCOM_USERNAME");
 
 // ── Plans ─────────────────────────────────────────────────
 const PLANS = {
-  starter: { monthly: 89,  annual: 680,  name: "OMDAN Starter" },
-  pro:     { monthly: 129, annual: 990,  name: "OMDAN Pro" },
-  office:  { monthly: 499, annual: 4500, name: "OMDAN Office" },
+  starter: { monthly: 89, annual: 680, name: "OMDAN Starter" },
+  pro: { monthly: 129, annual: 990, name: "OMDAN Pro" },
+  office: { monthly: 499, annual: 4500, name: "OMDAN Office" },
 };
 
 const CARDCOM_URLS = {
-  lowProfile:  "https://secure.cardcom.solutions/Interface/LowProfile.aspx",
-  indicator:   "https://secure.cardcom.solutions/Interface/BillGoldGetLowProfileIndicator.aspx",
+  lowProfile: "https://secure.cardcom.solutions/Interface/LowProfile.aspx",
+  indicator: "https://secure.cardcom.solutions/Interface/BillGoldGetLowProfileIndicator.aspx",
   chargeToken: "https://secure.cardcom.solutions/Interface/BillGoldService.asmx",
-  successUrl:  "https://omdan-property.web.app/billing-success.html",
-  errorUrl:    "https://omdan-property.web.app/billing-error.html",
-  webhookUrl:  "https://us-central1-omdan-property.cloudfunctions.net/cardcomWebhook",
+  successUrl: "https://omdan-property.web.app/billing-success.html",
+  errorUrl: "https://omdan-property.web.app/billing-error.html",
+  webhookUrl: "https://us-central1-omdan-property.cloudfunctions.net/cardcomWebhook",
 };
 
 // ── CORS helper ───────────────────────────────────────────
@@ -80,12 +80,21 @@ async function nextCaseNumber() {
 // ════════════════════════════════════════════════════════════
 exports.createCase = onRequest({ region: "us-central1" }, async (req, res) => {
   cors(res);
-  if (req.method === "OPTIONS") { res.status(204).send(""); return; }
-  if (req.method !== "POST")    { res.status(405).json({ error: "Method not allowed" }); return; }
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
 
   try {
     const decoded = await verifyToken(req);
-    if (!decoded)                { res.status(401).json({ error: "Unauthorized" }); return; }
+    if (!decoded) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
     const uid = decoded.uid;
 
     const d = req.body || {};
@@ -94,10 +103,10 @@ exports.createCase = onRequest({ region: "us-central1" }, async (req, res) => {
       return;
     }
 
-    const caseNumber   = await nextCaseNumber();
-    const now          = FieldValue.serverTimestamp();
-    const caseRef      = db.collection("cases").doc();
-    const propRef      = db.collection("propertyCases").doc(caseRef.id);
+    const caseNumber = await nextCaseNumber();
+    const now = FieldValue.serverTimestamp();
+    const caseRef = db.collection("cases").doc();
+    const propRef = db.collection("propertyCases").doc(caseRef.id);
 
     const title = d.insuredName
       ? `${d.insuredName}${d.claimNumber ? " — " + d.claimNumber : ""}`
@@ -106,73 +115,81 @@ exports.createCase = onRequest({ region: "us-central1" }, async (req, res) => {
     await caseRef.set({
       caseNumber,
       title,
-      moduleKey:  "property",
-      status:     "draft",
-      createdBy:  uid,
+      moduleKey: "property",
+      status: "draft",
+      createdBy: uid,
       assignedTo: uid,
-      summary:    buildSummary(d),
-      createdAt:  now,
-      updatedAt:  now,
+      summary: buildSummary(d),
+      createdAt: now,
+      updatedAt: now,
     });
 
     await propRef.set({
-      caseId:           caseRef.id,
+      caseId: caseRef.id,
       caseNumber,
+
       // מבוטח
-      insuredName:      d.insuredName      || "",
-      idNumber:         d.idNumber         || "",
-      phone:            d.phone            || "",
-      email:            d.email            || "",
+      insuredName: d.insuredName || "",
+      idNumber: d.idNumber || "",
+      phone: d.phone || "",
+      email: d.email || "",
+
       // תביעה
-      claimNumber:      d.claimNumber      || "",
-      policyNumber:     d.policyNumber     || "",
-      insurer:          d.insurer          || "",
+      claimNumber: d.claimNumber || "",
+      policyNumber: d.policyNumber || "",
+      insurer: d.insurer || "",
+
       // תאריכים
-      eventDate:        d.eventDate        || "",
-      reportDate:       d.reportDate       || "",
-      inspectionDate:   d.inspectionDate   || "",
+      eventDate: d.eventDate || "",
+      reportDate: d.reportDate || "",
+      inspectionDate: d.inspectionDate || "",
+
       // נכס
-      assetType:        d.assetType        || "apartment",
-      usageType:        d.usageType        || "residential",
-      city:             d.city             || "",
-      street:           d.street           || "",
-      houseNumber:      d.houseNumber      || "",
-      apartment:        d.apartment        || "",
-      fullAddress:      d.fullAddress      || "",
-      floor:            d.floor            || "",
-      rooms:            d.rooms            || "",
-      area:             d.area             || "",
-      buildYear:        d.buildYear        || "",
+      assetType: d.assetType || "apartment",
+      usageType: d.usageType || "residential",
+      city: d.city || "",
+      street: d.street || "",
+      houseNumber: d.houseNumber || "",
+      apartment: d.apartment || "",
+      fullAddress: d.fullAddress || "",
+      floor: d.floor || "",
+      rooms: d.rooms || "",
+      area: d.area || "",
+      buildYear: d.buildYear || "",
+
       // אירוע
-      incidentType:     d.incidentType     || "water_damage",
-      lossType:         d.lossType         || "property_damage",
-      urgencyLevel:     d.urgencyLevel     || "normal",
+      incidentType: d.incidentType || "water_damage",
+      lossType: d.lossType || "property_damage",
+      urgencyLevel: d.urgencyLevel || "normal",
+
       // בדיקה
-      inspectorName:    d.inspectorName    || "",
-      weather:          d.weather          || "",
-      occupancy:        d.occupancy        || "",
-      affectedAreas:    d.affectedAreas    || [],
+      inspectorName: d.inspectorName || "",
+      weather: d.weather || "",
+      occupancy: d.occupancy || "",
+      affectedAreas: d.affectedAreas || [],
       affectedContents: d.affectedContents || [],
       initialObservation: d.initialObservation || "",
-      description:      d.description     || "",
+      description: d.description || "",
+
       // BOQ
-      boqItems:         [],
-      boqTotal:         0,
-      shiputTotal:      0,
-      claimTotal:       0,
+      boqItems: [],
+      boqTotal: 0,
+      shiputTotal: 0,
+      claimTotal: 0,
+
       // extras
-      reportMode:       d.reportMode       || "insurance",
-      extraNotes:       d.extraNotes       || "",
-      createdBy:        uid,
-      createdAt:        now,
-      updatedAt:        now,
+      reportMode: d.reportMode || "insurance",
+      extraNotes: d.extraNotes || "",
+      createdBy: uid,
+      createdAt: now,
+      updatedAt: now,
     });
 
     logger.info("Case created", { caseId: caseRef.id, caseNumber, uid });
 
     res.json({
-      success:        true,
-      caseId:         caseRef.id,
+      success: true,
+      caseId: caseRef.id,
       propertyCaseId: propRef.id,
       caseNumber,
     });
@@ -184,34 +201,47 @@ exports.createCase = onRequest({ region: "us-central1" }, async (req, res) => {
 
 // ════════════════════════════════════════════════════════════
 //  2. processCase  POST /processCase
-//     מקבל BOQ ונתונים מעודכנים, שומר, מחזיר summary
 // ════════════════════════════════════════════════════════════
 exports.processCase = onRequest({ region: "us-central1" }, async (req, res) => {
   cors(res);
-  if (req.method === "OPTIONS") { res.status(204).send(""); return; }
-  if (req.method !== "POST")    { res.status(405).json({ error: "Method not allowed" }); return; }
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
 
   try {
     const decoded = await verifyToken(req);
-    if (!decoded) { res.status(401).json({ error: "Unauthorized" }); return; }
+    if (!decoded) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
 
     const { caseId, data } = req.body || {};
-    if (!caseId) { res.status(400).json({ error: "caseId נדרש" }); return; }
+    if (!caseId) {
+      res.status(400).json({ error: "caseId נדרש" });
+      return;
+    }
 
     const caseRef = db.collection("cases").doc(caseId);
     const propRef = db.collection("propertyCases").doc(caseId);
 
     const propSnap = await propRef.get();
-    if (!propSnap.exists) { res.status(404).json({ error: "תיק לא נמצא" }); return; }
+    if (!propSnap.exists) {
+      res.status(404).json({ error: "תיק לא נמצא" });
+      return;
+    }
 
     const now = FieldValue.serverTimestamp();
-    const d   = data || {};
+    const d = data || {};
 
-    // חשב סכומי BOQ
-    const boqItems   = d.boqItems || [];
-    const boqTotal   = boqItems.reduce((s, i) => s + (Number(i.totalKinun)  || 0), 0);
+    const boqItems = d.boqItems || [];
+    const boqTotal = boqItems.reduce((s, i) => s + (Number(i.totalKinun) || 0), 0);
     const shiputTotal = boqItems.reduce((s, i) => s + (Number(i.totalShiput) || 0), 0);
-    const claimTotal  = boqItems.reduce((s, i) => s + (Number(i.totalClaim)  || 0), 0);
+    const claimTotal = boqItems.reduce((s, i) => s + (Number(i.totalClaim) || 0), 0);
 
     const updateData = {
       ...d,
@@ -225,15 +255,18 @@ exports.processCase = onRequest({ region: "us-central1" }, async (req, res) => {
 
     await propRef.set(updateData, { merge: true });
 
-    await caseRef.set({
-      status:    "processing",
-      summary:   buildSummary({ ...propSnap.data(), ...d }),
-      updatedAt: now,
-      lastProcessedAt: now,
-    }, { merge: true });
+    await caseRef.set(
+      {
+        status: "processing",
+        summary: buildSummary({ ...propSnap.data(), ...d }),
+        updatedAt: now,
+        lastProcessedAt: now,
+      },
+      { merge: true }
+    );
 
     res.json({
-      success:     true,
+      success: true,
       caseId,
       boqTotal,
       shiputTotal,
@@ -250,25 +283,37 @@ exports.processCase = onRequest({ region: "us-central1" }, async (req, res) => {
 // ════════════════════════════════════════════════════════════
 exports.getCase = onRequest({ region: "us-central1" }, async (req, res) => {
   cors(res);
-  if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
 
   try {
     const decoded = await verifyToken(req);
-    if (!decoded) { res.status(401).json({ error: "Unauthorized" }); return; }
+    if (!decoded) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
 
     const caseId = req.query.caseId;
-    if (!caseId) { res.status(400).json({ error: "caseId נדרש" }); return; }
+    if (!caseId) {
+      res.status(400).json({ error: "caseId נדרש" });
+      return;
+    }
 
     const [caseSnap, propSnap] = await Promise.all([
       db.collection("cases").doc(caseId).get(),
       db.collection("propertyCases").doc(caseId).get(),
     ]);
 
-    if (!caseSnap.exists) { res.status(404).json({ error: "תיק לא נמצא" }); return; }
+    if (!caseSnap.exists) {
+      res.status(404).json({ error: "תיק לא נמצא" });
+      return;
+    }
 
     res.json({
-      success:      true,
-      case:         { id: caseSnap.id, ...toJS(caseSnap.data()) },
+      success: true,
+      case: { id: caseSnap.id, ...toJS(caseSnap.data()) },
       propertyCase: propSnap.exists ? { id: propSnap.id, ...toJS(propSnap.data()) } : null,
     });
   } catch (e) {
@@ -282,20 +327,26 @@ exports.getCase = onRequest({ region: "us-central1" }, async (req, res) => {
 // ════════════════════════════════════════════════════════════
 exports.listCases = onRequest({ region: "us-central1" }, async (req, res) => {
   cors(res);
-  if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
 
   try {
     const decoded = await verifyToken(req);
-    if (!decoded) { res.status(401).json({ error: "Unauthorized" }); return; }
+    if (!decoded) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
 
     const limit = Math.min(parseInt(req.query.limit || "25"), 100);
-    const snap  = await db.collection("cases")
+    const snap = await db.collection("cases")
       .where("createdBy", "==", decoded.uid)
       .orderBy("createdAt", "desc")
       .limit(limit)
       .get();
 
-    const cases = snap.docs.map(d => ({ id: d.id, ...toJS(d.data()) }));
+    const cases = snap.docs.map((d) => ({ id: d.id, ...toJS(d.data()) }));
     res.json({ success: true, cases, total: cases.length });
   } catch (e) {
     logger.error("listCases", e);
@@ -306,10 +357,11 @@ exports.listCases = onRequest({ region: "us-central1" }, async (req, res) => {
 // ── Helpers ───────────────────────────────────────────────
 function buildSummary(d) {
   const parts = [];
-  if (d.claimNumber)   parts.push(`תביעה ${d.claimNumber}`);
-  if (d.fullAddress || (d.city && d.street))
+  if (d.claimNumber) parts.push(`תביעה ${d.claimNumber}`);
+  if (d.fullAddress || (d.city && d.street)) {
     parts.push(`נכס: ${d.fullAddress || d.city + " " + d.street}`);
-  if (d.insurer)       parts.push(`מבטח: ${d.insurer}`);
+  }
+  if (d.insurer) parts.push(`מבטח: ${d.insurer}`);
   return parts.join(" | ");
 }
 
@@ -324,31 +376,58 @@ function toJS(data) {
 }
 
 // ════════════════════════════════════════════════════════════
-//  BILLING — Cardcom (same as appraiser-Pro, updated URLs)
+//  BILLING — Cardcom
 // ════════════════════════════════════════════════════════════
 function httpPost(url, params) {
   return new Promise((resolve, reject) => {
     const body = querystring.stringify(params);
-    const u    = new URL(url);
-    const req  = https.request({
-      hostname: u.hostname, path: u.pathname,
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded", "Content-Length": Buffer.byteLength(body) },
-    }, (res) => { let d = ""; res.on("data", c => d += c); res.on("end", () => resolve(d)); });
+    const u = new URL(url);
+
+    const req = https.request(
+      {
+        hostname: u.hostname,
+        path: u.pathname,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Length": Buffer.byteLength(body),
+        },
+      },
+      (res) => {
+        let d = "";
+        res.on("data", (c) => {
+          d += c;
+        });
+        res.on("end", () => resolve(d));
+      }
+    );
+
     req.on("error", reject);
-    req.write(body); req.end();
+    req.write(body);
+    req.end();
   });
 }
 
 function httpGet(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, res => { let d = ""; res.on("data", c => d += c); res.on("end", () => resolve(d)); }).on("error", reject);
+    https
+      .get(url, (res) => {
+        let d = "";
+        res.on("data", (c) => {
+          d += c;
+        });
+        res.on("end", () => resolve(d));
+      })
+      .on("error", reject);
   });
 }
 
 function parseNV(str) {
   const r = {};
-  str.split("&").forEach(p => { const [k, ...v] = p.split("="); if (k) r[decodeURIComponent(k)] = decodeURIComponent(v.join("=") || ""); });
+  str.split("&").forEach((p) => {
+    const [k, ...v] = p.split("=");
+    if (k) r[decodeURIComponent(k)] = decodeURIComponent(v.join("=") || "");
+  });
   return r;
 }
 
@@ -359,36 +438,210 @@ function calcEnd(mode, from = new Date()) {
   return d;
 }
 
+function buildCardcomBasePayload({ amount, planData, billingMode, decoded, sessionId, fullName }) {
+  return {
+    TerminalNumber: CARDCOM_TERMINAL.value(),
+    UserName: CARDCOM_USERNAME.value(),
+    APILevel: "10",
+    Operation: "2",
+    CoinId: "1",
+    Language: "he",
+    Codepage: "65001",
+
+    SumToBill: String(amount),
+    ProductName: planData.name,
+    CardOwnerEmail: decoded.email || "",
+    CardOwnerName: fullName,
+
+    SuccessRedirectUrl: `${CARDCOM_URLS.successUrl}?session=${sessionId}`,
+    ErrorRedirectUrl: `${CARDCOM_URLS.errorUrl}?session=${sessionId}`,
+    IndicatorUrl: CARDCOM_URLS.webhookUrl,
+    ReturnValue: sessionId,
+
+    InvoiceHeadOperation: "1",
+    DocTypeToCreate: "400",
+    AutoRedirect: "false",
+
+    "InvoiceHead.CustName": fullName,
+    "InvoiceHead.Email": decoded.email || "",
+    "InvoiceHead.SendByEmail": "true",
+    "InvoiceHead.Language": "he",
+    "InvoiceHead.Comments": `${planData.name} - ${billingMode}`,
+  };
+}
+
+async function tryCardcomCreatePayment(payload, label) {
+  logger.info(`Cardcom payload ${label}`, payload);
+
+  const raw = await httpPost(CARDCOM_URLS.lowProfile, payload);
+  const parsed = parseNV(raw);
+
+  logger.info(`Cardcom raw response ${label}`, { raw });
+  logger.info(`Cardcom parsed response ${label}`, parsed);
+
+  return { raw, parsed };
+}
+
 exports.cardcomCreatePayment = onRequest(
   { region: "us-central1", secrets: [CARDCOM_TERMINAL, CARDCOM_USERNAME] },
   async (req, res) => {
     cors(res);
-    if (req.method === "OPTIONS") { res.status(204).send(""); return; }
-    if (req.method !== "POST")    { res.status(405).json({ error: "Method not allowed" }); return; }
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
     try {
       const decoded = await verifyToken(req);
-      if (!decoded) { res.status(401).json({ error: "Unauthorized" }); return; }
+      if (!decoded) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+
       const { planId, billingMode } = req.body || {};
       const planData = PLANS[planId];
-      if (!planData || !["monthly","annual"].includes(billingMode)) { res.status(400).json({ error: "Invalid plan" }); return; }
+
+      if (!planData || !["monthly", "annual"].includes(billingMode)) {
+        res.status(400).json({ error: "Invalid plan" });
+        return;
+      }
+
       const amount = billingMode === "annual" ? planData.annual : planData.monthly;
+
+      // שליפת שם מלא אמיתי מהפרופיל
+      let fullName = decoded.name || "";
+      try {
+        const userSnap = await db.collection("users").doc(decoded.uid).get();
+        if (userSnap.exists) {
+          const userData = userSnap.data() || {};
+          fullName =
+            userData.fullName ||
+            [userData.firstName, userData.lastName].filter(Boolean).join(" ") ||
+            decoded.name ||
+            decoded.email ||
+            "לקוח OMDAN";
+        } else {
+          fullName = decoded.name || decoded.email || "לקוח OMDAN";
+        }
+      } catch (e) {
+        logger.warn("Failed to load user profile for Cardcom name", {
+          uid: decoded.uid,
+          message: e.message,
+        });
+        fullName = decoded.name || decoded.email || "לקוח OMDAN";
+      }
+
       const sessionRef = db.collection("checkoutSessions").doc();
-      await sessionRef.set({ uid: decoded.uid, planId, billingMode, amount, productName: planData.name, status: "pending", createdAt: FieldValue.serverTimestamp() });
-      const raw = await httpPost(CARDCOM_URLS.lowProfile, {
-        TerminalNumber: CARDCOM_TERMINAL.value(), UserName: CARDCOM_USERNAME.value(),
-        APILevel: "10", Operation: "2", CoinId: "1", Language: "he", Codepage: "65001",
-        SumToBill: String(amount), ProductName: planData.name,
-        CardOwnerEmail: decoded.email || "",
-        SuccessRedirectUrl: `${CARDCOM_URLS.successUrl}?session=${sessionRef.id}`,
-        ErrorRedirectUrl:   `${CARDCOM_URLS.errorUrl}?session=${sessionRef.id}`,
-        IndicatorUrl: CARDCOM_URLS.webhookUrl, ReturnValue: sessionRef.id,
-        InvoiceHeadOperation: "1", DocTypeToCreate: "400", AutoRedirect: "false",
+      await sessionRef.set({
+        uid: decoded.uid,
+        planId,
+        billingMode,
+        amount,
+        productName: planData.name,
+        customerName: fullName,
+        customerEmail: decoded.email || "",
+        status: "pending",
+        createdAt: FieldValue.serverTimestamp(),
       });
-      const parsed = parseNV(raw);
-      if (parsed.ResponseCode !== "0") throw new Error(parsed.Description || "Cardcom error");
-      await sessionRef.update({ lowProfileCode: parsed.LowProfileCode || null });
-      res.json({ url: parsed.Url || parsed.url, sessionId: sessionRef.id });
-    } catch (e) { logger.error("cardcomCreatePayment", e); res.status(500).json({ error: e.message }); }
+
+      const basePayload = buildCardcomBasePayload({
+        amount,
+        planData,
+        billingMode,
+        decoded,
+        sessionId: sessionRef.id,
+        fullName,
+      });
+
+      // ניסיון 1: InvoiceLines בלי אינדקס
+      let attempt = await tryCardcomCreatePayment(
+        {
+          ...basePayload,
+          "InvoiceLines.Description": planData.name,
+          "InvoiceLines.Quantity": "1",
+          "InvoiceLines.Price": String(amount),
+          "InvoiceLines.IsPriceIncludeVAT": "true",
+        },
+        "attempt_1_unindexed"
+      );
+
+      // ניסיון 2: InvoiceLines עם אינדקס
+      if (attempt.parsed.ResponseCode !== "0") {
+        logger.warn("Cardcom attempt 1 failed, retrying with indexed InvoiceLines", {
+          description: attempt.parsed.Description || "",
+          responseCode: attempt.parsed.ResponseCode || "",
+        });
+
+        attempt = await tryCardcomCreatePayment(
+          {
+            ...basePayload,
+            "InvoiceLines1.Description": planData.name,
+            "InvoiceLines1.Quantity": "1",
+            "InvoiceLines1.Price": String(amount),
+            "InvoiceLines1.IsPriceIncludeVAT": "true",
+          },
+          "attempt_2_indexed"
+        );
+      }
+
+      if (attempt.parsed.ResponseCode !== "0") {
+        logger.error("cardcomCreatePayment final failure", {
+          parsed: attempt.parsed,
+          sessionId: sessionRef.id,
+          uid: decoded.uid,
+          planId,
+          billingMode,
+        });
+
+        await sessionRef.update({
+          status: "failed",
+          error: attempt.parsed.Description || "Cardcom error",
+          errorCode: attempt.parsed.ResponseCode || null,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+
+        res.status(500).json({
+          error: attempt.parsed.Description || "Cardcom error",
+          details: attempt.parsed,
+        });
+        return;
+      }
+
+      const paymentUrl =
+        attempt.parsed.Url ||
+        attempt.parsed.url ||
+        attempt.parsed.LowProfileUrl ||
+        null;
+
+      await sessionRef.update({
+        lowProfileCode: attempt.parsed.LowProfileCode || null,
+        paymentUrl,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      logger.info("cardcomCreatePayment success", {
+        sessionId: sessionRef.id,
+        lowProfileCode: attempt.parsed.LowProfileCode || null,
+        paymentUrl,
+        fullName,
+      });
+
+      res.json({
+        success: true,
+        url: paymentUrl,
+        sessionId: sessionRef.id,
+      });
+    } catch (e) {
+      logger.error("cardcomCreatePayment crash", {
+        message: e.message,
+        stack: e.stack,
+      });
+      res.status(500).json({ error: e.message });
+    }
   }
 );
 
@@ -397,73 +650,220 @@ exports.cardcomWebhook = onRequest(
   async (req, res) => {
     try {
       const { terminalnumber, lowprofilecode, ReturnValue } = req.query;
-      if (!lowprofilecode || !ReturnValue) { res.status(200).send("ok"); return; }
-      const sessionRef  = db.collection("checkoutSessions").doc(ReturnValue);
+
+      logger.info("cardcomWebhook hit", {
+        terminalnumber,
+        lowprofilecode,
+        ReturnValue,
+        query: req.query,
+      });
+
+      if (!lowprofilecode || !ReturnValue) {
+        res.status(200).send("ok");
+        return;
+      }
+
+      const sessionRef = db.collection("checkoutSessions").doc(ReturnValue);
       const sessionSnap = await sessionRef.get();
-      if (!sessionSnap.exists) { res.status(200).send("ok"); return; }
+
+      if (!sessionSnap.exists) {
+        logger.warn("cardcomWebhook: session not found", { sessionId: ReturnValue });
+        res.status(200).send("ok");
+        return;
+      }
+
       const session = sessionSnap.data();
-      if (session.status === "paid") { res.status(200).send("ok"); return; }
-      const verifyRaw = await httpGet(`${CARDCOM_URLS.indicator}?terminalnumber=${terminalnumber}&username=${CARDCOM_USERNAME.value()}&lowprofilecode=${lowprofilecode}`);
-      const verified  = parseNV(verifyRaw);
-      if (verified.OperationResponse !== "0" || verified.DealResponse !== "0") { await sessionRef.update({ status: "failed" }); res.status(200).send("ok"); return; }
-      const dealNumber = verified.InternalDealNumber;
-      const payRef     = db.collection("payments").doc(String(dealNumber));
-      const DUPLICATE  = "DUPLICATE";
-      try {
-        await db.runTransaction(async t => {
-          const paySnap = await t.get(payRef);
-          if (paySnap.exists) { const e = new Error(DUPLICATE); e.code = DUPLICATE; throw e; }
-          t.set(payRef, { sessionId: ReturnValue, uid: session.uid, planId: session.planId, amount: session.amount, processedAt: FieldValue.serverTimestamp() });
-          t.update(sessionRef, { status: "paid", paidAt: FieldValue.serverTimestamp() });
+
+      if (session.status === "paid") {
+        logger.info("cardcomWebhook: session already paid", { sessionId: ReturnValue });
+        res.status(200).send("ok");
+        return;
+      }
+
+      const verifyUrl =
+        `${CARDCOM_URLS.indicator}?terminalnumber=${terminalnumber}` +
+        `&username=${encodeURIComponent(CARDCOM_USERNAME.value())}` +
+        `&lowprofilecode=${encodeURIComponent(lowprofilecode)}`;
+
+      logger.info("cardcomWebhook verify URL", { verifyUrl });
+
+      const verifyRaw = await httpGet(verifyUrl);
+      const verified = parseNV(verifyRaw);
+
+      logger.info("cardcomWebhook verify raw", { verifyRaw });
+      logger.info("cardcomWebhook verify parsed", verified);
+
+      if (verified.OperationResponse !== "0" || verified.DealResponse !== "0") {
+        await sessionRef.update({
+          status: "failed",
+          verifyResponse: verified,
+          updatedAt: FieldValue.serverTimestamp(),
         });
-      } catch (e) { if (e.code === DUPLICATE) { res.status(200).send("ok"); return; } throw e; }
+        res.status(200).send("ok");
+        return;
+      }
+
+      const dealNumber = verified.InternalDealNumber;
+      const payRef = db.collection("payments").doc(String(dealNumber));
+      const DUPLICATE = "DUPLICATE";
+
+      try {
+        await db.runTransaction(async (t) => {
+          const paySnap = await t.get(payRef);
+          if (paySnap.exists) {
+            const e = new Error(DUPLICATE);
+            e.code = DUPLICATE;
+            throw e;
+          }
+
+          t.set(payRef, {
+            sessionId: ReturnValue,
+            uid: session.uid,
+            planId: session.planId,
+            amount: session.amount,
+            processedAt: FieldValue.serverTimestamp(),
+            verified,
+          });
+
+          t.update(sessionRef, {
+            status: "paid",
+            paidAt: FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+        });
+      } catch (e) {
+        if (e.code === DUPLICATE) {
+          logger.warn("cardcomWebhook duplicate payment", { dealNumber });
+          res.status(200).send("ok");
+          return;
+        }
+        throw e;
+      }
+
       const plan = PLANS[session.planId];
-      if (!plan) { res.status(200).send("ok"); return; }
+      if (!plan) {
+        logger.warn("cardcomWebhook: invalid plan in session", { session });
+        res.status(200).send("ok");
+        return;
+      }
+
       const subEnd = calcEnd(session.billingMode);
-      await db.collection("billing").doc(session.uid).set({
-        plan: session.planId, billingMode: session.billingMode, status: "active",
-        subscriptionStart: admin.firestore.Timestamp.fromDate(new Date()),
-        subscriptionEnd:   admin.firestore.Timestamp.fromDate(subEnd),
-        lastPaymentAt: FieldValue.serverTimestamp(),
-        lastPaymentAmount: session.amount,
-        cardcomToken: verified.Token || null, cardcomTokenExp: verified.TokenExDate || null,
-        cardcomDealNumber: dealNumber, reportsThisMonth: 0,
-      }, { merge: true });
+
+      await db.collection("billing").doc(session.uid).set(
+        {
+          plan: session.planId,
+          billingMode: session.billingMode,
+          status: "active",
+          subscriptionStart: admin.firestore.Timestamp.fromDate(new Date()),
+          subscriptionEnd: admin.firestore.Timestamp.fromDate(subEnd),
+          lastPaymentAt: FieldValue.serverTimestamp(),
+          lastPaymentAmount: session.amount,
+          cardcomToken: verified.Token || null,
+          cardcomTokenExp: verified.TokenExDate || null,
+          cardcomDealNumber: dealNumber,
+          reportsThisMonth: 0,
+        },
+        { merge: true }
+      );
+
+      logger.info("cardcomWebhook success", {
+        uid: session.uid,
+        dealNumber,
+        plan: session.planId,
+        billingMode: session.billingMode,
+      });
+
       res.status(200).send("ok");
-    } catch (e) { logger.error("cardcomWebhook", e); res.status(200).send("ok"); }
+    } catch (e) {
+      logger.error("cardcomWebhook crash", {
+        message: e.message,
+        stack: e.stack,
+      });
+      res.status(200).send("ok");
+    }
   }
 );
 
 exports.cardcomRenewSubscriptions = onSchedule(
-  { schedule: "0 9 * * *", timeZone: "Asia/Jerusalem", region: "us-central1", secrets: [CARDCOM_TERMINAL, CARDCOM_USERNAME] },
+  {
+    schedule: "0 9 * * *",
+    timeZone: "Asia/Jerusalem",
+    region: "us-central1",
+    secrets: [CARDCOM_TERMINAL, CARDCOM_USERNAME],
+  },
   async () => {
-    const now = new Date(), tomorrow = new Date(now);
+    const now = new Date();
+    const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
+
     const snap = await db.collection("billing")
       .where("status", "==", "active")
       .where("subscriptionEnd", ">=", admin.firestore.Timestamp.fromDate(now))
-      .where("subscriptionEnd", "<",  admin.firestore.Timestamp.fromDate(tomorrow))
+      .where("subscriptionEnd", "<", admin.firestore.Timestamp.fromDate(tomorrow))
       .get();
+
     for (const docSnap of snap.docs) {
-      const uid = docSnap.id, b = docSnap.data();
-      if (b.cancelAtEnd) { await db.collection("billing").doc(uid).update({ status: "canceled", canceledAt: FieldValue.serverTimestamp() }); continue; }
+      const uid = docSnap.id;
+      const b = docSnap.data();
+
+      if (b.cancelAtEnd) {
+        await db.collection("billing").doc(uid).update({
+          status: "canceled",
+          canceledAt: FieldValue.serverTimestamp(),
+        });
+        continue;
+      }
+
       if (!b.cardcomToken) continue;
-      const plan = PLANS[b.plan]; if (!plan) continue;
+
+      const plan = PLANS[b.plan];
+      if (!plan) continue;
+
       const amount = b.billingMode === "annual" ? plan.annual : plan.monthly;
+
       try {
         const raw = await httpPost(`${CARDCOM_URLS.chargeToken}?op=DoTransaction`, {
-          TerminalNumber: CARDCOM_TERMINAL.value(), UserName: CARDCOM_USERNAME.value(),
-          Token: b.cardcomToken, TokenExDate: b.cardcomTokenExp,
-          SumToBill: String(amount), CoinId: "1", Operation: "1", ProductName: `${plan.name} — חידוש`,
+          TerminalNumber: CARDCOM_TERMINAL.value(),
+          UserName: CARDCOM_USERNAME.value(),
+          Token: b.cardcomToken,
+          TokenExDate: b.cardcomTokenExp,
+          SumToBill: String(amount),
+          CoinId: "1",
+          Operation: "1",
+          ProductName: `${plan.name} — חידוש`,
         });
+
         const parsed = parseNV(raw);
+
+        logger.info("cardcomRenewSubscriptions response", {
+          uid,
+          raw,
+          parsed,
+        });
+
         if (parsed.ResponseCode === "0" && parsed.OperationResponse === "0") {
           const newEnd = calcEnd(b.billingMode, b.subscriptionEnd.toDate());
-          await db.collection("billing").doc(uid).update({ status: "active", subscriptionEnd: admin.firestore.Timestamp.fromDate(newEnd), lastPaymentAt: FieldValue.serverTimestamp(), lastPaymentAmount: amount, reportsThisMonth: 0 });
+
+          await db.collection("billing").doc(uid).update({
+            status: "active",
+            subscriptionEnd: admin.firestore.Timestamp.fromDate(newEnd),
+            lastPaymentAt: FieldValue.serverTimestamp(),
+            lastPaymentAmount: amount,
+            reportsThisMonth: 0,
+          });
         } else {
-          await db.collection("billing").doc(uid).update({ status: "renewal_failed", renewalError: parsed.Description || parsed.ResponseCode });
+          await db.collection("billing").doc(uid).update({
+            status: "renewal_failed",
+            renewalError: parsed.Description || parsed.ResponseCode,
+          });
         }
-      } catch (e) { logger.error("Renewal error", { uid, err: e.message }); }
+      } catch (e) {
+        logger.error("Renewal error", {
+          uid,
+          message: e.message,
+          stack: e.stack,
+        });
+      }
     }
   }
 );

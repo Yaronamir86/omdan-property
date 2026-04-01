@@ -7,7 +7,9 @@
   <script>
     // רץ לפני הרינדור — מונע flash
     try{
-      const p=JSON.parse(localStorage.getItem("omdan_profile")||"null");
+      const _cachedRaw=localStorage.getItem("omdan_profile");
+      const _cached=_cachedRaw?JSON.parse(_cachedRaw):null;
+      const p=(_cached&&_cached._uid===u.uid)?_cached:null;
       if(p){
         document.addEventListener("DOMContentLoaded",()=>{
           const mark=document.getElementById("logoMark");
@@ -204,7 +206,7 @@
   <div class="page-header">
     <div>
       <div class="page-title">התיקים שלי</div>
-      <div class="page-sub" id="pageSubtitle">טוען...</div>
+      <div class="page-sub" id="pageSubtitle"></div>
     </div>
     <button class="btn btn-primary" onclick="newCase()">+ תיק חדש</button>
   </div>
@@ -213,22 +215,22 @@
   <div class="stats">
     <div class="sc sc-accent">
       <div class="label">סה"כ תיקים</div>
-      <div class="value" id="statTotal">—</div>
+      <div class="value" id="statTotal">0</div>
       <div class="sub">כל הזמנים</div>
     </div>
     <div class="sc sc-blue">
       <div class="label">בטיפול</div>
-      <div class="value" id="statOpen">—</div>
+      <div class="value" id="statOpen">0</div>
       <div class="sub">טיוטות ובעיבוד</div>
     </div>
     <div class="sc sc-green">
       <div class="label">הושלמו</div>
-      <div class="value" id="statDone">—</div>
+      <div class="value" id="statDone">0</div>
       <div class="sub">דוחות מוכנים</div>
     </div>
     <div class="sc sc-purple">
       <div class="label">החודש</div>
-      <div class="value" id="statMonth">—</div>
+      <div class="value" id="statMonth">0</div>
       <div class="sub">תיקים חדשים</div>
     </div>
   </div>
@@ -239,7 +241,7 @@
     <div style="display:flex;gap:10px;align-items:center;">
       <div class="search-wrap">
         <span class="ico">🔍</span>
-        <input type="text" id="searchInput" placeholder="חיפוש לפי שם, מספר תביעה..." oninput="filterCases()" />
+        <input type="text" id="searchInput" placeholder="חפש לפי שם תיק / לקוח" oninput="filterCases()" />
       </div>
     </div>
   </div>
@@ -259,7 +261,7 @@
         </tr>
       </thead>
       <tbody id="casesBody">
-        <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted);">טוען תיקים... <span class="spin"></span></td></tr>
+        <tr id="loadingRow"><td colspan="7" style="text-align:center;padding:60px 20px;color:var(--muted);"><div style="font-size:28px;margin-bottom:12px;">⏳</div><div style="font-weight:700;font-size:15px;margin-bottom:4px;">טוען תיקים...</div></td></tr>
       </tbody>
     </table>
   </div>
@@ -286,22 +288,45 @@ let currentUser=null, allCases=[];
 
 auth.onAuthStateChanged(async u=>{
   if(!u){ window.location.href="/"; return; }
-  // Billing gate check
-  const billingDoc = await db.collection("billing").doc(u.uid).get();
-  if(billingDoc.exists){
-    const billing = billingDoc.data();
-    const now = new Date();
-    let hasAccess = false;
-    if(billing.plan==='trial'){
-      hasAccess = now < new Date(billing.trialEnd);
-    } else if(['starter','pro','office'].includes(billing.plan)){
-      hasAccess = billing.status==='active' && now < new Date(billing.subscriptionEnd);
-    }
-    if(!hasAccess){
-      const reason = billing.plan==='trial' ? 'trial_expired' : 'subscription_expired';
-      window.location.href=`/billing-gate.html?reason=${reason}`;
-      return;
-    }
+  // ── Billing check — unified ──
+  const now = new Date();
+  let billingToken = null;
+  try {
+    const billingDoc = await db.collection("billing").doc(u.uid).get();
+    billingToken = billingDoc.exists ? billingDoc.data() : null;
+    console.log('[Dashboard] billing:', billingToken?.plan, billingToken?.status);
+  } catch(e) {
+    console.warn('[Dashboard] billing fetch error:', e.message);
+  }
+
+  // אם אין billing doc — צור trial
+  if (!billingToken) {
+    console.log('[Dashboard] no billing, creating trial for', u.uid);
+    const trialEnd = new Date(); trialEnd.setDate(trialEnd.getDate() + 14);
+    billingToken = { uid: u.uid, email: u.email, plan: 'trial', products: ['omdan-property'],
+      trialEnd: trialEnd.toISOString(), subscriptionEnd: null, status: null,
+      reportsThisMonth: 0, createdAt: new Date().toISOString() };
+    try { await db.collection("billing").doc(u.uid).set(billingToken); } catch(e) { console.warn('trial create failed:', e); }
+  }
+
+  // checkAccess — תמיכה ב-Timestamp + ISO
+  const _toDate = v => v?.toDate ? v.toDate() : (v ? new Date(v) : null);
+  let hasAccess = false;
+  if (billingToken.plan === 'trial') {
+    const trialEnd = _toDate(billingToken.trialEnd);
+    hasAccess = !!trialEnd && now < trialEnd;
+    console.log('[Dashboard] trial check:', hasAccess, 'end:', trialEnd);
+  } else if (['starter','pro','office'].includes(billingToken.plan) && billingToken.status === 'active') {
+    const subEnd = _toDate(billingToken.subscriptionEnd);
+    hasAccess = !!subEnd && now < subEnd;
+    console.log('[Dashboard] paid check:', hasAccess, 'plan:', billingToken.plan, 'end:', subEnd);
+  }
+
+  if (!hasAccess) {
+    const reason = billingToken.plan === 'trial' ? 'trial_expired' : 'subscription_expired';
+    console.warn('[Dashboard] access denied, reason:', reason);
+    window.location.href = `/billing-gate.html?reason=${reason}`;
+    return;
   }
   currentUser=u;
   document.getElementById("navUser").textContent=u.displayName||u.email;
@@ -309,24 +334,53 @@ auth.onAuthStateChanged(async u=>{
   loadCases();
 });
 
-async function loadProfile(uid){
-  // טעינה מיידית מ-cache
+function applyProfile(p){
+  if(!p) return;
   try{
-    const cached=localStorage.getItem("omdan_profile");
-    if(cached) applyProfile(JSON.parse(cached));
-  }catch(e){}
-  // עדכון מ-Firestore ברקע
+    const nameEl = document.getElementById('navUser');
+    if(nameEl && (p.nameHe||p.fullName)) nameEl.textContent = p.nameHe||p.fullName;
+    const sqEl = document.getElementById('topbarLogo');
+    if(sqEl && p.logoLetters){
+      const sq = sqEl.querySelector('.logo-sq, [data-initials]');
+      if(sq){ sq.textContent=p.logoLetters; if(p.logoColor) sq.style.background=p.logoColor; }
+    }
+  }catch(e){ /* לא שובר */ }
+}
+
+async function loadProfile(uid){
+  // ניקוי cache אם שייך ליוזר אחר
+  try{
+    const cached = localStorage.getItem("omdan_profile");
+    if(cached){
+      const parsed = JSON.parse(cached);
+      // אם הcache שייך לאותו יוזר — השתמש בו
+      if(parsed._uid === uid){
+        applyProfile(parsed);
+      } else {
+        // יוזר שונה — נקה מיד
+        localStorage.removeItem("omdan_profile");
+      }
+    }
+  }catch(e){ localStorage.removeItem("omdan_profile"); }
+  // טעינה מ-Firestore
   try{
     const snap=await db.collection("users").doc(uid).get();
     if(!snap.exists) return;
     const p=snap.data();
-    localStorage.setItem("omdan_profile", JSON.stringify(p));
+    // שמור עם uid מזהה
+    localStorage.setItem("omdan_profile", JSON.stringify({...p, _uid: uid}));
     applyProfile(p);
   }catch(e){ console.warn("profile load",e); }
 }
 
 
 async function loadCases(){
+  // הצג loading
+  document.getElementById('casesBody').innerHTML=
+    `<tr><td colspan="7" style="text-align:center;padding:60px;color:var(--muted);">
+      <div style="font-size:28px;margin-bottom:12px;">⏳</div>
+      <div style="font-weight:700;">טוען תיקים...</div>
+    </td></tr>`;
   try{
     const snap = await db.collection("cases")
       .where("uid","==",currentUser.uid)
@@ -335,21 +389,26 @@ async function loadCases(){
     allCases = snap.docs.map(d=>({id:d.id,...d.data(),
       createdAt: d.data().createdAt?.toDate?.()?.toISOString() || d.data().createdAt
     }));
-    // מיון בצד לקוח — לא צריך composite index
     allCases.sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
     renderStats(allCases);
     renderTable(allCases);
-    document.getElementById("pageSubtitle").textContent=`${allCases.length} תיקים בסך הכל`;
+    document.getElementById("pageSubtitle").textContent =
+      allCases.length ? `${allCases.length} תיקים בסך הכל` : '';
   }catch(e){
     console.error("loadCases error:",e);
-    document.getElementById("casesBody").innerHTML=`<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--red);">שגיאה: ${e.message}</td></tr>`;
+    document.getElementById("casesBody").innerHTML=
+      `<tr><td colspan="7"><div class="empty">
+        <div class="icon">⚠️</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--red);">שגיאה בטעינת נתונים</div>
+        <p style="margin-bottom:16px;font-size:13px;">${e.message||'אירעה שגיאה בלתי צפויה'}</p>
+        <button class="btn btn-ghost" onclick="location.reload()">🔄 נסה שוב</button>
+      </div></td></tr>`;
   }
 }
 
 function renderStats(cases){
   const now=new Date();
   const thisMonth=cases.filter(c=>{
-    // createdAt is a string like "24.3.2026" or a Firestore timestamp
     if(!c.createdAt) return false;
     if(typeof c.createdAt === "string"){
       const parts = c.createdAt.split(".");
@@ -365,16 +424,28 @@ function renderStats(cases){
   });
   const done = cases.filter(c=>c.status==="completed"||(c.state?.summary?.claimTotal||c.state?.summary?.rehabTime));
   const open = cases.filter(c=>!c.status||c.status==="draft"||c.status==="processing");
-  document.getElementById("statTotal").textContent=cases.length;
-  document.getElementById("statOpen").textContent=open.length;
-  document.getElementById("statDone").textContent=done.length;
-  document.getElementById("statMonth").textContent=thisMonth.length;
+  document.getElementById("statTotal").textContent = cases.length;
+  document.getElementById("statOpen").textContent  = open.length;
+  document.getElementById("statDone").textContent  = done.length;
+  document.getElementById("statMonth").textContent = thisMonth.length;
+  // הצג KPI section רק אם יש נתונים
+  const statsEl = document.querySelector('.stats');
+  if(statsEl) statsEl.style.display = cases.length ? '' : 'none';
 }
 
-function renderTable(cases){
+function renderTable(cases, isSearch=false){
   const tbody=document.getElementById("casesBody");
   if(!cases.length){
-    tbody.innerHTML=`<tr><td colspan="6"><div class="empty"><div class="icon">📁</div><p>אין תיקים עדיין — <a href="#" onclick="newCase()" style="color:var(--accent)">פתח תיק ראשון</a></p></div></td></tr>`;
+    if(isSearch){
+      tbody.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="icon">🔍</div><div style="font-size:16px;font-weight:700;margin-bottom:8px;">לא נמצאו תוצאות</div><p>נסה מילות חיפוש אחרות</p></div></td></tr>`;
+    } else {
+      tbody.innerHTML=`<tr><td colspan="7"><div class="empty">
+        <div class="icon">📂</div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:8px;color:var(--text);">אין לך עדיין תיקים</div>
+        <p style="margin-bottom:20px;">התחל ביצירת תיק ראשון</p>
+        <button class="btn btn-primary" onclick="newCase()" style="font-size:15px;padding:12px 28px;">+ תיק חדש</button>
+      </div></td></tr>`;
+    }
     return;
   }
   tbody.innerHTML=cases.map(c=>{
@@ -385,11 +456,11 @@ function renderTable(cases){
       [insuredName, claimNum].filter(Boolean).join(" — ") : "ללא כותרת";
     const dateStr = typeof c.createdAt === "string" ? c.createdAt :
       (c.createdAt?.seconds ? new Date(c.createdAt.seconds*1000).toLocaleDateString("he-IL") :
-      (c.updatedAt?.seconds ? new Date(c.updatedAt.seconds*1000).toLocaleDateString("he-IL") : "—"));
+      (c.updatedAt?.seconds ? new Date(c.updatedAt.seconds*1000).toLocaleDateString("he-IL") : ""));
     const isDone = c.status==="completed" || !!(c.state?.summary?.claimTotal || c.state?.summary?.rehabTime);
     const status = c.status || (isDone ? "completed" : "draft");
     const evTypeMap = {water:'💧 מים',fire:'🔥 שריפה',burglary:'🚪 פריצה',storm:'🌪️ סערה',thirdparty:"👷 צד ג'",electrical:'⚡ חשמל',other:'📋 אחר',tax:'🏛️ מס רכוש'};
-    const evType = evTypeMap[c.state?.event?.eventType] || '—';
+    const evType = evTypeMap[c.state?.event?.eventType] || '';
     const actionBtn = isDone
       ? `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openCaseReport('${caseId}')" style="background:var(--green);color:#000;">📄 דוח</button>`
       : `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openCase('${caseId}')">פתח ›</button>`;
@@ -407,7 +478,7 @@ function renderTable(cases){
 
 function filterCases(){
   const q=document.getElementById("searchInput").value.toLowerCase().trim();
-  if(!q){ renderTable(allCases); return; }
+  if(!q){ renderTable(allCases, false); return; }
   const filtered=allCases.filter(c=>{
     const name   = (c.state?.base?.fullName||c.name||"").toLowerCase();
     const claim  = (c.state?.insurance?.claimNum||c.state?.base?.claimNum||"").toLowerCase();
@@ -418,23 +489,23 @@ function filterCases(){
     return name.includes(q)||claim.includes(q)||policy.includes(q)||
            addr.includes(q)||cid.includes(q)||mode.includes(q);
   });
-  renderTable(filtered);
+  renderTable(filtered, true);
 }
 
 function modeTag(m){
   const map={private:["mode-private","שומה פרטית"],insurance:["mode-insurance","ביטוח"],tax:["mode-tax","מס רכוש"]};
-  const[cls,lbl]=map[m]||["mode-private",m||"—"];
+  const[cls,lbl]=map[m]||["mode-private",m||"שומה"];
   return`<span class="mode-tag ${cls}">${lbl}</span>`;
 }
 
 function statusBadge(s){
   const map={draft:["badge-draft","טיוטה"],processing:["badge-processing","בעיבוד"],completed:["badge-done","הושלם"],review:["badge-review","לבדיקה"]};
-  const[cls,lbl]=map[s]||["badge-draft",s||"—"];
+  const[cls,lbl]=map[s]||["badge-draft",s||"טיוטה"];
   return`<span class="badge ${cls}">${lbl}</span>`;
 }
 
 function fmtDate(iso){
-  if(!iso)return"—";
+  if(!iso)return"";
   return new Date(iso).toLocaleDateString("he-IL",{day:"2-digit",month:"2-digit",year:"numeric"});
 }
 
@@ -454,7 +525,7 @@ function openCaseReport(caseId){ window.location.href=`/app/case.html?case=${cas
 function newCase(){ window.location.href="/app/case.html"; }
 function newTaxCase(mode){ window.location.href=`/app/tax-form.html?mode=${mode}`; }
 function goSettings(){ window.location.href="/app/settings.html"; }
-function doLogout(){ auth.signOut().then(()=>window.location.href="/"); }
+function doLogout(){ localStorage.removeItem("omdan_profile"); auth.signOut().then(()=>window.location.href="/"); }
 function goBilling(){ window.location.href='/app/account-billing.html'; }
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js', {updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});});}</script>

@@ -707,47 +707,55 @@ onAuthStateChanged(_auth, async user => {
       }
     } catch(e){ console.warn('profile load error', e); }
 
-    // ── Billing / Trial Check ──
+    // ── Billing / Trial Check — unified ──
+    const _toDate = v => v?.toDate ? v.toDate() : (v ? new Date(v) : null);
     try {
       const billingDoc = await getDoc(doc(_db, 'billing', user.uid));
-      if(billingDoc.exists()){
-        const billing = billingDoc.data();
-        const now = new Date();
-        let hasAccess = false;
-        let daysLeft = 0;
-        window._billing = billing;
+      const now = new Date();
+      let billing = billingDoc.exists() ? billingDoc.data() : null;
 
-        if(billing.plan === 'trial'){
-          const trialEnd = new Date(billing.trialEnd);
-          hasAccess = now < trialEnd;
-          daysLeft = Math.max(0, Math.ceil((trialEnd - now)/(1000*60*60*24)));
-        } else if(billing.plan === 'pro' || billing.plan === 'annual'){
-          const subEnd = new Date(billing.subscriptionEnd);
-          hasAccess = now < subEnd;
-          daysLeft = Math.max(0, Math.ceil((subEnd - now)/(1000*60*60*24)));
-        }
-
-        if(!hasAccess){
-          // Show upgrade screen
-          showUpgradeScreen(billing.plan === 'trial' ? 'trial_expired' : 'subscription_expired');
-        } else if(billing.plan === 'trial' && daysLeft <= 3){
-          // Show trial warning banner
-          showTrialBanner(daysLeft);
-        }
-      } else {
-        // New user — create trial record
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 14);
-        const newBilling = {
+      // New user — create trial
+      if (!billing) {
+        const trialEnd = new Date(); trialEnd.setDate(trialEnd.getDate() + 14);
+        billing = {
           uid: user.uid, email: user.email, plan: 'trial',
-          products: ['appraiser-pro'], trialEnd: trialEnd.toISOString(),
-          subscriptionEnd: null, stripeCustomerId: null,
-          createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+          products: ['omdan-property'], trialEnd: trialEnd.toISOString(),
+          subscriptionEnd: null, status: null,
+          reportsThisMonth: 0, createdAt: new Date().toISOString()
         };
-        await setDoc(doc(_db, 'billing', user.uid), newBilling);
-        window._billing = newBilling;
+        try { await setDoc(doc(_db, 'billing', user.uid), billing); } catch(e2) { console.warn('trial create:', e2); }
+        console.log('[Case] created trial for', user.uid);
       }
-    } catch(e){ console.warn('billing check error', e); }
+
+      window._billing = billing;
+      let hasAccess = false;
+      let daysLeft = 0;
+      console.log('[Case] billing plan:', billing.plan, 'status:', billing.status);
+
+      if (billing.plan === 'trial') {
+        const trialEnd = _toDate(billing.trialEnd);
+        if (trialEnd) {
+          hasAccess = now < trialEnd;
+          daysLeft = Math.max(0, Math.ceil((trialEnd - now) / 86400000));
+        }
+        console.log('[Case] trial:', hasAccess, 'daysLeft:', daysLeft);
+      } else if (['starter','pro','office'].includes(billing.plan) && billing.status === 'active') {
+        const subEnd = _toDate(billing.subscriptionEnd);
+        if (subEnd) {
+          hasAccess = now < subEnd;
+          daysLeft = Math.max(0, Math.ceil((subEnd - now) / 86400000));
+        }
+        console.log('[Case] paid:', hasAccess, 'plan:', billing.plan);
+      }
+
+      if (!hasAccess) {
+        const reason = billing.plan === 'trial' ? 'trial_expired' : 'subscription_expired';
+        console.warn('[Case] access denied:', reason);
+        showUpgradeScreen(reason);
+      } else if (billing.plan === 'trial' && daysLeft <= 3) {
+        showTrialBanner(daysLeft);
+      }
+    } catch(e){ console.warn('[Case] billing check error:', e); }
 
   } else {
     const loader = document.getElementById('formLoader');
@@ -910,7 +918,7 @@ window.doForgotPassword = async () => {
 
 <!-- ══════════════════ APP SHELL ══════════════════ -->
 <!-- ══════════════════ CASE MANAGER ══════════════════ -->
-<div id="caseMgr">
+<div id="caseMgr" class="hidden" style="display:none;">
   <div class="cm-panel">
     <div class="cm-title">📁 ניהול תיקים</div>
     <div class="cm-sub">תיקים מסונכרנים לענן אוטומטית.</div>
@@ -1022,7 +1030,7 @@ window.doForgotPassword = async () => {
 </div>
 
 <!-- ══════════════════ REPORT VIEW ══════════════════ -->
-<div id="reportView">
+<div id="reportView" class="hidden">
   <div class="rpt-topbar" style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:#fff;border-bottom:2px solid #E5E7EB;gap:12px;flex-wrap:wrap;">
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <button class="btn btn-secondary btn-sm" onclick="closeReport()" style="display:flex;align-items:center;gap:5px;">← חזרה לעריכה</button>
@@ -4588,7 +4596,7 @@ function _doGenerateReport(){
 
   const mkInfoRow = (k,v) => v ? `<tr><td style="padding:6px 8px;font-weight:700;color:#6B7280;width:160px;">${k}:</td><td style="padding:6px 8px;">${esc(v)}</td></tr>` : '';
   const mkBOQSection = (items, sectionTitle) => {
-    if(!items.length) return '';
+    if(!items.length) return `<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">📋 לא נוספו סעיפים לפרק זה עדיין</div>`;
     const isIns = (mode === 'insurance');
     const showClaim = !!STATE.boq.hasClaim;
 

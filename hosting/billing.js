@@ -79,7 +79,7 @@ class BillingCore {
    * Firestore token structure — /billing/{uid}:
    * {
    *   uid, email, plan: 'trial'|'starter'|'pro'|'office',
-   *   products: ['appraiser-pro'],
+   *   products: ['omdan-property'],
    *   trialEnd: ISO,
    *   subscriptionEnd: ISO,
    *   reportsThisMonth: number,
@@ -106,7 +106,7 @@ class BillingCore {
     const token = {
       uid, email,
       plan: 'trial',
-      products: ['appraiser-pro'],
+      products: ['omdan-property'],
       trialEnd: trialEnd.toISOString(),
       subscriptionEnd: null,
       reportsThisMonth: 0,
@@ -121,32 +121,60 @@ class BillingCore {
   }
 
   static checkAccess(token, productId) {
-    if (!token) return { ok: false, reason: 'no_token' };
-    if (!token.products?.includes(productId)) return { ok: false, reason: 'no_product' };
+    if (!token) {
+      console.warn('[BillingCore] checkAccess: no token');
+      return { ok: false, reason: 'no_token' };
+    }
+
+    // Fallback: אם אין products[] — אפשר גישה אם plan תקין
+    const hasProduct = !token.products || token.products.includes(productId) || token.products.includes('omdan-property');
+    if (!hasProduct) {
+      console.warn('[BillingCore] no_product', token.products, productId);
+      return { ok: false, reason: 'no_product' };
+    }
 
     const now = new Date();
 
+    // Helper: Firestore Timestamp | ISO string | Date
+    const toDate = (v) => {
+      if (!v) return null;
+      if (v?.toDate) return v.toDate();       // Firestore Timestamp
+      if (v instanceof Date) return v;
+      return new Date(v);                      // ISO string / number
+    };
+
     // Trial
     if (token.plan === 'trial') {
-      const trialEnd = new Date(token.trialEnd);
-      if (now > trialEnd) return { ok: false, reason: 'trial_expired' };
+      const trialEnd = toDate(token.trialEnd);
+      if (!trialEnd) { console.warn('[BillingCore] trial: no trialEnd'); return { ok: false, reason: 'trial_expired' }; }
+      if (now > trialEnd) { console.warn('[BillingCore] trial expired', trialEnd); return { ok: false, reason: 'trial_expired' }; }
       const daysLeft = Math.ceil((trialEnd - now) / 86400000);
+      console.log('[BillingCore] trial OK, daysLeft:', daysLeft);
       return { ok: true, plan: 'trial', daysLeft };
     }
 
-    // Paid subscription
-    if (token.subscriptionEnd) {
-      const subEnd = new Date(token.subscriptionEnd);
-      if (now > subEnd) return { ok: false, reason: 'subscription_expired' };
+    // Paid subscription: starter | pro | office
+    if (['starter','pro','office'].includes(token.plan)) {
+      if (token.status !== 'active') {
+        console.warn('[BillingCore] paid: status not active:', token.status);
+        return { ok: false, reason: 'subscription_expired' };
+      }
+      const subEnd = toDate(token.subscriptionEnd);
+      if (!subEnd || now > subEnd) {
+        console.warn('[BillingCore] paid: subEnd expired', subEnd);
+        return { ok: false, reason: 'subscription_expired' };
+      }
+      console.log('[BillingCore] paid OK, plan:', token.plan, 'subEnd:', subEnd);
       return { ok: true, plan: token.plan };
     }
 
+    console.warn('[BillingCore] unknown plan:', token.plan);
     return { ok: false, reason: 'unknown' };
   }
 
   static getDaysLeftInTrial(token) {
     if (!token || token.plan !== 'trial') return null;
-    const trialEnd = new Date(token.trialEnd);
+    const trialEnd = token.trialEnd?.toDate ? token.trialEnd.toDate() : new Date(token.trialEnd);
     return Math.max(0, Math.ceil((trialEnd - new Date()) / 86400000));
   }
 

@@ -199,11 +199,13 @@
       }
       .plan-card.popular {
         border: 2px solid var(--accent);
-        background: linear-gradient(
-          135deg,
-          rgba(245, 158, 11, 0.04),
-          var(--card)
-        );
+        background: linear-gradient(160deg,rgba(245,158,11,.07) 0%,var(--card) 60%);
+        box-shadow: 0 0 0 1px rgba(245,158,11,.15), 0 20px 60px rgba(245,158,11,.12);
+        transform: scale(1.04);
+        z-index: 1;
+      }
+      .plan-card.popular:hover {
+        transform: scale(1.06) translateY(-3px);
       }
       .popular-badge {
         position: absolute;
@@ -420,6 +422,58 @@
         transform: rotate(45deg);
       }
 
+
+      /* Comparison table */
+      .comparison-wrap {
+        max-width:1100px;margin:0 auto 48px;padding:0 5%;
+      }
+      .comparison-title {
+        font-size:20px;font-weight:900;text-align:center;margin-bottom:24px;
+      }
+      .comparison-table {
+        width:100%;border-collapse:collapse;font-size:13px;
+        background:var(--card);border-radius:16px;overflow:hidden;
+        border:1px solid var(--border);
+      }
+      .comparison-table th {
+        padding:14px 16px;text-align:center;font-size:12px;font-weight:800;
+        color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
+        border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);
+      }
+      .comparison-table th.pop {color:var(--accent);}
+      .comparison-table td {
+        padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);
+        text-align:center;color:var(--muted);
+      }
+      .comparison-table td:first-child {text-align:right;font-weight:600;color:var(--text);}
+      .comparison-table tbody tr:last-child td {border-bottom:none;}
+      .comparison-table tbody tr:hover td {background:rgba(255,255,255,.02);}
+      .ct-yes {color:var(--green);font-weight:800;font-size:16px;}
+      .ct-no  {color:var(--subtle);font-size:16px;}
+      .ct-val {color:var(--text);font-weight:700;}
+
+      /* Urgency badge */
+      .urgency-note {
+        display:inline-flex;align-items:center;gap:6px;
+        font-size:11px;font-weight:700;color:var(--green);
+        margin-top:8px;opacity:.9;
+      }
+
+      /* Benefit bullets */
+      .plan-benefit {
+        display:flex;align-items:flex-start;gap:8px;
+        font-size:13px;margin-bottom:8px;
+      }
+      .plan-benefit .b-icon {font-size:14px;flex-shrink:0;margin-top:1px;}
+      .plan-benefit .b-text {color:var(--text);font-weight:600;line-height:1.4;}
+      .plan-benefit .b-sub  {font-size:11px;color:var(--muted);display:block;}
+
+      @media(max-width:768px){
+        .plan-card.popular{transform:scale(1);}
+        .comparison-wrap{overflow-x:auto;}
+        .comparison-table{min-width:520px;}
+      }
+
       /* Footer */
       footer {
         border-top: 1px solid var(--border);
@@ -555,19 +609,22 @@ firebase.auth().onAuthStateChanged(user => {
           </div>
           <div class="price-annual" id="annual-starter"></div>
           <div class="plan-divider"></div>
-          <ul class="plan-features">
-            <li class="highlight">עד 20 דוחות בחודש</li>
-            <li>יצירת דוחות שמאות</li>
-            <li>העלאת תמונות</li>
-            <li>הפקת PDF</li>
-            <li>משתמש אחד</li>
-          </ul>
-          <button
-            class="btn-plan btn-plan-outline"
-            onclick="startCheckout('starter')"
-          >
-            בחר Starter
+          <div class="plan-benefit">
+            <span class="b-icon">📄</span>
+            <span class="b-text">20 דוחות בחודש<span class="b-sub">מספיק לשמאי עצמאי בתחילת הדרך</span></span>
+          </div>
+          <div class="plan-benefit">
+            <span class="b-icon">📷</span>
+            <span class="b-text">תיעוד תמונות ב-PDF<span class="b-sub">דוח מקצועי בלחיצה אחת</span></span>
+          </div>
+          <div class="plan-benefit">
+            <span class="b-icon">✍️</span>
+            <span class="b-text">חתימה דיגיטלית<span class="b-sub">מראה מקצועי ללקוח</span></span>
+          </div>
+          <button class="btn-plan btn-plan-outline" onclick="startCheckout('starter')" style="margin-top:auto;">
+            התחל עכשיו
           </button>
+          <div class="urgency-note">✓ 14 יום חינם — ללא כרטיס אשראי</div>
         </div>
 
         <!-- Pro -->
@@ -583,20 +640,26 @@ firebase.auth().onAuthStateChanged(user => {
           </div>
           <div class="price-annual" id="annual-pro"></div>
           <div class="plan-divider"></div>
-          <ul class="plan-features">
-            <li class="highlight">דוחות ללא הגבלה</li>
-            <li>BOQ ומחירונים</li>
-            <li>אחסון תמונות</li>
-            <li>חתימה דיגיטלית</li>
-            <li>ייצוא לאקסל</li>
-            <li>משתמש אחד</li>
-          </ul>
-          <button
-            class="btn-plan btn-plan-primary"
-            onclick="startCheckout('pro')"
-          >
-            בחר Pro
+          <div class="plan-benefit">
+            <span class="b-icon">♾️</span>
+            <span class="b-text">דוחות ללא הגבלה<span class="b-sub">חוסך בממוצע 3 שעות עבודה לתיק</span></span>
+          </div>
+          <div class="plan-benefit">
+            <span class="b-icon">📚</span>
+            <span class="b-text">BOQ + ספריית מחירון<span class="b-sub">277 סעיפים — כתב כמויות אוטומטי</span></span>
+          </div>
+          <div class="plan-benefit">
+            <span class="b-icon">🎨</span>
+            <span class="b-text">נושאי צבע לדוח<span class="b-sub">מראה מקצועי שמבדל אותך</span></span>
+          </div>
+          <div class="plan-benefit">
+            <span class="b-icon">💾</span>
+            <span class="b-text">ייצוא Excel + PDF<span class="b-sub">תאימות מלאה לחברות ביטוח</span></span>
+          </div>
+          <button class="btn-plan btn-plan-primary" onclick="startCheckout('pro')" style="margin-top:auto;font-size:16px;padding:15px;">
+            התחל עכשיו — Pro
           </button>
+          <div class="urgency-note">✓ ללא התחייבות · ביטול בכל עת</div>
         </div>
 
         <!-- Office -->
@@ -611,21 +674,84 @@ firebase.auth().onAuthStateChanged(user => {
           </div>
           <div class="price-annual" id="annual-office"></div>
           <div class="plan-divider"></div>
-          <ul class="plan-features">
-            <li class="highlight">5 משתמשים</li>
-            <li>ניהול תיקים</li>
-            <li>הרשאות עובדים</li>
-            <li>לוג פעילות</li>
-            <li>API חיבור למערכות</li>
-          </ul>
-          <button
-            class="btn-plan btn-plan-outline"
-            onclick="startCheckout('office')"
-          >
-            בחר Office
+          <div class="plan-benefit">
+            <span class="b-icon">👥</span>
+            <span class="b-text">5 שמאים במשרד<span class="b-sub">ניהול צוות מרכזי ממקום אחד</span></span>
+          </div>
+          <div class="plan-benefit">
+            <span class="b-icon">🔐</span>
+            <span class="b-text">הרשאות מתקדמות<span class="b-sub">שליטה על מה כל עובד רואה</span></span>
+          </div>
+          <div class="plan-benefit">
+            <span class="b-icon">📊</span>
+            <span class="b-text">לוג פעילות + סטטיסטיקות<span class="b-sub">מעקב על ביצועי המשרד</span></span>
+          </div>
+          <button class="btn-plan btn-plan-outline" onclick="startCheckout('office')" style="margin-top:auto;">
+            התחל עכשיו
           </button>
+          <div class="urgency-note">✓ 14 יום חינם — ללא כרטיס אשראי</div>
         </div>
       </div>
+    </div>
+
+
+    <!-- Comparison Table -->
+    <div class="comparison-wrap">
+      <div class="comparison-title">השוואה מהירה</div>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th style="text-align:right;">פיצ'ר</th>
+            <th>Starter</th>
+            <th class="pop">⭐ Pro</th>
+            <th>Office</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>דוחות חודשיים</td>
+            <td class="ct-val">20</td>
+            <td class="ct-val" style="color:var(--accent);">ללא הגבלה</td>
+            <td class="ct-val">ללא הגבלה</td>
+          </tr>
+          <tr>
+            <td>BOQ + ספריית מחירון</td>
+            <td class="ct-no">—</td>
+            <td class="ct-yes">✓</td>
+            <td class="ct-yes">✓</td>
+          </tr>
+          <tr>
+            <td>חתימה דיגיטלית</td>
+            <td class="ct-yes">✓</td>
+            <td class="ct-yes">✓</td>
+            <td class="ct-yes">✓</td>
+          </tr>
+          <tr>
+            <td>נושאי צבע לדוח</td>
+            <td class="ct-no">—</td>
+            <td class="ct-yes">✓</td>
+            <td class="ct-yes">✓</td>
+          </tr>
+          <tr>
+            <td>ייצוא Excel / PDF</td>
+            <td class="ct-yes">✓</td>
+            <td class="ct-yes">✓</td>
+            <td class="ct-yes">✓</td>
+          </tr>
+          <tr>
+            <td>מספר משתמשים</td>
+            <td class="ct-val">1</td>
+            <td class="ct-val">1</td>
+            <td class="ct-val">עד 5</td>
+          </tr>
+          <tr>
+            <td>הרשאות עובדים</td>
+            <td class="ct-no">—</td>
+            <td class="ct-no">—</td>
+            <td class="ct-yes">✓</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- FAQ -->
@@ -725,18 +851,63 @@ firebase.auth().onAuthStateChanged(user => {
         document.querySelector("nav").after(banner);
       }
 
-      // startCheckout — ממתין לauth ואז מחליט
-      let _firebaseUser  = null;
-      let _authResolved  = false;
-      let _authPromise   = null; // Promise שיסתיים כשauth יתבהר
+      let _firebaseUser = null;
+
+      // Reset buttons — called on pageshow (bfcache restore) and on error
+      function _resetCheckoutBtns() {
+        const labels = { starter: 'התחל עכשיו', pro: 'התחל עכשיו — Pro', office: 'התחל עכשיו' };
+        document.querySelectorAll('.btn-plan').forEach(b => {
+          b.disabled = false;
+          b.style.opacity = '';
+          b.style.pointerEvents = '';
+          // Restore original label from data attribute
+          if(b.dataset.origText) b.textContent = b.dataset.origText;
+        });
+      }
+
+      // Restore on back-navigation (bfcache)
+      window.addEventListener('pageshow', e => {
+        if(e.persisted) _resetCheckoutBtns();
+      });
 
       async function startCheckout(planId) {
-        const user = window._firebaseUser || null;
-        if (!user) {
-          window.location.href = '/register.html';
+        if (!_firebaseUser) {
+          window.location.href = `/register.html?plan=${planId}&billing=${billingMode}`;
           return;
         }
-        alert('מערכת התשלומים בהקמה. לשדרוג מנוי פנה אלינו ישירות.');
+        const btns = document.querySelectorAll('.btn-plan');
+        btns.forEach(b => {
+          if(!b.dataset.origText) b.dataset.origText = b.textContent;
+          b.disabled = true;
+          b.style.opacity = '.5';
+          b.style.pointerEvents = 'none';
+        });
+        const clicked = [...btns].find(b => b.onclick?.toString().includes(planId));
+        if(clicked) clicked.textContent = '⏳ מעביר לתשלום...';
+
+        try {
+          const token = await _firebaseUser.getIdToken(true);
+          const res = await fetch(
+            'https://us-central1-omdan-property.cloudfunctions.net/cardcomCreatePayment',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ planId, billingMode }),
+            }
+          );
+          const data = await res.json();
+          if (data.url) { window.location.href = data.url; return; }
+          throw new Error(data.error || 'שגיאה ביצירת תשלום');
+        } catch(e) {
+          console.error('Checkout error:', e);
+          _resetCheckoutBtns();
+          const errEl = document.getElementById('checkout-error') || document.createElement('div');
+          errEl.id = 'checkout-error';
+          errEl.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1f2937;border:1px solid rgba(239,68,68,.4);color:#fca5a5;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:700;z-index:9999;text-align:center;';
+          errEl.textContent = '⚠️ ' + (e.message || 'שגיאה בחיבור לתשלום — נסה שוב');
+          if(!document.getElementById('checkout-error')) document.body.appendChild(errEl);
+          setTimeout(() => errEl.remove(), 5000);
+        }
       }
     </script>
 
@@ -752,12 +923,8 @@ firebase.auth().onAuthStateChanged(user => {
       const auth = getAuth(app);
 
       // צור Promise שמסתיים כשauth יתבהר — startCheckout ממתין לזה
-      window._authPromise = new Promise(resolve => {
-        onAuthStateChanged(auth, user => {
-          window._firebaseUser  = user || null;
-          window._authResolved  = true;
-          resolve(user);
-        });
+      onAuthStateChanged(auth, user => {
+        window._firebaseUser = user || null;
       });
     </script>
   
