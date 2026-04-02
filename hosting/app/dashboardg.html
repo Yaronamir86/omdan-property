@@ -193,42 +193,6 @@
   .tb-right .btn{display:none !important;}
   .tb-user{display:none !important;}
 }
-
-
-    /* ── ONBOARDING ── */
-    /* Onboarding — 4 strips (consistent with settings) */
-    .ob-strip{position:fixed;background:rgba(3,7,18,.82);z-index:241;display:none;pointer-events:none;transition:all .18s ease;}
-    .ob-strip.show{display:block;}
-    .ob-frame{position:fixed;z-index:242;pointer-events:none;display:none;border-radius:12px;
-      box-shadow:0 0 0 2.5px rgba(245,158,11,.8),0 0 24px rgba(245,158,11,.2);
-      transition:all .18s ease;}
-    .ob-frame.show{display:block;}
-    .ob-spotlight{ /* handled by 4-strip overlays */ }
-    .ob-spotlight-soft{ /* handled by 4-strip overlays */ }
-    .ob-card{position:fixed;z-index:280;display:none;width:min(420px,calc(100vw - 32px));background:rgba(17,24,39,.98);border:1px solid rgba(245,158,11,.25);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.45);padding:20px 20px 18px;}
-    .ob-card.show{display:block;}
-    .ob-step{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
-    .ob-title{font-size:20px;font-weight:900;margin-bottom:8px;line-height:1.2;}
-    .ob-text{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
-    .ob-list{display:flex;flex-direction:column;gap:10px;margin:0 0 16px;padding:0;list-style:none;}
-    .ob-list li{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text);}
-    .ob-list li span:first-child{color:var(--accent);font-weight:900;min-width:18px;text-align:center;}
-    .ob-actions{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;}
-    .ob-progress{font-size:12px;color:var(--subtle);font-weight:700;}
-    .ob-arrow{position:absolute;width:18px;height:18px;background:rgba(17,24,39,.98);border-left:1px solid rgba(245,158,11,.25);border-top:1px solid rgba(245,158,11,.25);transform:rotate(45deg);}
-    .ob-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.24);color:var(--accent);font-size:11px;font-weight:800;margin-bottom:12px;}
-    .ob-demo-note{display:none;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(135deg,rgba(59,130,246,.13),rgba(59,130,246,.05));border:1px solid rgba(59,130,246,.3);border-radius:14px;padding:12px 16px;margin:0 0 16px;}
-    .ob-demo-note.show{display:flex;}
-    .ob-demo-note strong{font-size:13px;}
-    .ob-demo-note span{font-size:12px;color:var(--muted);}
-    body.ob-lock{overflow:hidden;}
-    @media(max-width:768px){
-      .ob-card{width:calc(100vw - 24px);padding:18px 16px 16px;}
-      .ob-title{font-size:18px;}
-      .ob-demo-note{flex-direction:column;align-items:flex-start;}
-      .ob-spotlight{ /* 4-strip approach */ }
-    }
-
   </style>
 </head>
 <body>
@@ -245,7 +209,7 @@
   <div class="tb-right">
     <span class="tb-user" id="navUser"></span>
     <button class="btn btn-ghost btn-sm" onclick="goBilling()">💳 מנוי</button>
-    <button class="btn btn-ghost btn-sm" id="settingsBtn" onclick="goSettings()">⚙️ הגדרות</button>
+    <button class="btn btn-ghost btn-sm" onclick="goSettings()">⚙️ הגדרות</button>
     <button class="btn btn-ghost btn-sm" onclick="doLogout()">יציאה</button>
   </div>
 </div>
@@ -256,7 +220,7 @@
       <div class="page-title">התיקים שלי</div>
       <div class="page-sub" id="pageSubtitle"></div>
     </div>
-    <button class="btn btn-primary" id="newCaseBtn" onclick="newCase()">+ תיק חדש</button>
+    <button class="btn btn-primary" onclick="newCase()">+ תיק חדש</button>
   </div>
 
   <!-- סטטיסטיקות -->
@@ -341,42 +305,7 @@
       </tbody>
     </table>
   </div>
-
-
-  <div class="ob-demo-note" id="obDemoNote">
-    <div>
-      <strong>מצב הדגמה ראשונית</strong><br>
-      <span>הנתונים שמוצגים כרגע נועדו להמחיש איך ייראה לוח הניהול שלך בעבודה השוטפת.</span>
-    </div>
-    <button class="btn btn-ghost btn-sm" onclick="skipDashboardOnboarding()">סגור הדגמה</button>
-  </div>
-
 </main>
-
-
-
-<div class="ob-strip" id="obStripTop"></div>
-<div class="ob-strip" id="obStripBottom"></div>
-<div class="ob-strip" id="obStripLeft"></div>
-<div class="ob-strip" id="obStripRight"></div>
-<div class="ob-frame" id="obSpotlightFrame"></div>
-<div class="ob-card" id="obCard">
-  <div class="ob-arrow" id="obArrow"></div>
-  <div class="ob-step" id="obStepLabel">שלב 1</div>
-  <div class="ob-chip" id="obChip">היכרות ראשונית</div>
-  <div class="ob-title" id="obTitle">ברוך הבא ל-OMDA</div>
-  <div class="ob-text" id="obText"></div>
-  <ul class="ob-list" id="obList"></ul>
-  <div class="ob-actions">
-    <div class="ob-progress" id="obProgress">1 / 4</div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost btn-sm" id="obSkipBtn" onclick="skipDashboardOnboarding()">דלג</button>
-      <button class="btn btn-secondary btn-sm" id="obBackBtn" onclick="prevOnboardingStep()" style="display:none;">חזרה</button>
-      <button class="btn btn-primary btn-sm" id="obNextBtn" onclick="nextOnboardingStep()">התחל</button>
-    </div>
-  </div>
-</div>
-
 
 <!-- Billing Gate -->
 <script src="/billing.js"></script>
@@ -396,8 +325,6 @@ firebase.initializeApp({
 const auth=firebase.auth(), db=firebase.firestore();
 
 let currentUser=null, allCases=[];
-const ONBOARDING_DEFAULTS = { onboardingCompleted:false, onboardingStep:'dashboard' };
-let onboardingUserState = { ...ONBOARDING_DEFAULTS };
 
 function isCaseDone(c){
   return c.status==="completed" || !!(c.state?.summary?.claimTotal || c.state?.summary?.rehabTime);
@@ -472,28 +399,8 @@ auth.onAuthStateChanged(async u=>{
   }
   currentUser=u;
   document.getElementById("navUser").textContent=u.displayName||u.email;
-
-  try{
-    const userRef = db.collection('users').doc(u.uid);
-    const userSnap = await userRef.get();
-    const userData = userSnap.exists ? (userSnap.data() || {}) : {};
-    onboardingUserState = {
-      onboardingCompleted: userData.onboardingCompleted === true,
-      onboardingStep: userData.onboardingStep || 'dashboard'
-    };
-    if(!('onboardingStep' in userData) || !('onboardingCompleted' in userData)){
-      await userRef.set({
-        onboardingCompleted: onboardingUserState.onboardingCompleted,
-        onboardingStep: onboardingUserState.onboardingStep,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge:true });
-    }
-  }catch(e){
-    console.warn('onboarding state load failed', e);
-  }
-
   loadProfile(u.uid);
-  loadCases().finally(()=>setTimeout(maybeStartDashboardOnboarding, 180));
+  loadCases();
 });
 
 function applyProfile(p){
@@ -717,315 +624,11 @@ function openCase(caseId){
   }
 }
 function openCaseReport(caseId){ window.location.href=`/app/case.html?case=${caseId}&view=report`; }
-async function newCase(){
-  if(onboardingUserState.onboardingCompleted !== true && onboardingUserState.onboardingStep === 'first_case'){
-    try{
-      await updateOnboardingState({ onboardingCompleted:true, onboardingStep:'done' });
-    }catch(e){ console.warn('onboarding completion save failed', e); }
-  }
-  window.location.href="/app/case.html";
-}
+function newCase(){ window.location.href="/app/case.html"; }
 function newTaxCase(mode){ window.location.href=`/app/tax-form.html?mode=${mode}`; }
-async function goSettings(){
-  if(onboardingUserState.onboardingCompleted !== true && onboardingUserState.onboardingStep === 'dashboard'){
-    try{
-      await updateOnboardingState({ onboardingCompleted:false, onboardingStep:'settings' });
-    }catch(e){ console.warn('onboarding settings step save failed', e); }
-  }
-  window.location.href="/app/settings.html";
-}
+function goSettings(){ window.location.href="/app/settings.html"; }
 function doLogout(){ localStorage.removeItem("omdan_profile"); auth.signOut().then(()=>window.location.href="/"); }
 function goBilling(){ window.location.href='/app/account-billing.html'; }
-
-
-const DASHBOARD_ONBOARDING_KEY = 'omda_dashboard_onboarding_preview_done';
-let onboardingActive = false;
-let onboardingStep = 0;
-let onboardingRestoreCases = null;
-const onboardingDemoCases = [
-  {id:'case_demo_102341', mode:'insurance', status:'processing', createdAt:'2026-03-30T10:00:00Z', state:{base:{fullName:'משפחת כהן', city:'בת ים', street:'בלפור 12'}, event:{eventType:'water'}, insurance:{claimNum:'CL-5512', policyNum:'P-8821'}, damages:{livingRoom:true}}},
-  {id:'case_demo_102188', mode:'private', status:'draft', createdAt:'2026-03-28T08:30:00Z', state:{base:{fullName:'יוסי לוי', city:'חולון', street:'ההסתדרות 4'}, event:{eventType:'fire'}, insurance:{claimNum:'', policyNum:''}, damages:{kitchen:true}, summary:{notes:'טיוטה'}}},
-  {id:'case_demo_102102', mode:'insurance', status:'draft', createdAt:'2026-03-26T12:15:00Z', state:{base:{fullName:'רונית דגן', city:'ראשון לציון', street:'הכרמל 8'}, event:{eventType:'water'}, insurance:{claimNum:'CL-5412', policyNum:'P-7721'}, damages:{bathroom:true}, summary:{rehabTime:'10 ימים'}}},
-  {id:'case_demo_101944', mode:'tax', status:'completed', createdAt:'2026-03-19T09:00:00Z', state:{base:{fullName:'מפעל אלון', city:'אשדוד', street:'האורגים 2'}, event:{eventType:'storm'}, summary:{claimTotal:'125000', rehabTime:'21 ימים'}}}
-];
-const onboardingSteps = [
-  {
-    target: '.page-header',
-    placement: 'bottom',
-    step: 'ברוך הבא',
-    chip: 'לוח דשבורד לדוגמה',
-    title: 'ככה ייראה מרכז השליטה שלך',
-    text: 'בכניסה הראשונה תראה דשבורד מלא עם נתוני דוגמה, כדי להבין מיד איך העבודה שלך תיראה בפועל לפני פתיחת תיק אמיתי.',
-    bullets: ['הכפתור הראשי פותח תיק חדש.', 'הדשבורד מציג תמונת מצב עוד לפני שמתחילים לעבוד.', 'מכאן ממשיכים להגדרת המערכת.'],
-    nextLabel: 'המשך'
-  },
-  {
-    target: '.stats',
-    placement: 'bottom',
-    step: 'שלב 1',
-    chip: 'מה רואים כאן',
-    title: 'הכרטיסים העליונים מסבירים את מצב העבודה',
-    text: 'כאן תראה תוך כמה שניות כמה תיקים יש לך, מה בטיפול, מה הושלם ומה כדאי לסגור קודם.',
-    bullets: ['בטיפול = עבודה פעילה.', 'ממתין להשלמה = כמעט סגור, נשארו פרטים אחרונים.', 'החודש = כמות תיקים שנפתחו בתקופה האחרונה.'],
-    nextLabel: 'הבנתי'
-  },
-  {
-    target: '.table-wrap',
-    placement: 'top',
-    step: 'שלב 2',
-    chip: 'רשימת תיקים',
-    title: 'כאן מתבצעת העבודה היומיומית',
-    text: 'כאן תראה לכל תיק מספר, סוג, נזק, סטטוס ותאריך — כך תדע בדיוק לאן להיכנס ומה דורש טיפול קודם.',
-    bullets: ['הסטטוס מוצג בנפרד מהפעולות.', 'בדוח מוכן הכפתור משתנה ל“דוח”.', 'אפשר לחפש ולסנן בלי לצאת מהדשבורד.'],
-    nextLabel: 'המשך להגדרות'
-  },
-  {
-    target: '#settingsBtn',
-    placement: 'bottom',
-    step: 'שלב 3',
-    chip: 'לפני תיק ראשון',
-    title: 'עכשיו מגדירים את המערכת האישית שלך',
-    text: 'לפני פתיחת תיק ראשון, תעבור להגדרות ותגדיר לוגו, חתימה ופרטים אישיים — כל אלה ייכנסו אוטומטית לדוח הסופי.',
-    bullets: ['לוגו בראש הדוח.', 'פרטי השמאי והמשרד בגוף הדוח.', 'חתימה שמתווספת אוטומטית בסיום.'],
-    nextLabel: 'עבור להגדרות',
-    final: true
-  }
-];
-
-function shouldStartDashboardOnboarding(){
-  const url = new URL(window.location.href);
-  const forcedStep = url.searchParams.get('onboarding');
-  if(onboardingUserState.onboardingCompleted === true) return false;
-  if(forcedStep === 'dashboard') return true;
-  if((forcedStep === 'first_case' || forcedStep === 'first-case') && onboardingUserState.onboardingStep === 'first_case') return false;
-  return onboardingUserState.onboardingStep === 'dashboard';
-}
-
-function shouldStartFirstCasePrompt(){
-  const url = new URL(window.location.href);
-  const forcedStep = url.searchParams.get('onboarding');
-  if(onboardingUserState.onboardingCompleted === true) return false;
-  if(forcedStep === 'first_case' || forcedStep === 'first-case') return true;
-  return onboardingUserState.onboardingStep === 'first_case';
-}
-
-function maybeStartDashboardOnboarding(){
-  if(onboardingActive) return;
-
-  if(shouldStartDashboardOnboarding()){
-    onboardingActive = true;
-    onboardingRestoreCases = Array.isArray(allCases) ? [...allCases] : [];
-    renderDemoDashboard();
-    document.body.classList.add('ob-lock');
-    // overlay replaced by strips
-    setTimeout(() => showOnboardingStep(0), 120);
-    return;
-  }
-
-  if(shouldStartFirstCasePrompt()){
-    openFirstCasePrompt();
-  }
-}
-
-async function updateOnboardingState(patch){
-  if(!currentUser?.uid) return;
-  onboardingUserState = { ...onboardingUserState, ...patch };
-  await db.collection('users').doc(currentUser.uid).set({
-    onboardingCompleted: onboardingUserState.onboardingCompleted === true,
-    onboardingStep: onboardingUserState.onboardingStep || 'dashboard',
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge:true });
-}
-
-function renderDemoDashboard(){
-  document.getElementById('obDemoNote').classList.add('show');
-  renderStats(onboardingDemoCases);
-  renderTable(onboardingDemoCases);
-  document.getElementById('pageSubtitle').textContent = '4 תיקים לדוגמה — כך ייראה הדשבורד שלך';
-  document.getElementById('searchInput').value = '';
-  const status = document.getElementById('statusFilter'); if(status) status.value = '';
-  const mode = document.getElementById('modeFilter'); if(mode) mode.value = '';
-}
-
-function restoreRealDashboard(){
-  document.getElementById('obDemoNote').classList.remove('show');
-  if(onboardingRestoreCases){
-    renderStats(onboardingRestoreCases);
-    renderTable(onboardingRestoreCases);
-    document.getElementById('pageSubtitle').textContent = onboardingRestoreCases.length ? `${onboardingRestoreCases.length} תיקים בסך הכל` : '';
-  }
-}
-
-function updateSpotlightFrame(target){
-  const strips = ['obStripTop','obStripBottom','obStripLeft','obStripRight'].map(id=>document.getElementById(id));
-  const frame = document.getElementById('obSpotlightFrame');
-  if(!target){
-    strips.forEach(el=>{ if(el){ el.style.display='none'; el.classList.remove('show'); }});
-    if(frame){ frame.style.display='none'; frame.classList.remove('show'); }
-    return;
-  }
-  const r = target.getBoundingClientRect();
-  const pad = 10;
-  const W = window.innerWidth, H = window.innerHeight;
-  const x1=Math.max(0,r.left-pad), y1=Math.max(0,r.top-pad);
-  const x2=Math.min(W,r.right+pad), y2=Math.min(H,r.bottom+pad);
-  const defs = [
-    {top:0,left:0,width:W,height:y1},
-    {top:y2,left:0,width:W,height:H-y2},
-    {top:y1,left:0,width:x1,height:y2-y1},
-    {top:y1,left:x2,width:W-x2,height:y2-y1},
-  ];
-  strips.forEach((el,i)=>{
-    if(!el) return;
-    Object.assign(el.style,{top:defs[i].top+'px',left:defs[i].left+'px',width:defs[i].width+'px',height:defs[i].height+'px',display:'block'});
-    el.classList.add('show');
-  });
-  if(frame){
-    Object.assign(frame.style,{top:y1+'px',left:x1+'px',width:(x2-x1)+'px',height:(y2-y1)+'px',display:'block'});
-    frame.classList.add('show');
-  }
-}
-
-function clearOnboardingSpotlight(){
-  document.querySelectorAll('.ob-spotlight,.ob-spotlight-soft').forEach(el => {
-    el.classList.remove('ob-spotlight','ob-spotlight-soft');
-  });
-  updateSpotlightFrame(null);
-}
-
-function showOnboardingStep(index){
-  onboardingStep = index;
-  clearOnboardingSpotlight();
-  const card = document.getElementById('obCard');
-  const arrow = document.getElementById('obArrow');
-  const s = onboardingSteps[index];
-  const target = document.querySelector(s.target);
-  if(!target) return;
-
-  // spotlight via 4-strips (no classList needed)
-  document.getElementById('obStepLabel').textContent = s.step;
-  document.getElementById('obChip').textContent = s.chip;
-  document.getElementById('obTitle').textContent = s.title;
-  document.getElementById('obText').textContent = s.text;
-  document.getElementById('obProgress').textContent = `${index + 1} / ${onboardingSteps.length}`;
-  document.getElementById('obBackBtn').style.display = index > 0 ? 'inline-flex' : 'none';
-  document.getElementById('obNextBtn').textContent = s.nextLabel || (s.final ? 'סיום' : 'המשך');
-
-  const list = document.getElementById('obList');
-  list.innerHTML = (s.bullets || []).map((item, i) => `<li><span>${i+1}</span><span>${item}</span></li>`).join('');
-
-  card.classList.add('show');
-  card.style.visibility = 'hidden';
-  requestAnimationFrame(() => {
-    updateSpotlightFrame(target);
-    const rect = target.getBoundingClientRect();
-    const cW = card.offsetWidth, cH = card.offsetHeight;
-    const vW = window.innerWidth, vH = window.innerHeight;
-    const gap = 18;
-    let top = 0, left = 0;
-
-    // מנסה placement — אם אין מקום עובר לצד הנגדי
-    if(s.placement === 'top'){
-      top = rect.top - cH - gap;
-      if(top < 12) top = rect.bottom + gap; // fallback למטה
-    } else { // bottom
-      top = rect.bottom + gap;
-      if(top + cH > vH - 12) top = rect.top - cH - gap; // fallback למעלה
-    }
-    top = Math.max(12, Math.min(vH - cH - 12, top));
-
-    // מרכז אופקית — אבל לא דורס את האלמנט
-    left = rect.left + rect.width / 2 - cW / 2;
-    left = Math.max(12, Math.min(vW - cW - 12, left));
-
-    // בדיקת overlap — אם הכרטיסייה דורסת את האלמנט, הזזה לפינה בטוחה
-    const overlapH = top < rect.bottom + 4 && top + cH > rect.top - 4;
-    const overlapV = left < rect.right + 4 && left + cW > rect.left - 4;
-    if(overlapH && overlapV){
-      // העבר לפינה עם הכי הרבה מקום
-      const spaceBelow = vH - rect.bottom;
-      const spaceAbove = rect.top;
-      top = spaceBelow >= spaceAbove
-        ? Math.min(vH - cH - 12, rect.bottom + gap)
-        : Math.max(12, rect.top - cH - gap);
-    }
-
-    arrow.style.display = 'none'; // arrow לא רלוונטי עם 4-strips
-    card.style.top = `${top}px`;
-    card.style.left = `${left}px`;
-    card.style.visibility = 'visible';
-  });
-
-  if(index > 0){
-    target.scrollIntoView({behavior:'smooth', block: 'center'});
-  }
-}
-
-async function nextOnboardingStep(){
-  const current = onboardingSteps[onboardingStep];
-  if(current?.final){
-    await updateOnboardingState({ onboardingCompleted:false, onboardingStep:'settings' });
-    window.location.href = '/app/settings.html?onboarding=profile-setup';
-    return;
-  }
-  if(onboardingStep < onboardingSteps.length - 1){
-    showOnboardingStep(onboardingStep + 1);
-  }
-}
-
-function prevOnboardingStep(){
-  if(onboardingStep > 0){
-    showOnboardingStep(onboardingStep - 1);
-  }
-}
-
-async function skipDashboardOnboarding(){
-  await updateOnboardingState({ onboardingCompleted:true, onboardingStep:'done' });
-  onboardingActive = false;
-  clearOnboardingSpotlight();
-  document.getElementById('obCard').classList.remove('show');
-  updateSpotlightFrame(null); // clear strips
-  document.body.classList.remove('ob-lock');
-  restoreRealDashboard();
-}
-
-function openFirstCasePrompt(){
-  const overlay = document.getElementById('obOverlay');
-  const card = document.getElementById('obCard');
-  clearOnboardingSpotlight();
-  document.getElementById('obDemoNote').classList.remove('show');
-  document.body.classList.add('ob-lock');
-  overlay.classList.add('show');
-  card.classList.add('show');
-  card.style.visibility='visible';
-  document.getElementById('obStepLabel').textContent = 'השלב הבא';
-  document.getElementById('obChip').textContent = 'תיק ראשון';
-  document.getElementById('obTitle').textContent = 'המערכת מוכנה — אפשר לפתוח תיק ראשון';
-  document.getElementById('obText').textContent = 'השלמת את ההגדרות האישיות. מעכשיו הלוגו, החתימה והפרטים שלך ייכנסו אוטומטית לדוח הסופי.';
-  document.getElementById('obProgress').textContent = 'סיום';
-  document.getElementById('obBackBtn').style.display = 'none';
-  document.getElementById('obSkipBtn').textContent = 'אחר כך';
-  document.getElementById('obNextBtn').textContent = 'צור תיק ראשון';
-  document.getElementById('obList').innerHTML = `
-    <li><span>1</span><span>התיק הראשון ימחיש את זרימת העבודה בפועל.</span></li>
-    <li><span>2</span><span>הפרטים שהגדרת כבר ייכנסו לדוחות.</span></li>
-    <li><span>3</span><span>אחרי פתיחת התיק הראשון האונבורדינג לא יוצג שוב.</span></li>`;
-  card.style.top = `${Math.max(24, window.innerHeight/2 - card.offsetHeight/2)}px`;
-  card.style.left = `${Math.max(12, window.innerWidth/2 - card.offsetWidth/2)}px`;
-  const arrow = document.getElementById('obArrow');
-  arrow.style.display = 'none';
-  onboardingActive = true;
-}
-
-window.addEventListener('resize', () => {
-  if(onboardingActive){
-    const s = onboardingSteps[onboardingStep];
-    const t = s ? document.querySelector(s.target) : null;
-    updateSpotlightFrame(t || null);
-    showOnboardingStep(onboardingStep);
-  }
-});
-
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js', {updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});});}</script>
 

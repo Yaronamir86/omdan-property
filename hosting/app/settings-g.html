@@ -11,7 +11,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp }
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 // Firebase Storage no longer used — signature and logo stored as base64 in Firestore
 
@@ -31,25 +31,10 @@ onAuthStateChanged(auth, async user => {
   if(!user){ window.location.href='../index.html'; return; }
   window._currentUser = user;
   document.getElementById('userEmail').textContent = user.email;
-  // Load profile + onboarding state
+  // Load profile
   try{
-    const userRef = doc(db,'users',user.uid);
-    const snap = await getDoc(userRef);
-    const data = snap.exists() ? (snap.data() || {}) : {};
-    window._settingsOnboarding = {
-      completed: data.onboardingCompleted === true,
-      step: data.onboardingStep || 'dashboard',
-      active: false
-    };
-    if(snap.exists()) loadProfile(data);
-    if(!('onboardingStep' in data) || !('onboardingCompleted' in data)){
-      await setDoc(userRef, {
-        onboardingCompleted: window._settingsOnboarding.completed,
-        onboardingStep: window._settingsOnboarding.step,
-        updatedAt: serverTimestamp()
-      }, { merge:true });
-    }
-    setTimeout(maybeStartSettingsOnboarding, 220);
+    const snap = await getDoc(doc(db,'users',user.uid));
+    if(snap.exists()) loadProfile(snap.data());
   }catch(e){ console.error(e); }
 });
 
@@ -76,22 +61,6 @@ window._uploadSig = async (dataUrl) => {
 };
 
 window._doLogout = async () => { await signOut(auth); window.location.href='../index.html'; };
-
-function cleanupSettingsOnboarding() {
-  const overlay = document.getElementById('settingsObOverlay');
-  const card = document.getElementById('settingsObCard');
-  if (overlay) overlay.classList.remove('show');
-  if (card) {
-    card.classList.remove('show');
-    card.style.top = '';
-    card.style.left = '';
-    card.style.right = '';
-    card.style.bottom = '';
-  }
-  document.body.classList.remove('ob-lock');
-  document.querySelectorAll('.ob-highlight, .ob-spotlight, .ob-spotlight-soft')
-    .forEach(el => el.classList.remove('ob-highlight', 'ob-spotlight', 'ob-spotlight-soft'));
-}
 </script>
 
 <style>
@@ -636,47 +605,6 @@ body::before{
 }
 
 }
-
-
-
-/* ── Onboarding — זהה לדשבורד (ob-* system) ── */
-.ob-spotlight{ /* handled by 4-strip overlays */ }
-.ob-spotlight-soft{ /* handled by 4-strip overlays */ }
-/* 4 overlays במקום אחד — יוצרים frame סביב האלמנט */
-.ob-strip{position:fixed;background:rgba(3,7,18,.82);z-index:241;display:none;pointer-events:none;transition:all .18s ease;}
-.ob-strip.show{display:block;}
-/* frame גבול כתום */
-.ob-frame{position:fixed;z-index:242;pointer-events:none;display:none;border-radius:12px;
-  box-shadow:0 0 0 2.5px rgba(245,158,11,.8),0 0 24px rgba(245,158,11,.2);
-  transition:all .18s ease;}
-.ob-frame.show{display:block;}
-.ob-card{position:fixed;z-index:280;display:none;width:min(420px,calc(100vw - 32px));background:rgba(17,24,39,.98);border:1px solid rgba(245,158,11,.25);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.45);padding:20px 20px 18px;}
-.ob-card.show{display:block;}
-.ob-card{position:fixed;z-index:280;display:none;width:min(420px,calc(100vw - 32px));background:rgba(17,24,39,.98);border:1px solid rgba(245,158,11,.25);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.45);padding:20px 20px 18px;}
-.ob-card.show{display:block;}
-.ob-step{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
-.ob-title{font-size:20px;font-weight:900;margin-bottom:8px;line-height:1.2;}
-.ob-text{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
-.ob-list{display:flex;flex-direction:column;gap:10px;margin:0 0 16px;padding:0;list-style:none;}
-.ob-list li{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text);}
-.ob-list li span:first-child{color:var(--accent);font-weight:900;min-width:18px;text-align:center;}
-.ob-actions{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;}
-.ob-progress{font-size:12px;color:var(--subtle);font-weight:700;}
-.ob-arrow{position:absolute;width:18px;height:18px;background:rgba(17,24,39,.98);border-left:1px solid rgba(245,158,11,.25);border-top:1px solid rgba(245,158,11,.25);transform:rotate(45deg);}
-.ob-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.24);color:var(--accent);font-size:11px;font-weight:800;margin-bottom:12px;}
-body.ob-lock{overflow:hidden;}
-@media(max-width:768px){
-  .ob-card{width:calc(100vw - 24px);padding:18px 16px 16px;}
-  .ob-title{font-size:18px;}
-  .ob-spotlight{ /* 4-strip approach, no box-shadow needed */ }
-}
-
-
-
-
-
-
-
 </style>
 </head>
 <body>
@@ -695,12 +623,6 @@ body.ob-lock{overflow:hidden;}
   #mob-topbar{display:flex !important;}
   .main{padding-top:8px !important;}
 }
-
-
-
-
-
-
 </style>
 
 <div class="app">
@@ -975,30 +897,6 @@ body.ob-lock{overflow:hidden;}
 </main>
 
 </div><!-- .content or similar wrapper -->
-
-
-<!-- 4 strips במקום overlay אחד -->
-<div class="ob-strip" id="obStripTop"></div>
-<div class="ob-strip" id="obStripBottom"></div>
-<div class="ob-strip" id="obStripLeft"></div>
-<div class="ob-strip" id="obStripRight"></div>
-<div class="ob-frame" id="obSpotlightFrame"></div>
-<div class="ob-card" id="settingsOnboardingCard">
-  <div class="ob-arrow" id="settingsOnboardingArrow"></div>
-  <div class="ob-step" id="settingsOnboardingStepLabel">שלב 1</div>
-  <div class="ob-chip" id="settingsOnboardingChip">הגדרת פרופיל</div>
-  <div class="ob-title" id="settingsOnboardingTitle">הגדרת המערכת</div>
-  <div class="ob-text" id="settingsOnboardingText"></div>
-  <ul class="ob-list" id="settingsOnboardingList"></ul>
-  <div class="ob-actions">
-    <div class="ob-progress" id="settingsOnboardingProgress">1 / 4</div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost btn-sm" id="settingsOnboardingSkip" onclick="skipSettingsOnboarding()">דלג</button>
-      <button class="btn btn-secondary btn-sm" id="settingsOnboardingBack" onclick="prevSettingsOnboardingStep()" style="display:none;">חזרה</button>
-      <button class="btn btn-primary btn-sm" id="settingsOnboardingNext" onclick="nextSettingsOnboardingStep()">התחל</button>
-    </div>
-  </div>
-</div>
 
 <!-- ── Save bar ── -->
 <div class="save-bar">
@@ -1422,26 +1320,12 @@ async function saveAll(){
     }
 
     await window._saveProfile(profile);
-
-    if(window._currentUser?.uid && window._settingsOnboarding && window._settingsOnboarding.completed !== true && window._settingsOnboarding.step === 'settings'){
-      await window._saveProfile({
-        onboardingCompleted: false,
-        onboardingStep: 'first_case'
-      });
-      window._settingsOnboarding.step = 'first_case';
-    }
-
     setSaveStatus('saved');
     // status מוצג ב-save-bar בלבד
 
     // Update sidebar
     const _sn=document.getElementById('sbLogoName'); if(_sn) _sn.textContent=profile.nameHe||'';
     const _sq=document.getElementById('sbLogoSq'); if(_sq) _sq.textContent=profile.logoInitials||'';
-
-    if(window._settingsOnboarding && window._settingsOnboarding.step === 'first_case' && new URLSearchParams(window.location.search).get('onboarding') === 'profile-setup'){
-      toast('✅ נשמר. מעביר אותך לפתיחת תיק ראשון');
-      setTimeout(()=>{ window.location.href='/app/dashboard.html?onboarding=first_case'; }, 700);
-    }
 
   }catch(e){
     setSaveStatus('unsaved');
@@ -1532,332 +1416,6 @@ document.addEventListener('DOMContentLoaded', ()=> renderThemeGrid());
 
 
 
-
-
-
-// ══════════════════════════════════════════════════
-// SETTINGS ONBOARDING
-// ══════════════════════════════════════════════════
-const settingsOnboardingSteps = [
-  {
-    target: '.settings-right .section:nth-of-type(1)',
-    placement: 'right',
-    step: 'שלב 1',
-    chip: 'זהות ויזואלית',
-    title: 'הלוגו שלך נכנס לראש כל דוח',
-    text: 'הלוגו שתגדיר כאן יופיע אוטומטית בראש כל דוח שמאות שתפיק.',
-    bullets: ['בחר אותיות + צבע, או העלה תמונה.', 'הלוגו ייכנס לכל דוח עתידי.', 'ניתן לשנות בכל עת.'],
-    nextLabel: 'המשך'
-  },
-  {
-    target: '.settings-right .section:nth-of-type(2)',
-    placement: 'right',
-    step: 'שלב 2',
-    chip: 'פרטים מקצועיים',
-    title: 'הפרטים שיופיעו בכל דוח',
-    text: 'שם, תואר, רישיון ופרטי משרד — כולם ייכנסו אוטומטית לדוח הסופי.',
-    bullets: ['פרטי השמאי — שם, תואר, רישיון.', 'פרטי המשרד — עיר, כתובת.', 'פרטי קשר — טלפון, אימייל.'],
-    nextLabel: 'המשך'
-  },
-  {
-    target: '.settings-left .section:nth-of-type(2)',
-    placement: 'left',
-    step: 'שלב 3',
-    chip: 'חתימה דיגיטלית',
-    title: 'החתימה נשמרת פעם אחת',
-    text: 'חתום פעם אחת — וכל דוח שתפיק יכלול אותה אוטומטית בתחתית.',
-    bullets: ['חתום עם העכבר או האצבע.', 'נשמרת מוצפנת בחשבון שלך.', 'מתווספת לכל דוח עתידי.'],
-    nextLabel: 'המשך'
-  },
-  {
-    target: '.save-bar',
-    placement: 'above-fixed',
-    step: 'שלב 4',
-    chip: 'מוכן לעבודה',
-    title: 'שמור וצא לתיק הראשון',
-    text: 'אחרי השמירה תחזור לדשבורד ותוכל לפתוח את התיק הראשון שלך.',
-    bullets: ['הלוגו, הפרטים והחתימה נשמרים.', 'כל תיק עתידי ייהנה מההגדרות האלה.', 'פתח תיק ראשון לסיום האונבורדינג.'],
-    nextLabel: 'שמור ואפשר לצאת',
-    final: true
-  }
-];
-
-let settingsOnboardingIndex = 0;
-
-function maybeStartSettingsOnboarding(){
-  const params = new URLSearchParams(window.location.search);
-  const forced = params.get('onboarding') === 'profile-setup';
-  if(window._settingsOnboarding?.completed === true) return;
-  if(!forced && window._settingsOnboarding?.step !== 'settings') return;
-  if(window._settingsOnboarding?.active) return;
-
-  window._settingsOnboarding.active = true;
-  document.body.classList.add('ob-lock');
-
-  const overlay = document.getElementById('settingsOnboardingOverlay');
-  const card = document.getElementById('settingsOnboardingCard');
-  if (overlay) overlay.classList.add('show');
-  if (card) card.classList.add('show');
-
-  showSettingsOnboardingStep(0);
-}
-
-function updateSpotlightFrame(target){
-  const ids = ['obStripTop','obStripBottom','obStripLeft','obStripRight','obSpotlightFrame'];
-  const els = {};
-  ids.forEach(id => { els[id] = document.getElementById(id); });
-
-  if(!target){
-    ids.forEach(id => { if(els[id]){ els[id].style.display='none'; els[id].classList.remove('show'); } });
-    return;
-  }
-
-  const r = target.getBoundingClientRect();
-  const pad = 10;
-  const W = window.innerWidth, H = window.innerHeight;
-  const x1 = Math.max(0, r.left - pad);
-  const y1 = Math.max(0, r.top  - pad);
-  const x2 = Math.min(W, r.right  + pad);
-  const y2 = Math.min(H, r.bottom + pad);
-
-  // Top strip
-  if(els.obStripTop){
-    Object.assign(els.obStripTop.style, {top:'0',left:'0',width:W+'px',height:y1+'px',display:'block'});
-    els.obStripTop.classList.add('show');
-  }
-  // Bottom strip
-  if(els.obStripBottom){
-    Object.assign(els.obStripBottom.style, {top:y2+'px',left:'0',width:W+'px',height:(H-y2)+'px',display:'block'});
-    els.obStripBottom.classList.add('show');
-  }
-  // Left strip (בין top לbottom)
-  if(els.obStripLeft){
-    Object.assign(els.obStripLeft.style, {top:y1+'px',left:'0',width:x1+'px',height:(y2-y1)+'px',display:'block'});
-    els.obStripLeft.classList.add('show');
-  }
-  // Right strip
-  if(els.obStripRight){
-    Object.assign(els.obStripRight.style, {top:y1+'px',left:x2+'px',width:(W-x2)+'px',height:(y2-y1)+'px',display:'block'});
-    els.obStripRight.classList.add('show');
-  }
-  // Frame border
-  if(els.obSpotlightFrame){
-    Object.assign(els.obSpotlightFrame.style, {top:y1+'px',left:x1+'px',width:(x2-x1)+'px',height:(y2-y1)+'px',display:'block'});
-    els.obSpotlightFrame.classList.add('show');
-  }
-}
-
-function clearSettingsOnboardingHighlight(){
-  document.querySelectorAll('.ob-spotlight,.ob-spotlight-soft').forEach(el => el.classList.remove('ob-spotlight','ob-spotlight-soft'));
-  updateSpotlightFrame(null); // מסתיר את כל ה-strips
-}
-
-function getSettingsOnboardingTarget(step){
-  if(!step?.target) return null;
-  return document.querySelector(step.target);
-}
-
-function placeSettingsOnboardingCard(target, placement){
-  const card = document.getElementById('settingsOnboardingCard');
-  const arrow = document.getElementById('settingsOnboardingArrow');
-  if(!card) return;
-  if(arrow) arrow.style.display = 'none'; // 4-strip approach, no arrow needed
-
-  const cW = card.offsetWidth, cH = card.offsetHeight;
-  const vW = window.innerWidth, vH = window.innerHeight;
-  const gap = 20;
-
-  // מובייל — תחתית המסך
-  if(vW <= 768){
-    Object.assign(card.style, {top:'auto', bottom:'76px', left:'12px', right:'12px', width:'auto'});
-    return;
-  }
-
-  // אין target — מרכז
-  if(!target){
-    card.style.top  = `${Math.max(24, vH/2 - cH/2)}px`;
-    card.style.left = `${Math.max(12, vW/2 - cW/2)}px`;
-    card.style.right = 'auto'; card.style.bottom = 'auto';
-    return;
-  }
-
-  const r = target.getBoundingClientRect();
-
-  // above-fixed (save-bar)
-  if(placement === 'above-fixed'){
-    const top = Math.max(12, vH - r.height - cH - gap - 8);
-    const left = Math.max(12, Math.min(vW - cW - 12, vW/2 - cW/2));
-    Object.assign(card.style, {top:top+'px', left:left+'px', right:'auto', bottom:'auto'});
-    return;
-  }
-
-  // פונקציית overlap
-  const overlaps = (t, l) =>
-    l < r.right + 4 && l + cW > r.left - 4 &&
-    t < r.bottom + 4 && t + cH > r.top - 4;
-
-  // נסה right
-  if(placement === 'right'){
-    let left = r.right + gap;
-    let top  = Math.max(12, Math.min(vH - cH - 12, r.top + r.height/2 - cH/2));
-    // אם אין מקום ימינה — נסה שמאלה
-    if(left + cW > vW - 12){
-      left = r.left - cW - gap;
-    }
-    // אם גם שמאלה אין מקום — מתחת
-    if(left < 12 || overlaps(top, left)){
-      top  = r.bottom + gap;
-      left = Math.max(12, Math.min(vW - cW - 12, vW/2 - cW/2));
-      if(top + cH > vH - 12) top = Math.max(12, r.top - cH - gap);
-    }
-    Object.assign(card.style, {top:top+'px', left:left+'px', right:'auto', bottom:'auto'});
-    return;
-  }
-
-  // נסה left
-  if(placement === 'left'){
-    let left = r.left - cW - gap;
-    let top  = Math.max(12, Math.min(vH - cH - 12, r.top + r.height/2 - cH/2));
-    if(left < 12){
-      left = r.right + gap;
-    }
-    if(left + cW > vW - 12 || overlaps(top, left)){
-      top  = r.bottom + gap;
-      left = Math.max(12, Math.min(vW - cW - 12, vW/2 - cW/2));
-      if(top + cH > vH - 12) top = Math.max(12, r.top - cH - gap);
-    }
-    Object.assign(card.style, {top:top+'px', left:left+'px', right:'auto', bottom:'auto'});
-    return;
-  }
-
-  // default: bottom / top
-  let top  = r.bottom + gap;
-  let left = Math.max(12, Math.min(vW - cW - 12, r.left + r.width/2 - cW/2));
-  if(top + cH > vH - 12){
-    top = r.top - cH - gap;
-  }
-  top = Math.max(12, top);
-  // בדיקת overlap סופית — פינה בטוחה
-  if(overlaps(top, left)){
-    top = vH/2 - cH/2;
-    left = vW - cW - 20;
-    top = Math.max(12, Math.min(vH - cH - 12, top));
-  }
-  Object.assign(card.style, {top:top+'px', left:left+'px', right:'auto', bottom:'auto'});
-}
-
-function showSettingsOnboardingStep(index){
-  settingsOnboardingIndex = index;
-  const step = settingsOnboardingSteps[index];
-  if(!step) return;
-
-  clearSettingsOnboardingHighlight();
-
-  const card = document.getElementById('settingsOnboardingCard');
-  const arrow = document.getElementById('settingsOnboardingArrow');
-  const target = getSettingsOnboardingTarget(step);
-
-  document.getElementById('settingsOnboardingStepLabel').textContent = step.step || `שלב ${index + 1}`;
-  if(document.getElementById('settingsOnboardingChip')) document.getElementById('settingsOnboardingChip').textContent = step.chip || '';
-  document.getElementById('settingsOnboardingTitle').textContent = step.title;
-  document.getElementById('settingsOnboardingText').textContent = step.text;
-  document.getElementById('settingsOnboardingProgress').textContent = `${index + 1} / ${settingsOnboardingSteps.length}`;
-  document.getElementById('settingsOnboardingBack').style.display = index > 0 ? 'inline-flex' : 'none';
-  document.getElementById('settingsOnboardingNext').textContent = step.nextLabel || 'המשך';
-
-  const list = document.getElementById('settingsOnboardingList');
-  if(list) list.innerHTML = (step.bullets || []).map((item, i) => `<li><span>${i+1}</span><span>${item}</span></li>`).join('');
-
-  card.classList.add('show');
-  card.style.visibility = 'hidden';
-
-  if(target){
-    // לאלמנטים fixed (כמו save-bar) — אל תנסה scrollIntoView
-    if(getComputedStyle(target).position !== 'fixed'){
-      target.scrollIntoView({ behavior:'smooth', block:'center' });
-    }
-  }
-
-  setTimeout(() => {
-    // עדכן spotlight frame לפי מיקום הtime אחרי scroll
-    updateSpotlightFrame(target || null);
-    placeSettingsOnboardingCard(target, step.placement);
-    card.style.visibility = 'visible';
-  }, 220);
-}
-
-async function nextSettingsOnboardingStep(){
-  const current = settingsOnboardingSteps[settingsOnboardingIndex];
-  if(current?.final){
-    // שמור + עבור לדשבורד לשלב הבא
-    try{
-      await saveAll();
-      if(window._currentUser?.uid && window._settingsOnboarding){
-        window._settingsOnboarding.step = 'first_case';
-      }
-    }catch(e){ console.warn('settings onboarding save:', e); }
-    closeSettingsOnboarding();
-    window.location.href = '/app/dashboard.html?onboarding=first_case';
-    return;
-  }
-  if(settingsOnboardingIndex >= settingsOnboardingSteps.length - 1){
-    closeSettingsOnboarding();
-    return;
-  }
-  showSettingsOnboardingStep(settingsOnboardingIndex + 1);
-}
-
-function prevSettingsOnboardingStep(){
-  if(settingsOnboardingIndex > 0){
-    showSettingsOnboardingStep(settingsOnboardingIndex - 1);
-  }
-}
-
-async function skipSettingsOnboarding() {
-  try{
-    await window._saveProfile({
-      onboardingCompleted: true,
-      onboardingStep: 'done'
-    });
-    if (window._settingsOnboarding) {
-      window._settingsOnboarding.completed = true;
-      window._settingsOnboarding.step = 'done';
-    }
-  }catch(e){
-    console.error('skipSettingsOnboarding', e);
-  }
-  closeSettingsOnboarding();
-}
-
-function closeSettingsOnboarding(){
-  clearSettingsOnboardingHighlight(); // also hides spotlightFrame
-  document.body.classList.remove('ob-lock');
-
-  const overlay = document.getElementById('settingsOnboardingOverlay');
-  const card = document.getElementById('settingsOnboardingCard');
-
-  // overlay replaced by 4 strips — cleared via clearSettingsOnboardingHighlight
-  if(card){
-    card.classList.remove('show');
-    card.style.visibility = 'hidden';
-    card.style.top = '';
-    card.style.left = '';
-    card.style.right = '';
-    card.style.bottom = '';
-  }
-  if(window._settingsOnboarding) window._settingsOnboarding.active = false;
-}
-
-window.addEventListener('resize', () => {
-  if(window._settingsOnboarding?.active){
-    const step = settingsOnboardingSteps[settingsOnboardingIndex];
-    const target = getSettingsOnboardingTarget(step);
-    updateSpotlightFrame(target || null);
-    placeSettingsOnboardingCard(target, step?.placement);
-  }
-});
-
-
 // Init
 updateLogoPreview();
 renderTemplates();
@@ -1872,12 +1430,6 @@ document.addEventListener('keydown', e=>{
 .omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}
 .omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;transition:color .2s;}
 .omdan-footer a:hover{color:#f59e0b;}
-
-
-
-
-
-
 </style>
 <footer class="omdan-footer">
   <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
@@ -1896,12 +1448,6 @@ document.addEventListener('keydown', e=>{
   background:none;border:none;cursor:pointer;text-decoration:none;}
 .settings-mob-nav a.active{color:#F59E0B;}
 @media(max-width:768px){.settings-mob-nav{display:grid;}.app{padding-bottom:72px;}}
-
-
-
-
-
-
 </style>
 <nav class="settings-mob-nav">
   <a href="/app/dashboard.html"><span style="font-size:20px">📊</span>תיקים</a>

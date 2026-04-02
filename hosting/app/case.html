@@ -5181,12 +5181,15 @@ function _doGenerateReport(){
     #reportView .rpt-table .st, #reportView .rpt-table .st td { background: ${T.thBg} !important; }
   `;
   document.head.appendChild(themeStyle);
+  rptEl.classList.remove('hidden');
   rptEl.style.display = 'block';
   window.scrollTo(0,0);
 }
 
 function closeReport(){
-  document.getElementById('reportView').style.display='none';
+  const rv = document.getElementById('reportView');
+  rv.style.display = 'none';
+  rv.classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
 }
 
