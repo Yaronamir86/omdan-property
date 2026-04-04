@@ -19,7 +19,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 /* ── Layout ── */
 .app{display:flex;min-height:100vh;}
 .sidebar{width:240px;flex-shrink:0;background:var(--primary);border-left:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:150;}
-.main-wrap{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+.main-wrap{flex:1;min-width:0;display:flex;flex-direction:column;}
 
 /* ── Sidebar ── */
 .sb-logo{display:flex;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
@@ -40,7 +40,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .tb-page{font-size:13px;font-weight:700;color:var(--muted);}
 
 /* ── Main ── */
-main{max-width:1100px;margin:0 auto;padding:28px 20px;}
+main{max-width:1100px;margin:0 auto;padding:28px 20px;width:100%;}
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
 .page-title{font-size:20px;font-weight:800;}
 .page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
@@ -82,9 +82,15 @@ th{padding:11px 16px;text-align:right;font-size:11px;font-weight:700;color:var(-
 td{padding:13px 16px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle;}
 tr{position:relative;}
 tr:hover td{background:rgba(245,158,11,.04);cursor:pointer;}
-.row-actions{position:absolute;top:50%;left:12px;transform:translateY(-50%);display:flex;align-items:center;gap:6px;opacity:0;pointer-events:none;transition:opacity .15s;}
-tr:hover .row-actions{opacity:1;pointer-events:auto;}
-.row-menu-btn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-size:16px;font-weight:900;transition:background .15s,color .15s;font-family:inherit;}
+.row-actions{position:absolute;top:50%;left:12px;transform:translateY(-50%);display:flex;align-items:center;gap:6px;transition:opacity .15s;}
+.row-menu-btn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-size:16px;font-weight:900;transition:background .15s,color .15s,opacity .15s;opacity:1;visibility:visible;pointer-events:auto;font-family:inherit;}
+@media (hover: hover) and (pointer: fine){
+  .row-actions{opacity:0;visibility:hidden;pointer-events:none;}
+  tr:hover .row-actions{opacity:1;visibility:visible;pointer-events:auto;}
+}
+@media (hover: none), (pointer: coarse){
+  .row-actions{opacity:1;visibility:visible;pointer-events:auto;}
+}
 .row-menu-btn:hover{background:var(--primary2);color:var(--text);}
 .row-dropdown{position:fixed;z-index:500;min-width:160px;background:#1F2937;border:1px solid var(--primary3);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);padding:6px;display:none;}
 .row-dropdown.open{display:block;}
@@ -94,11 +100,6 @@ tr:hover .row-actions{opacity:1;pointer-events:auto;}
 /* ── Badges ── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
 .badge-done{background:rgba(16,185,129,.15);color:var(--green);}
-.report-paid-row td{background:rgba(16,185,129,.04);}
-.report-paid-row:hover td{background:rgba(16,185,129,.08)!important;}
-.report-paid-title{display:flex;align-items:center;gap:8px;min-width:0;}
-.report-paid-title-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.payment-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;background:rgba(16,185,129,.14);color:var(--green);border:1px solid rgba(16,185,129,.28);flex-shrink:0;}
 .mode-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;}
 .mode-private{background:rgba(59,130,246,.12);color:var(--blue);}
 .mode-insurance{background:rgba(239,68,68,.12);color:var(--red);}
@@ -234,7 +235,6 @@ firebase.initializeApp({
 });
 const auth=firebase.auth(), db=firebase.firestore();
 let allReports=[], currentUser=null;
-let paymentsMap = {};
 
 function isCaseDone(c){
   return c.status==="completed" || !!(c.state?.summary?.claimTotal || c.state?.summary?.rehabTime);
@@ -261,24 +261,6 @@ async function loadReports(){
         const tb=b.updatedAt?.seconds||b.createdAt?.seconds||0;
         return tb-ta;
       });
-
-    const paySnap = await db.collection('reportPayments')
-      .where('uid','==',currentUser.uid)
-      .get();
-
-    paymentsMap = {};
-    paySnap.forEach(doc=>{
-      const p = doc.data() || {};
-      if(p.caseId){
-        const entry = { id: doc.id, ...p };
-        paymentsMap[p.caseId] = entry;
-
-        // תמיכה גם במזהים עם/בלי prefix של case_
-        const cleanId = String(p.caseId).replace(/^case_/, '');
-        paymentsMap[cleanId] = entry;
-      }
-    });
-
     renderStats(allReports);
     renderTable(allReports);
     document.getElementById('pageSubtitle').textContent=`${allReports.length} דוחות סגורים`;
@@ -313,17 +295,9 @@ function renderTable(reports){
     const ev=evMap[c.state?.event?.eventType]||'';
     const ts=c.updatedAt?.seconds||c.createdAt?.seconds;
     const date=ts?new Date(ts*1000).toLocaleDateString('he-IL'):'';
-    const payment = paymentsMap[c.id]
-      || paymentsMap[String(c.id).replace(/^case_/, '')]
-      || paymentsMap[`case_${String(c.id).replace(/^case_/, '')}`];
-    return `<tr class="${payment ? 'report-paid-row' : ''}" onclick="openReport('${c.id}')">
+    return `<tr onclick="openReport('${c.id}')">
       <td style="font-weight:800;color:var(--accent);font-size:12px;">${c.id?.replace('case_','#')?.slice(-6)||''}</td>
-      <td style="font-weight:600;max-width:320px;">
-        <div class="report-paid-title">
-          <span class="report-paid-title-text">${escHtml(title)}</span>
-          ${payment ? `<span class="payment-pill">✔ שולם${payment.amount ? ` • ₪${Number(payment.amount).toLocaleString('he-IL')}` : ''}</span>` : ''}
-        </div>
-      </td>
+      <td style="font-weight:600;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(title)}</td>
       <td>${modeTag(c.mode)}</td>
       <td style="font-size:12px;">${ev}</td>
       <td style="color:var(--muted);font-size:12px;">${date}</td>
@@ -362,15 +336,10 @@ function openMenu(e,caseId){
   const dd=document.getElementById('rowDropdown');
   if(_activeMenu===caseId&&dd.classList.contains('open')){closeMenu();return;}
   _activeMenu=caseId;
-  const payment = paymentsMap[caseId]
-    || paymentsMap[String(caseId).replace(/^case_/, '')]
-    || paymentsMap[`case_${String(caseId).replace(/^case_/, '')}`];
   dd.innerHTML=`
     <div class="row-dropdown-item" onclick="closeMenu();openReport('${caseId}')">📄 הצג דוח</div>
     <div class="row-dropdown-item" onclick="closeMenu();downloadPDF('${caseId}')">⬇️ הורד PDF</div>
-    ${payment
-      ? `<div class="row-dropdown-item" onclick="closeMenu();goToPayment('${caseId}')">✏️ ערוך תשלום</div>`
-      : `<div class="row-dropdown-item" onclick="closeMenu();goToPayment('${caseId}')">💰 תשלום לדוח זה</div>`}`;
+    <div class="row-dropdown-item" onclick="closeMenu();goToPayment('${caseId}')">💰 תשלום לדוח זה</div>`;
   dd.classList.add('open');
   const r=e.currentTarget.getBoundingClientRect();
   let top=r.bottom+6, left=r.left-160+r.width;

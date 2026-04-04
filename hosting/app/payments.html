@@ -19,7 +19,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 /* ── Layout ── */
 .app{display:flex;min-height:100vh;}
 .sidebar{width:240px;flex-shrink:0;background:var(--primary);border-left:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:150;}
-.main-wrap{flex:1;min-width:0;}
+.main-wrap{flex:1;min-width:0;display:flex;flex-direction:column;}
 .sb-logo{display:flex;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
 .sb-nav{flex:1;}
 .sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;border-right:3px solid transparent;white-space:nowrap;}
@@ -37,7 +37,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .tb-page{font-size:13px;font-weight:700;color:var(--muted);}
 
 /* ── Main ── */
-main{max-width:1100px;margin:0 auto;padding:28px 20px;}
+main{max-width:1100px;margin:0 auto;padding:28px 20px;width:100%;}
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
 .page-title{font-size:20px;font-weight:800;}
 .page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
@@ -124,13 +124,26 @@ option{background:#1F2937;}
 .action-btn-del{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.15);color:#f87171;}
 .action-btn-del:hover{background:rgba(239,68,68,.18);}
 
-
-/* ── Row menu (constant 3 dots) ── */
+/* ── Row menu (hover on desktop, always visible on mobile) ── */
 .row-menu-btn{
   display:inline-flex;align-items:center;justify-content:center;
   width:32px;height:32px;border-radius:8px;border:1px solid var(--primary3);
   background:var(--primary2);color:var(--muted);cursor:pointer;
   font-size:16px;font-weight:900;transition:all .15s;font-family:'Heebo',sans-serif;
+  opacity:1;visibility:visible;pointer-events:auto;
+}
+@media (hover: hover) and (pointer: fine){
+  .pay-row .row-menu-btn{
+    opacity:0;visibility:hidden;pointer-events:none;
+  }
+  .pay-row:hover .row-menu-btn{
+    opacity:1;visibility:visible;pointer-events:auto;
+  }
+}
+@media (hover: none), (pointer: coarse){
+  .pay-row .row-menu-btn{
+    opacity:1;visibility:visible;pointer-events:auto;
+  }
 }
 .row-menu-btn:hover{background:var(--primary3);color:var(--text);}
 .row-dropdown{
@@ -211,7 +224,7 @@ option{background:#1F2937;}
       <div class="sub" id="statUnpaidCount">0 רשומות</div>
     </div>
     <div class="sc sc-accent">
-      <div class="label">מקדמה</div>
+      <div class="label">חלקי</div>
       <div class="value" id="statPartial">₪0</div>
       <div class="sub" id="statPartialCount">0 רשומות</div>
     </div>
@@ -228,7 +241,7 @@ option{background:#1F2937;}
       <select id="statusFilter" class="filter-select" onchange="filterPayments()">
         <option value="">כל הסטטוסים</option>
         <option value="unpaid">לא שולם</option>
-        <option value="partial">מקדמה</option>
+        <option value="partial">חלקי</option>
         <option value="paid">שולם</option>
       </select>
     </div>
@@ -287,7 +300,7 @@ option{background:#1F2937;}
         <label>סטטוס תשלום</label>
         <select id="fStatus">
           <option value="unpaid">לא שולם</option>
-          <option value="partial">מקדמה</option>
+          <option value="partial">חלקי</option>
           <option value="paid">שולם</option>
         </select>
       </div>
@@ -377,9 +390,8 @@ async function loadPayments(){
   const tbody=document.getElementById('paymentsBody');
   tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--muted);"><div class="spin"></div></td></tr>`;
   try{
-    const snap=await payCol().where('uid','==',currentUser.uid).limit(200).get();
-    allPayments=snap.docs.map(d=>({_id:d.id,...d.data()}))
-      .sort((a,b)=>((b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)));
+    const snap=await payCol().where('uid','==',currentUser.uid).orderBy('createdAt','desc').limit(200).get();
+    allPayments=snap.docs.map(d=>({_id:d.id,...d.data()}));
     renderStats(allPayments);
     renderTable(allPayments);
   }catch(e){
@@ -569,11 +581,27 @@ async function savePayment(){
     const caseId=document.getElementById('fCaseId').value;
     const c=allCases.find(x=>x.id===caseId);
     const caseTitle=c?(c.state?.base?.fullName||c.name||c.state?.insurance?.claimNum||caseId.slice(-8)):'';
+    if(!caseId){
+      alert('חובה לבחור דוח');
+      btn.disabled=false; btn.textContent='💾 שמור';
+      return;
+    }
+    if(!document.getElementById('fClientName').value.trim()){
+      alert('חובה להזין שם לקוח');
+      btn.disabled=false; btn.textContent='💾 שמור';
+      return;
+    }
+    const amountVal = Number(document.getElementById('fAmount').value)||0;
+    if(amountVal <= 0){
+      alert('סכום לא תקין');
+      btn.disabled=false; btn.textContent='💾 שמור';
+      return;
+    }
     const data={
       caseId:caseId||null,
       caseTitle:caseTitle||document.getElementById('fCaseId').selectedOptions[0]?.textContent||'',
       clientName:document.getElementById('fClientName').value.trim(),
-      amount:Number(document.getElementById('fAmount').value)||0,
+      amount:amountVal,
       status:document.getElementById('fStatus').value||'unpaid',
       date:document.getElementById('fDate').value||todayISO(),
       docType:document.getElementById('fDocType').value||null,
@@ -610,41 +638,32 @@ async function deletePayment(id){
   }catch(e){alert('שגיאה: '+e.message);}
 }
 
-
 let activePaymentMenu = null;
 
 function openPaymentMenu(e, paymentId){
   e.stopPropagation();
   const dd = document.getElementById('paymentDropdown');
-
   if(activePaymentMenu === paymentId && dd.classList.contains('open')){
     closePaymentMenu();
     return;
   }
-
   activePaymentMenu = paymentId;
   dd.innerHTML = `
     <div class="row-dropdown-item" onclick="closePaymentMenu();openEditModal('${paymentId}')">✏️ עריכה</div>
     <div class="row-dropdown-item" onclick="closePaymentMenu();deletePayment('${paymentId}')">🗑️ מחיקה</div>
   `;
   dd.classList.add('open');
-
   const rect = e.currentTarget.getBoundingClientRect();
   let top = rect.bottom + 6;
-  let left = rect.left - 150;
-
-  if(top + 110 > window.innerHeight - 8){
-    top = rect.top - 110 - 6;
-  }
+  let left = rect.left - 150 + rect.width;
+  if(top + 120 > window.innerHeight - 12) top = rect.top - 120 - 6;
   if(left < 8) left = 8;
-
   dd.style.top = top + 'px';
   dd.style.left = left + 'px';
 }
 
 function closePaymentMenu(){
-  const dd = document.getElementById('paymentDropdown');
-  if(dd) dd.classList.remove('open');
+  document.getElementById('paymentDropdown').classList.remove('open');
   activePaymentMenu = null;
 }
 

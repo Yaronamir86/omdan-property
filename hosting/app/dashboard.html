@@ -861,8 +861,24 @@ document.addEventListener('click', closeRowMenu);
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeRowMenu(); });
 
 async function deleteCase(caseId){
-  if(!confirm('האם למחוק את התיק? פעולה זו אינה ניתנת לביטול.')) return;
   try{
+    const paySnap = await db.collection('reportPayments')
+      .where('uid','==',currentUser.uid)
+      .where('caseId','==',caseId)
+      .get();
+
+    const payments = paySnap.docs.map(d => d.data() || {});
+    const hasAdvance = payments.some(p => {
+      const amount = Number(p.amount) || 0;
+      return p.status === 'partial' || amount > 0;
+    });
+
+    const confirmMsg = hasAdvance
+      ? 'האם למחוק את התיק?\n\nשולמה מקדמה על הדוח או קיים תשלום חלקי.\nהאם אתה בטוח שברצונך למחוק?'
+      : 'האם למחוק את התיק? פעולה זו אינה ניתנת לביטול.';
+
+    if(!confirm(confirmMsg)) return;
+
     await db.collection('cases').doc(caseId).delete();
     allCases = allCases.filter(c => c.id !== caseId);
     renderStats(allCases);
@@ -1090,7 +1106,6 @@ function showOnboardingStep(index){
   const target = document.querySelector(s.target);
   if(!target) return;
 
-  // spotlight via 4-strips (no classList needed)
   document.getElementById('obStepLabel').textContent = s.step;
   document.getElementById('obChip').textContent = s.chip;
   document.getElementById('obTitle').textContent = s.title;
@@ -1104,7 +1119,8 @@ function showOnboardingStep(index){
 
   card.classList.add('show');
   card.style.visibility = 'hidden';
-  requestAnimationFrame(() => {
+
+  const placeStep = () => {
     updateSpotlightFrame(target);
     const rect = target.getBoundingClientRect();
     const cW = card.offsetWidth, cH = card.offsetHeight;
@@ -1112,25 +1128,20 @@ function showOnboardingStep(index){
     const gap = 18;
     let top = 0, left = 0;
 
-    // מנסה placement — אם אין מקום עובר לצד הנגדי
     if(s.placement === 'top'){
       top = rect.top - cH - gap;
-      if(top < 12) top = rect.bottom + gap; // fallback למטה
-    } else { // bottom
+      if(top < 12) top = rect.bottom + gap;
+    } else {
       top = rect.bottom + gap;
-      if(top + cH > vH - 12) top = rect.top - cH - gap; // fallback למעלה
+      if(top + cH > vH - 12) top = rect.top - cH - gap;
     }
     top = Math.max(12, Math.min(vH - cH - 12, top));
-
-    // מרכז אופקית — אבל לא דורס את האלמנט
     left = rect.left + rect.width / 2 - cW / 2;
     left = Math.max(12, Math.min(vW - cW - 12, left));
 
-    // בדיקת overlap — אם הכרטיסייה דורסת את האלמנט, הזזה לפינה בטוחה
     const overlapH = top < rect.bottom + 4 && top + cH > rect.top - 4;
     const overlapV = left < rect.right + 4 && left + cW > rect.left - 4;
     if(overlapH && overlapV){
-      // העבר לפינה עם הכי הרבה מקום
       const spaceBelow = vH - rect.bottom;
       const spaceAbove = rect.top;
       top = spaceBelow >= spaceAbove
@@ -1138,14 +1149,17 @@ function showOnboardingStep(index){
         : Math.max(12, rect.top - cH - gap);
     }
 
-    arrow.style.display = 'none'; // arrow לא רלוונטי עם 4-strips
+    arrow.style.display = 'none';
     card.style.top = `${top}px`;
     card.style.left = `${left}px`;
     card.style.visibility = 'visible';
-  });
+  };
 
   if(index > 0){
-    target.scrollIntoView({behavior:'smooth', block: 'center'});
+    target.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(() => requestAnimationFrame(placeStep), 320);
+  } else {
+    requestAnimationFrame(placeStep);
   }
 }
 
@@ -1178,12 +1192,11 @@ async function skipDashboardOnboarding(){
 }
 
 function openFirstCasePrompt(){
-  const overlay = document.getElementById('obOverlay');
   const card = document.getElementById('obCard');
   clearOnboardingSpotlight();
+  updateSpotlightFrame(null);
   document.getElementById('obDemoNote').classList.remove('show');
   document.body.classList.add('ob-lock');
-  overlay.classList.add('show');
   card.classList.add('show');
   card.style.visibility='visible';
   document.getElementById('obStepLabel').textContent = 'השלב הבא';
@@ -1206,12 +1219,25 @@ function openFirstCasePrompt(){
 }
 
 window.addEventListener('resize', () => {
-  if(onboardingActive){
-    const s = onboardingSteps[onboardingStep];
-    const t = s ? document.querySelector(s.target) : null;
-    updateSpotlightFrame(t || null);
-    showOnboardingStep(onboardingStep);
+  if(!onboardingActive) return;
+  const card = document.getElementById('obCard');
+  if(!card.classList.contains('show')) return;
+  const s = onboardingSteps[onboardingStep];
+  const t = s ? document.querySelector(s.target) : null;
+  if(!t) return;
+  updateSpotlightFrame(t);
+  const rect = t.getBoundingClientRect();
+  const cW = card.offsetWidth, cH = card.offsetHeight;
+  const vW = window.innerWidth, vH = window.innerHeight;
+  const gap = 18;
+  let top = s.placement === 'top' ? rect.top - cH - gap : rect.bottom + gap;
+  if(top < 12 || top + cH > vH - 12){
+    top = rect.bottom + gap + cH <= vH - 12 ? rect.bottom + gap : Math.max(12, rect.top - cH - gap);
   }
+  let left = rect.left + rect.width / 2 - cW / 2;
+  left = Math.max(12, Math.min(vW - cW - 12, left));
+  card.style.top = `${top}px`;
+  card.style.left = `${left}px`;
 });
 
 </script>
