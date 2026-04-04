@@ -7,50 +7,37 @@
  */
 
 // ── Plans ──
+// ── תוכניות מנוי לפי מוצר ──
 const BILLING_PLANS = {
-  trial: {
-    id: 'trial',
-    label: 'ניסיון חינם',
-    days: 14,
-    price: 0,
-    reportsPerMonth: 5,
-    features: ['יצירת דוחות שמאות','העלאת תמונות','הפקת PDF','עד 5 דוחות בחודש','משתמש אחד'],
+
+  // ── OMDA רכוש ──
+  trial:   { id:'trial',   product:'omdan-property', label:'ניסיון חינם', priceMonthly:0,   priceAnnual:0,    reportsPerMonth:5   },
+  starter: { id:'starter', product:'omdan-property', label:'Starter',     priceMonthly:89,  priceAnnual:680,  reportsPerMonth:20  },
+  pro:     { id:'pro',     product:'omdan-property', label:'Pro',         priceMonthly:129, priceAnnual:990,  reportsPerMonth:Infinity },
+  office:  { id:'office',  product:'omdan-property', label:'Office',      priceMonthly:499, priceAnnual:4500, reportsPerMonth:Infinity },
+
+  // ── OMDA איתור ──
+  leak: { id:'leak', product:'omdan-leak', label:'OMDA איתור', priceMonthly:29, priceAnnual:290 },
+
+  // ── Bundles ──
+  'bundle-starter-leak': {
+    id: 'bundle-starter-leak',
+    product: 'bundle',
+    label: 'Bundle — רכוש Starter + איתור',
+    priceMonthly: 109,           // במקום 118 (89+29)
+    priceAnnual:  890,           // במקום 970
+    fullPriceMonthly: 118,       // לתצוגת "חיסכון"
+    includes: ['omdan-property:starter', 'omdan-leak:leak'],
   },
-  starter: {
-    id: 'starter',
-    label: 'Starter',
-    labelHe: 'שמאי עצמאי',
-    priceMonthly: 89,
-    priceAnnual: 680,
-    reportsPerMonth: 20,
-    features: ['יצירת דוחות שמאות','העלאת תמונות','הפקת PDF','עד 20 דוחות בחודש','משתמש אחד'],
-    stripePriceMonthly: 'price_starter_monthly', // להחליף ב-Stripe
-    stripePriceAnnual:  'price_starter_annual',
-    popular: false,
-  },
-  pro: {
-    id: 'pro',
-    label: 'Pro',
-    labelHe: 'שמאי פעיל',
-    priceMonthly: 129,
-    priceAnnual: 990,
-    reportsPerMonth: Infinity,
-    features: ['דוחות ללא הגבלה','BOQ ומחירונים','אחסון תמונות','חתימה דיגיטלית','ייצוא לאקסל','משתמש אחד'],
-    stripePriceMonthly: 'price_pro_monthly',
-    stripePriceAnnual:  'price_pro_annual',
-    popular: true,
-  },
-  office: {
-    id: 'office',
-    label: 'Office',
-    labelHe: 'משרד שמאים',
-    priceMonthly: 499,
-    priceAnnual: 4500,
-    reportsPerMonth: Infinity,
-    features: ['5 משתמשים','ניהול תיקים','הרשאות עובדים','לוג פעילות','API חיבור למערכות'],
-    stripePriceMonthly: 'price_office_monthly',
-    stripePriceAnnual:  'price_office_annual',
-    popular: false,
+};
+
+// ── Bundle definitions ──
+const BUNDLES = {
+  'bundle-starter-leak': {
+    products: {
+      'omdan-property': { plan:'starter' },
+      'omdan-leak':     { plan:'leak'    },
+    },
   },
 };
 
@@ -126,50 +113,79 @@ class BillingCore {
       return { ok: false, reason: 'no_token' };
     }
 
-    // Fallback: אם אין products[] — אפשר גישה אם plan תקין
-    const hasProduct = !token.products || token.products.includes(productId) || token.products.includes('omdan-property');
+    const now = new Date();
+    const toDate = (v) => {
+      if (!v) return null;
+      if (v?.toDate) return v.toDate();
+      if (v instanceof Date) return v;
+      return new Date(v);
+    };
+
+    // ── NEW: plans-map structure ──
+    // billing doc יכיל: plans: { 'omdan-property': { status, subEnd }, 'omdan-leak': {...} }
+    if (token.plans && token.plans[productId]) {
+      const p = token.plans[productId];
+      if (p.plan === 'trial') {
+        const trialEnd = toDate(p.trialEnd);
+        if (!trialEnd || now > trialEnd) return { ok: false, reason: 'trial_expired' };
+        const daysLeft = Math.ceil((trialEnd - now) / 86400000);
+        console.log('[BillingCore] plans-map trial OK', productId, 'daysLeft:', daysLeft);
+        return { ok: true, plan: 'trial', daysLeft };
+      }
+      if (p.status === 'active') {
+        const subEnd = toDate(p.subscriptionEnd);
+        if (!subEnd || now > subEnd) return { ok: false, reason: 'subscription_expired' };
+        console.log('[BillingCore] plans-map paid OK', productId, p.plan);
+        return { ok: true, plan: p.plan };
+      }
+      return { ok: false, reason: 'subscription_expired' };
+    }
+
+    // ── LEGACY: flat structure (backwards compat לרכוש קיים) ──
+    const hasProduct = !token.products
+      || token.products.includes(productId)
+      || (productId === 'omdan-property' && token.products.includes('omdan-property'));
+
     if (!hasProduct) {
-      console.warn('[BillingCore] no_product', token.products, productId);
+      console.warn('[BillingCore] no_product', productId);
       return { ok: false, reason: 'no_product' };
     }
 
-    const now = new Date();
-
-    // Helper: Firestore Timestamp | ISO string | Date
-    const toDate = (v) => {
-      if (!v) return null;
-      if (v?.toDate) return v.toDate();       // Firestore Timestamp
-      if (v instanceof Date) return v;
-      return new Date(v);                      // ISO string / number
-    };
-
-    // Trial
     if (token.plan === 'trial') {
       const trialEnd = toDate(token.trialEnd);
-      if (!trialEnd) { console.warn('[BillingCore] trial: no trialEnd'); return { ok: false, reason: 'trial_expired' }; }
-      if (now > trialEnd) { console.warn('[BillingCore] trial expired', trialEnd); return { ok: false, reason: 'trial_expired' }; }
+      if (!trialEnd || now > trialEnd) return { ok: false, reason: 'trial_expired' };
       const daysLeft = Math.ceil((trialEnd - now) / 86400000);
-      console.log('[BillingCore] trial OK, daysLeft:', daysLeft);
       return { ok: true, plan: 'trial', daysLeft };
     }
 
-    // Paid subscription: starter | pro | office
-    if (['starter','pro','office'].includes(token.plan)) {
-      if (token.status !== 'active') {
-        console.warn('[BillingCore] paid: status not active:', token.status);
-        return { ok: false, reason: 'subscription_expired' };
-      }
+    if (['starter','pro','office'].includes(token.plan) && token.status === 'active') {
       const subEnd = toDate(token.subscriptionEnd);
-      if (!subEnd || now > subEnd) {
-        console.warn('[BillingCore] paid: subEnd expired', subEnd);
-        return { ok: false, reason: 'subscription_expired' };
-      }
-      console.log('[BillingCore] paid OK, plan:', token.plan, 'subEnd:', subEnd);
+      if (!subEnd || now > subEnd) return { ok: false, reason: 'subscription_expired' };
       return { ok: true, plan: token.plan };
     }
 
-    console.warn('[BillingCore] unknown plan:', token.plan);
+    console.warn('[BillingCore] unknown/expired', token.plan);
     return { ok: false, reason: 'unknown' };
+  }
+
+  // בדוק אם user זכאי להנחת bundle
+  static getBundleOffer(token, buyingProductId) {
+    if (!token) return null;
+    // אם קונה איתור ויש לו רכוש Starter → הצע bundle
+    if (buyingProductId === 'omdan-leak') {
+      const hasProperty = token.plans?.['omdan-property']?.status === 'active'
+        || (token.plan && ['starter','pro','office'].includes(token.plan) && token.status === 'active');
+      if (hasProperty) {
+        return {
+          bundleId: 'bundle-starter-leak',
+          bundlePrice: 109,
+          fullPrice: 118,
+          saving: 9,
+          label: 'Bundle עם OMDA רכוש — ₪109 במקום ₪118'
+        };
+      }
+    }
+    return null;
   }
 
   static getDaysLeftInTrial(token) {
@@ -184,4 +200,4 @@ class BillingCore {
 }
 
 // Export for use in other files
-if (typeof module !== 'undefined') module.exports = { BillingCore, BILLING_PLANS, BILLING_PRODUCTS };
+if (typeof module !== 'undefined') module.exports = { BillingCore, BILLING_PLANS, BILLING_PRODUCTS, BUNDLES };

@@ -31,9 +31,16 @@ const CARDCOM_USERNAME = defineSecret("CARDCOM_USERNAME");
 
 // ── Plans ─────────────────────────────────────────────────
 const PLANS = {
-  starter: { monthly: 89, annual: 680, name: "OMDAN Starter" },
-  pro: { monthly: 129, annual: 990, name: "OMDAN Pro" },
-  office: { monthly: 499, annual: 4500, name: "OMDAN Office" },
+  starter: { monthly: 89,  annual: 680,  name: "OMDA רכוש Starter", product: "omdan-property" },
+  pro:     { monthly: 129, annual: 990,  name: "OMDA רכוש Pro",     product: "omdan-property" },
+  office:  { monthly: 499, annual: 4500, name: "OMDA רכוש Office",  product: "omdan-property" },
+  leak:    { monthly: 29,  annual: 290,  name: "OMDA איתור",         product: "omdan-leak"     },
+  "bundle-starter-leak": {
+    monthly: 109, annual: 890,
+    name: "Bundle — רכוש Starter + איתור",
+    product: "bundle",
+    includes: { "omdan-property": "starter", "omdan-leak": "leak" },
+  },
 };
 
 const CARDCOM_URLS = {
@@ -438,7 +445,7 @@ function calcEnd(mode, from = new Date()) {
   return d;
 }
 
-function buildCardcomBasePayload({ amount, planData, billingMode, decoded, sessionId, fullName }) {
+function buildCardcomBasePayload({ amount, planData, billingMode, decoded, sessionId }) {
   return {
     TerminalNumber: CARDCOM_TERMINAL.value(),
     UserName: CARDCOM_USERNAME.value(),
@@ -451,7 +458,6 @@ function buildCardcomBasePayload({ amount, planData, billingMode, decoded, sessi
     SumToBill: String(amount),
     ProductName: planData.name,
     CardOwnerEmail: decoded.email || "",
-    CardOwnerName: fullName,
 
     SuccessRedirectUrl: `${CARDCOM_URLS.successUrl}?session=${sessionId}`,
     ErrorRedirectUrl: `${CARDCOM_URLS.errorUrl}?session=${sessionId}`,
@@ -462,7 +468,7 @@ function buildCardcomBasePayload({ amount, planData, billingMode, decoded, sessi
     DocTypeToCreate: "400",
     AutoRedirect: "false",
 
-    "InvoiceHead.CustName": fullName,
+    "InvoiceHead.CustName": decoded.name || decoded.email || "לקוח OMDAN",
     "InvoiceHead.Email": decoded.email || "",
     "InvoiceHead.SendByEmail": "true",
     "InvoiceHead.Language": "he",
@@ -512,29 +518,6 @@ exports.cardcomCreatePayment = onRequest(
 
       const amount = billingMode === "annual" ? planData.annual : planData.monthly;
 
-      // שליפת שם מלא אמיתי מהפרופיל
-      let fullName = decoded.name || "";
-      try {
-        const userSnap = await db.collection("users").doc(decoded.uid).get();
-        if (userSnap.exists) {
-          const userData = userSnap.data() || {};
-          fullName =
-            userData.fullName ||
-            [userData.firstName, userData.lastName].filter(Boolean).join(" ") ||
-            decoded.name ||
-            decoded.email ||
-            "לקוח OMDAN";
-        } else {
-          fullName = decoded.name || decoded.email || "לקוח OMDAN";
-        }
-      } catch (e) {
-        logger.warn("Failed to load user profile for Cardcom name", {
-          uid: decoded.uid,
-          message: e.message,
-        });
-        fullName = decoded.name || decoded.email || "לקוח OMDAN";
-      }
-
       const sessionRef = db.collection("checkoutSessions").doc();
       await sessionRef.set({
         uid: decoded.uid,
@@ -542,8 +525,6 @@ exports.cardcomCreatePayment = onRequest(
         billingMode,
         amount,
         productName: planData.name,
-        customerName: fullName,
-        customerEmail: decoded.email || "",
         status: "pending",
         createdAt: FieldValue.serverTimestamp(),
       });
@@ -554,10 +535,9 @@ exports.cardcomCreatePayment = onRequest(
         billingMode,
         decoded,
         sessionId: sessionRef.id,
-        fullName,
       });
 
-      // ניסיון 1: InvoiceLines בלי אינדקס
+      // Attempt 1: InvoiceLines בלי אינדקס
       let attempt = await tryCardcomCreatePayment(
         {
           ...basePayload,
@@ -569,7 +549,7 @@ exports.cardcomCreatePayment = onRequest(
         "attempt_1_unindexed"
       );
 
-      // ניסיון 2: InvoiceLines עם אינדקס
+      // Attempt 2: InvoiceLines עם אינדקס
       if (attempt.parsed.ResponseCode !== "0") {
         logger.warn("Cardcom attempt 1 failed, retrying with indexed InvoiceLines", {
           description: attempt.parsed.Description || "",
@@ -611,11 +591,7 @@ exports.cardcomCreatePayment = onRequest(
         return;
       }
 
-      const paymentUrl =
-        attempt.parsed.Url ||
-        attempt.parsed.url ||
-        attempt.parsed.LowProfileUrl ||
-        null;
+      const paymentUrl = attempt.parsed.Url || attempt.parsed.url || attempt.parsed.LowProfileUrl || null;
 
       await sessionRef.update({
         lowProfileCode: attempt.parsed.LowProfileCode || null,
@@ -627,7 +603,6 @@ exports.cardcomCreatePayment = onRequest(
         sessionId: sessionRef.id,
         lowProfileCode: attempt.parsed.LowProfileCode || null,
         paymentUrl,
-        fullName,
       });
 
       res.json({
@@ -748,23 +723,48 @@ exports.cardcomWebhook = onRequest(
       }
 
       const subEnd = calcEnd(session.billingMode);
+      const isBundle = plan?.product === "bundle";
 
-      await db.collection("billing").doc(session.uid).set(
-        {
-          plan: session.planId,
+      const docUpdate = {
+        lastPaymentAt: FieldValue.serverTimestamp(),
+        lastPaymentAmount: session.amount,
+        cardcomToken: verified.Token || null,
+        cardcomTokenExp: verified.TokenExDate || null,
+        cardcomDealNumber: dealNumber,
+      };
+
+      if (isBundle && plan.includes) {
+        docUpdate.bundle = session.planId;
+        for (const [productId, planId] of Object.entries(plan.includes)) {
+          docUpdate[`plans.${productId}`] = {
+            plan: planId, status: "active",
+            billingMode: session.billingMode,
+            subscriptionStart: admin.firestore.Timestamp.fromDate(new Date()),
+            subscriptionEnd: admin.firestore.Timestamp.fromDate(subEnd),
+          };
+        }
+        docUpdate.products = Object.keys(plan.includes);
+      } else {
+        const productId = plan?.product || "omdan-property";
+        docUpdate[`plans.${productId}`] = {
+          plan: session.planId, status: "active",
           billingMode: session.billingMode,
-          status: "active",
           subscriptionStart: admin.firestore.Timestamp.fromDate(new Date()),
           subscriptionEnd: admin.firestore.Timestamp.fromDate(subEnd),
-          lastPaymentAt: FieldValue.serverTimestamp(),
-          lastPaymentAmount: session.amount,
-          cardcomToken: verified.Token || null,
-          cardcomTokenExp: verified.TokenExDate || null,
-          cardcomDealNumber: dealNumber,
-          reportsThisMonth: 0,
-        },
-        { merge: true }
-      );
+        };
+        // Legacy backwards compat לomda-property
+        if (productId === "omdan-property") {
+          Object.assign(docUpdate, {
+            plan: session.planId, status: "active",
+            billingMode: session.billingMode,
+            subscriptionEnd: admin.firestore.Timestamp.fromDate(subEnd),
+          });
+        }
+        docUpdate.products = [productId];
+        docUpdate.reportsThisMonth = 0;
+      }
+
+      await db.collection("billing").doc(session.uid).set(docUpdate, { merge: true });
 
       logger.info("cardcomWebhook success", {
         uid: session.uid,

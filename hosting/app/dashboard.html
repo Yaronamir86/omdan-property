@@ -117,7 +117,46 @@
     thead{background:var(--primary2);}
     th{padding:11px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
     td{padding:13px 16px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle;}
+    tr{position:relative;}
     tr:hover td{background:rgba(245,158,11,.04);cursor:pointer;}
+    /* ── Row actions menu ── */
+    .row-actions{
+      position:absolute;top:50%;left:12px;transform:translateY(-50%);
+      display:flex;align-items:center;gap:6px;
+      opacity:0;pointer-events:none;transition:opacity .15s;
+    }
+    tr:hover .row-actions{opacity:1;pointer-events:auto;}
+    /* מובייל — תמיד גלוי */
+    @media(max-width:768px){
+      .row-actions{opacity:1 !important;pointer-events:auto !important;position:static;transform:none;}
+    }
+    .row-menu-btn{
+      display:flex;align-items:center;justify-content:center;
+      width:30px;height:30px;border-radius:8px;border:1px solid var(--border);
+      background:var(--card);color:var(--muted);cursor:pointer;
+      font-size:16px;font-weight:900;letter-spacing:1px;
+      transition:background .15s,color .15s,border-color .15s;
+      font-family:inherit;
+    }
+    .row-menu-btn:hover{background:var(--primary2);color:var(--text);border-color:var(--primary3);}
+    /* Dropdown */
+    .row-dropdown{
+      position:fixed;z-index:500;min-width:160px;
+      background:#1F2937;border:1px solid var(--primary3);
+      border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);
+      padding:6px;display:none;
+    }
+    .row-dropdown.open{display:block;}
+    .row-dropdown-item{
+      display:flex;align-items:center;gap:10px;
+      padding:9px 12px;border-radius:8px;cursor:pointer;
+      font-size:13px;font-weight:600;color:var(--text);
+      transition:background .12s;white-space:nowrap;
+    }
+    .row-dropdown-item:hover{background:rgba(255,255,255,.06);}
+    .row-dropdown-item.danger{color:#F87171;}
+    .row-dropdown-item.danger:hover{background:rgba(239,68,68,.1);}
+    .row-dropdown-sep{height:1px;background:var(--border);margin:4px 0;}
     .case-num{font-weight:800;color:var(--accent);font-size:12px;}
     .case-title{font-weight:600;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
@@ -162,6 +201,34 @@
       th:nth-child(4),th:nth-child(5),td:nth-child(4),td:nth-child(5){display:none;}
     }
 
+/* ── APP LAYOUT ── */
+.app{display:flex;min-height:100vh;}
+.sidebar{
+  width:240px;flex-shrink:0;background:var(--primary);
+  border-left:1px solid var(--border);
+  padding:24px 0;position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;z-index:150;
+}
+.main-wrap{flex:1;display:flex;flex-direction:column;min-width:0;}
+.sb-logo{display:flex;align-items:center;padding:0 20px 20px;
+  border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sb-nav{flex:1;}
+.sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;
+  font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;
+  transition:all .15s;border-right:3px solid transparent;white-space:nowrap;}
+.sb-nav a:hover{color:var(--text);background:rgba(255,255,255,.04);}
+.sb-nav a.active{color:var(--accent);border-right-color:var(--accent);background:rgba(245,158,11,.06);}
+.sb-nav .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.sb-sep{height:1px;background:var(--border);margin:6px 20px;}
+.sb-footer{padding:16px 20px;border-top:1px solid var(--border);}
+.sb-user-name{font-size:11px;color:var(--subtle);margin-bottom:8px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-logout{width:100%;padding:9px;background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#f87171;
+  font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:background .2s;}
+.btn-logout:hover{background:rgba(239,68,68,.18);}
+@media(min-width:769px){.tb-logo-wrap{display:none !important;}.tb-divider{display:none !important;}}
+
 /* ── MOBILE BOTTOM NAV ── */
 .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
   background:var(--primary);border-top:1px solid var(--border);
@@ -174,6 +241,7 @@
 .mob-nav a:hover,.mob-nav button:hover,.mob-nav a.active{color:var(--accent);}
 .mob-nav .mn-icon{font-size:20px;line-height:1;}
 @media(max-width:768px){
+  .sidebar{display:none;}
   .mob-nav{display:grid;}
   main{padding-bottom:120px !important;}
   .stats{grid-template-columns:repeat(2,1fr) !important;}
@@ -183,15 +251,11 @@
   th:nth-child(3),td:nth-child(3){display:none;}
   th:nth-child(5),td:nth-child(5){display:none;}
   .tb-user{display:none;}
+  .tb-right .btn{display:none !important;}
 }
 @media(max-width:480px){
   #topbar{padding:0 12px;}
   .sc .value{font-size:20px;}
-}
-
-@media(max-width:768px){
-  .tb-right .btn{display:none !important;}
-  .tb-user{display:none !important;}
 }
 
 
@@ -233,9 +297,49 @@
 </head>
 <body>
 
+<div class="app">
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+      <img src="/assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;">
+      <img src="/assets/omda-logo.png" alt="OMDA" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
+    </a>
+  </div>
+  <nav class="sb-nav">
+    <a href="/app/dashboard.html" class="active">
+      <span class="nav-icon">📊</span> דשבורד
+    </a>
+    <a href="/app/reports.html">
+      <span class="nav-icon">📄</span> דוחות
+    </a>
+    <a href="/app/clients.html">
+      <span class="nav-icon">👥</span> לקוחות
+    </a>
+    <a href="/app/payments.html">
+      <span class="nav-icon">💰</span> תשלומים
+    </a>
+    <div class="sb-sep"></div>
+    <a href="/app/settings.html" id="sbSettingsLink">
+      <span class="nav-icon">⚙️</span> הגדרות
+    </a>
+    <a href="/app/account-billing.html">
+      <span class="nav-icon">💳</span> מנוי
+    </a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user-name" id="sidebarUser"></div>
+    <button class="btn-logout" onclick="doLogout()">🚪 התנתקות</button>
+  </div>
+</aside>
+
+<!-- ── Main wrap ── -->
+<div class="main-wrap">
+
 <div id="topbar">
   <div class="tb-left">
-    <a id="topbarLogo" href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <a class="tb-logo-wrap" id="topbarLogo" href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
       <img src="/assets/omda-icon.png" alt="" style="height:36px;width:36px;object-fit:contain;">
       <img src="/assets/omda-logo.png" alt="OMDA רכוש" style="height:30px;object-fit:contain;filter:brightness(0) invert(1);">
     </a>
@@ -244,8 +348,6 @@
   </div>
   <div class="tb-right">
     <span class="tb-user" id="navUser"></span>
-    <button class="btn btn-ghost btn-sm" onclick="goBilling()">💳 מנוי</button>
-    <button class="btn btn-ghost btn-sm" id="settingsBtn" onclick="goSettings()">⚙️ הגדרות</button>
     <button class="btn btn-ghost btn-sm" onclick="doLogout()">יציאה</button>
   </div>
 </div>
@@ -352,8 +454,13 @@
   </div>
 
 </main>
+</div><!-- /.main-wrap -->
+</div><!-- /.app -->
 
 
+
+<!-- Row context menu -->
+<div class="row-dropdown" id="rowDropdown" onclick="event.stopPropagation()"></div>
 
 <div class="ob-strip" id="obStripTop"></div>
 <div class="ob-strip" id="obStripBottom"></div>
@@ -472,6 +579,7 @@ auth.onAuthStateChanged(async u=>{
   }
   currentUser=u;
   document.getElementById("navUser").textContent=u.displayName||u.email;
+  const sb=document.getElementById("sidebarUser"); if(sb) sb.textContent=u.displayName||u.email;
 
   try{
     const userRef = db.collection('users').doc(u.uid);
@@ -651,17 +759,19 @@ function renderTable(cases, isSearch=false){
     const status = getDerivedStatus(c);
     const evTypeMap = {water:'💧 מים',fire:'🔥 שריפה',burglary:'🚪 פריצה',storm:'🌪️ סערה',thirdparty:"👷 צד ג'",electrical:'⚡ חשמל',other:'📋 אחר',tax:'🏛️ מס רכוש'};
     const evType = evTypeMap[c.state?.event?.eventType] || '';
-    const actionBtn = isDone
-      ? `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openCaseReport('${caseId}')" style="background:var(--green);color:#000;">📄 דוח</button>`
-      : `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();openCase('${caseId}')">פתח ›</button>`;
     return `<tr onclick="openCase('${caseId}')">
-      <td><span class="case-num" style="font-size:11px;color:var(--muted);">${caseId?.replace("case_","#")?.slice(-6)||"—"}</span></td>
+      <td><span class="case-num" style="font-size:11px;color:var(--muted);">${caseId?.replace("case_","#")?.slice(-6)||""}</span></td>
       <td><span class="case-title">${escHtml(title)}</span></td>
       <td>${modeTag(c.mode)}</td>
       <td><span style="font-size:12px;">${evType}</span></td>
       <td>${statusBadge(status)}</td>
       <td style="color:var(--muted);font-size:12px;">${dateStr}</td>
-      <td>${actionBtn}</td>
+      <td style="position:relative;text-align:left;padding-left:8px;">
+        <div class="row-actions">
+          <button class="row-menu-btn" title="אפשרויות"
+            onclick="event.stopPropagation();openRowMenu(event,'${caseId}',${isDone})">⋯</button>
+        </div>
+      </td>
     </tr>`;
   }).join("");
 }
@@ -705,6 +815,84 @@ function fmtDate(iso){
 }
 
 function escHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+// ── Row context menu ──
+let _activeMenu = null;
+
+function openRowMenu(e, caseId, isDone){
+  e.stopPropagation();
+  const dd = document.getElementById('rowDropdown');
+  // סגור אם כבר פתוח לאותו תיק
+  if(_activeMenu === caseId && dd.classList.contains('open')){
+    closeRowMenu(); return;
+  }
+  _activeMenu = caseId;
+
+  // בנה פריטים
+  const items = [];
+  if(!isDone){
+    items.push(`<div class="row-dropdown-item" onclick="closeRowMenu();openCase('${caseId}')">✏️ פתח לעריכה</div>`);
+  } else {
+    items.push(`<div class="row-dropdown-item" onclick="closeRowMenu();openCaseReport('${caseId}')">📄 הצג דוח</div>`);
+    items.push(`<div class="row-dropdown-item" onclick="closeRowMenu();downloadCasePDF('${caseId}')">⬇️ הורד PDF</div>`);
+  }
+  items.push(`<div class="row-dropdown-item" onclick="closeRowMenu();shareCase('${caseId}')">🔗 שתף תיק</div>`);
+  items.push(`<div class="row-dropdown-sep"></div>`);
+  items.push(`<div class="row-dropdown-item danger" onclick="closeRowMenu();deleteCase('${caseId}')">🗑️ מחק תיק</div>`);
+  dd.innerHTML = items.join('');
+
+  // מיקום — ליד הכפתור
+  dd.classList.add('open');
+  const btnRect = e.currentTarget.getBoundingClientRect();
+  const ddW = 170, ddH = dd.offsetHeight || 160;
+  let top = btnRect.bottom + 6;
+  let left = btnRect.left - ddW + btnRect.width;
+  if(top + ddH > window.innerHeight - 12) top = btnRect.top - ddH - 6;
+  if(left < 8) left = 8;
+  dd.style.top  = top + 'px';
+  dd.style.left = left + 'px';
+}
+
+function closeRowMenu(){
+  document.getElementById('rowDropdown').classList.remove('open');
+  _activeMenu = null;
+}
+document.addEventListener('click', closeRowMenu);
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeRowMenu(); });
+
+async function deleteCase(caseId){
+  if(!confirm('האם למחוק את התיק? פעולה זו אינה ניתנת לביטול.')) return;
+  try{
+    await db.collection('cases').doc(caseId).delete();
+    allCases = allCases.filter(c => c.id !== caseId);
+    renderStats(allCases);
+    renderTable(allCases);
+    document.getElementById('pageSubtitle').textContent = allCases.length ? `${allCases.length} תיקים בסך הכל` : '';
+  }catch(e){
+    alert('שגיאה במחיקה: ' + e.message);
+  }
+}
+
+function shareCase(caseId){
+  const url = `${location.origin}/app/case.html?case=${caseId}`;
+  if(navigator.share){
+    navigator.share({ title:'תיק OMDA', url }).catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(url).then(()=>{
+      const dd = document.getElementById('rowDropdown');
+      const tmp = document.createElement('div');
+      tmp.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1F2937;border:1px solid #374151;color:#F9FAFB;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:9999;';
+      tmp.textContent = '✓ הקישור הועתק';
+      document.body.appendChild(tmp);
+      setTimeout(()=>tmp.remove(), 2200);
+    }).catch(()=>{ prompt('העתק קישור:', url); });
+  }
+}
+
+function downloadCasePDF(caseId){
+  // פותח את הדוח ב-print mode
+  window.open(`/app/case.html?case=${caseId}&view=report&print=1`, '_blank');
+}
 
 function openCase(caseId){
   // בדוק אם תיק מס רכוש
@@ -780,7 +968,7 @@ const onboardingSteps = [
     nextLabel: 'המשך להגדרות'
   },
   {
-    target: '#settingsBtn',
+    target: '#sbSettingsLink',
     placement: 'bottom',
     step: 'שלב 3',
     chip: 'לפני תיק ראשון',
@@ -1045,18 +1233,18 @@ window.addEventListener('resize', () => {
 
 <!-- Mobile Bottom Nav -->
 <nav class="mob-nav">
-  <a href="/app/dashboard.html" class="active">
-    <span class="mn-icon">📊</span>תיקים
+  <a href="/app/reports.html">
+    <span class="mn-icon">📄</span>דוחות
   </a>
-  <a href="/app/case.html">
-    <span class="mn-icon">➕</span>תיק חדש
+  <a href="/app/payments.html">
+    <span class="mn-icon">💰</span>תשלומים
+  </a>
+  <a href="/app/clients.html">
+    <span class="mn-icon">👥</span>לקוחות
   </a>
   <a href="/app/settings.html">
     <span class="mn-icon">⚙️</span>הגדרות
   </a>
-  <button onclick="doLogout()">
-    <span class="mn-icon">🚪</span>יציאה
-  </button>
 </nav>
 </body>
 </html>

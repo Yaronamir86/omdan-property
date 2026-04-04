@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMDA | לקוחות</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#111827;--primary2:#1F2937;--primary3:#374151;
+  --accent:#F59E0B;--accent3:#D97706;
+  --blue:#3B82F6;--red:#EF4444;--green:#10B981;--purple:#8B5CF6;
+  --text:#F9FAFB;--muted:#9CA3AF;--subtle:#6B7280;--border:#1F2937;
+  --card:#111827;--bg:#030712;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+
+.app{display:flex;min-height:100vh;}
+.sidebar{width:240px;flex-shrink:0;background:var(--primary);border-left:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:150;}
+.main-wrap{flex:1;min-width:0;}
+.sb-logo{display:flex;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sb-nav{flex:1;}
+.sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;border-right:3px solid transparent;white-space:nowrap;}
+.sb-nav a:hover{color:var(--text);background:rgba(255,255,255,.04);}
+.sb-nav a.active{color:var(--accent);border-right-color:var(--accent);background:rgba(245,158,11,.06);}
+.sb-nav .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.sb-sep{height:1px;background:var(--border);margin:6px 20px;}
+.sb-footer{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;}
+.sb-user-name{font-size:11px;color:var(--subtle);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-logout{width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#f87171;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:background .2s;}
+.btn-logout:hover{background:rgba(239,68,68,.18);}
+
+#topbar{background:var(--primary);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:100;}
+.tb-page{font-size:13px;font-weight:700;color:var(--muted);}
+main{max-width:1100px;margin:0 auto;padding:28px 20px;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.page-title{font-size:20px;font-weight:800;}
+.page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+
+/* ── Stats ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
+.sc .label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.sc .value{font-size:26px;font-weight:900;letter-spacing:-1px;}
+.sc-accent{border-top:3px solid var(--accent);}
+.sc-green{border-top:3px solid var(--green);}
+.sc-blue{border-top:3px solid var(--blue);}
+
+/* ── Search ── */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+.toolbar-title{font-size:16px;font-weight:800;}
+.search-wrap{position:relative;}
+.search-wrap input{background:var(--primary2);border:1.5px solid var(--primary3);border-radius:10px;padding:9px 12px 9px 36px;font-size:13px;font-family:'Heebo',sans-serif;color:var(--text);direction:rtl;outline:none;width:280px;transition:border-color .2s;}
+.search-wrap input:focus{border-color:var(--accent);}
+.search-wrap .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
+
+/* ── Cards grid ── */
+.clients-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.client-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:border-color .2s,transform .15s;}
+.client-card:hover{border-color:var(--primary3);transform:translateY(-1px);}
+.cc-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.cc-avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#111;flex-shrink:0;}
+.cc-name{font-size:15px;font-weight:800;margin-bottom:2px;}
+.cc-meta{font-size:12px;color:var(--muted);}
+.cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.cc-stat{background:var(--primary2);border-radius:10px;padding:10px 12px;text-align:center;}
+.cc-stat-val{font-size:18px;font-weight:900;color:var(--text);}
+.cc-stat-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;}
+.cc-cases{display:flex;flex-direction:column;gap:6px;}
+.cc-case-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;}
+.cc-case-num{color:var(--accent);font-weight:800;font-size:11px;}
+.cc-case-title{color:var(--muted);flex:1;margin:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-btn{font-size:11px;font-weight:700;color:var(--accent);text-decoration:none;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);padding:3px 8px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.cc-btn:hover{background:rgba(245,158,11,.18);}
+
+/* ── Empty/Loading ── */
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.spin{display:inline-block;width:24px;height:24px;border:2px solid var(--primary3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+  .sidebar{display:none;}
+  main{padding:16px 12px;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .clients-grid{grid-template-columns:1fr;}
+  .search-wrap input{width:100%;}
+  .toolbar{flex-direction:column;align-items:stretch;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+      <img src="/assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;">
+      <img src="/assets/omda-logo.png" alt="OMDA" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
+    </a>
+  </div>
+  <nav class="sb-nav">
+    <a href="/app/dashboard.html"><span class="nav-icon">📊</span> דשבורד</a>
+    <a href="/app/reports.html"><span class="nav-icon">📄</span> דוחות</a>
+    <a href="/app/clients.html" class="active"><span class="nav-icon">👥</span> לקוחות</a>
+    <a href="/app/payments.html"><span class="nav-icon">💰</span> תשלומים</a>
+    <div class="sb-sep"></div>
+    <a href="/app/account-billing.html"><span class="nav-icon">💳</span> מנוי</a>
+    <a href="/app/settings.html"><span class="nav-icon">⚙️</span> הגדרות</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user-name" id="sidebarUser"></div>
+    <button class="btn-logout" onclick="doLogout()">🚪 התנתקות</button>
+  </div>
+</aside>
+
+<div class="main-wrap">
+<div id="topbar">
+  <div class="tb-page">לקוחות</div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div>
+      <div class="page-title">לקוחות</div>
+      <div class="page-sub" id="pageSubtitle">מאוחד מתיקי המערכת</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="sc sc-accent">
+      <div class="label">לקוחות ייחודיים</div>
+      <div class="value" id="statClients">0</div>
+    </div>
+    <div class="sc sc-green">
+      <div class="label">עם דוח סגור</div>
+      <div class="value" id="statDone">0</div>
+    </div>
+    <div class="sc sc-blue">
+      <div class="label">ממוצע תיקים ללקוח</div>
+      <div class="value" id="statAvg">0</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="toolbar-title">כל הלקוחות</div>
+    <div class="search-wrap">
+      <span class="ico">🔍</span>
+      <input type="text" id="searchInput" placeholder="חפש לפי שם לקוח / עיר" oninput="filterClients()">
+    </div>
+  </div>
+
+  <div id="clientsContainer">
+    <div class="empty"><div class="spin"></div></div>
+  </div>
+</main>
+</div><!-- /.main-wrap -->
+</div><!-- /.app -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+  authDomain:"omdan-property.firebaseapp.com",
+  projectId:"omdan-property",
+  storageBucket:"omdan-property.firebasestorage.app",
+  messagingSenderId:"1028931108038",
+  appId:"1:1028931108038:web:01731ca2a152b700ea6bc7"
+});
+const auth=firebase.auth(), db=firebase.firestore();
+let clientsMap={}, allClients=[], currentUser=null;
+
+function isCaseDone(c){
+  return c.status==="completed"||!!(c.state?.summary?.claimTotal||c.state?.summary?.rehabTime);
+}
+
+auth.onAuthStateChanged(async u=>{
+  if(!u){window.location.href='/';return;}
+  currentUser=u;
+  const sb=document.getElementById('sidebarUser');
+  if(sb) sb.textContent=u.displayName||u.email;
+  loadClients();
+});
+
+async function loadClients(){
+  try{
+    const snap=await db.collection('cases').where('uid','==',currentUser.uid).limit(200).get();
+    const cases=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+    // Group by client name (fullName or name)
+    clientsMap={};
+    cases.forEach(c=>{
+      const name=(c.state?.base?.fullName||c.name||'').trim();
+      if(!name) return;
+      if(!clientsMap[name]) clientsMap[name]={name, cases:[], city:c.state?.base?.city||''};
+      clientsMap[name].cases.push(c);
+      if(!clientsMap[name].city && c.state?.base?.city)
+        clientsMap[name].city=c.state.base.city;
+    });
+
+    allClients=Object.values(clientsMap).sort((a,b)=>b.cases.length-a.cases.length);
+    renderStats(allClients, cases.length);
+    renderClients(allClients);
+  }catch(e){
+    document.getElementById('clientsContainer').innerHTML=
+      `<div class="empty"><p>שגיאה: ${e.message}</p></div>`;
+  }
+}
+
+function renderStats(clients, totalCases){
+  document.getElementById('statClients').textContent=clients.length;
+  const withDone=clients.filter(cl=>cl.cases.some(isCaseDone)).length;
+  document.getElementById('statDone').textContent=withDone;
+  document.getElementById('statAvg').textContent=
+    clients.length?+(totalCases/clients.length).toFixed(1):0;
+  document.getElementById('pageSubtitle').textContent=
+    `${clients.length} לקוחות ייחודיים מתוך ${totalCases} תיקים`;
+}
+
+function renderClients(clients){
+  const container=document.getElementById('clientsContainer');
+  if(!clients.length){
+    container.innerHTML=`<div class="empty">
+      <div style="font-size:40px;margin-bottom:10px;">👥</div>
+      <p style="font-size:15px;font-weight:700;margin-bottom:6px;">לא נמצאו לקוחות</p>
+      <p>לקוחות נוצרים אוטומטית מתיקים עם שם מבוטח</p>
+    </div>`;
+    return;
+  }
+  container.innerHTML=`<div class="clients-grid">${clients.map(cl=>clientCard(cl)).join('')}</div>`;
+}
+
+function clientCard(cl){
+  const initials=cl.name.trim().split(' ').slice(0,2).map(w=>w[0]).join('');
+  const doneCount=cl.cases.filter(isCaseDone).length;
+  const openCount=cl.cases.length-doneCount;
+  const recentCases=cl.cases.slice(0,3);
+  return `<div class="client-card">
+    <div class="cc-header">
+      <div class="cc-avatar">${escHtml(initials)}</div>
+      <div>
+        <div class="cc-name">${escHtml(cl.name)}</div>
+        <div class="cc-meta">${cl.city?escHtml(cl.city):'כתובת לא ידועה'}</div>
+      </div>
+    </div>
+    <div class="cc-stats">
+      <div class="cc-stat">
+        <div class="cc-stat-val">${cl.cases.length}</div>
+        <div class="cc-stat-lbl">תיקים</div>
+      </div>
+      <div class="cc-stat">
+        <div class="cc-stat-val" style="color:var(--green);">${doneCount}</div>
+        <div class="cc-stat-lbl">סגורים</div>
+      </div>
+      <div class="cc-stat">
+        <div class="cc-stat-val" style="color:var(--accent);">${openCount}</div>
+        <div class="cc-stat-lbl">פתוחים</div>
+      </div>
+    </div>
+    <div class="cc-cases">
+      ${recentCases.map(c=>{
+        const claim=c.state?.insurance?.claimNum||c.state?.base?.claimNum||'';
+        const label=claim||c.id?.replace('case_','#')?.slice(-6)||'';
+        const isDone=isCaseDone(c);
+        const href=isDone?`/app/case.html?case=${c.id}&view=report`:`/app/case.html?case=${c.id}`;
+        return `<div class="cc-case-row">
+          <span class="cc-case-num">${escHtml(label)}</span>
+          <span class="cc-case-title">${isDone?'✅ סגור':'🔄 פתוח'}</span>
+          <a class="cc-btn" href="${href}">${isDone?'דוח':'עריכה'}</a>
+        </div>`;
+      }).join('')}
+      ${cl.cases.length>3?`<div style="font-size:11px;color:var(--subtle);text-align:center;padding-top:4px;">ועוד ${cl.cases.length-3} תיקים נוספים</div>`:''}
+    </div>
+  </div>`;
+}
+
+function filterClients(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase().trim();
+  if(!q){renderClients(allClients);return;}
+  const filtered=allClients.filter(cl=>
+    cl.name.toLowerCase().includes(q)||
+    (cl.city||'').toLowerCase().includes(q)
+  );
+  renderClients(filtered);
+}
+
+function doLogout(){auth.signOut().then(()=>window.location.href='/');}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
+</body>
+</html>

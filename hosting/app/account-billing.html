@@ -14,12 +14,27 @@
 }
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-/* ── NAV ── */
-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 5%;display:flex;align-items:center;justify-content:space-between;}
-.nav-logo{font-size:18px;font-weight:900;text-decoration:none;color:var(--text);}
-.nav-logo span{color:var(--accent);}
-.nav-back{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);text-decoration:none;font-weight:700;transition:color .2s;border:1px solid rgba(245,158,11,.3);padding:6px 14px;border-radius:8px;}
-.nav-back:hover{color:#fff;background:rgba(245,158,11,.1);}
+/* ── APP LAYOUT ── */
+.app{display:flex;min-height:100vh;}
+.sidebar{
+  width:240px;flex-shrink:0;background:#0d1117;
+  border-left:1px solid var(--border);
+  padding:24px 0;position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;z-index:150;
+}
+.main-wrap{flex:1;overflow:auto;}
+.sb-logo{display:flex;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sb-nav{flex:1;}
+.sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;border-right:3px solid transparent;white-space:nowrap;}
+.sb-nav a:hover{color:var(--text);background:rgba(255,255,255,.04);}
+.sb-nav a.active{color:var(--accent);border-right-color:var(--accent);background:rgba(245,158,11,.06);}
+.sb-nav .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.sb-sep{height:1px;background:var(--border);margin:6px 20px;}
+.sb-footer{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;}
+.sb-user-name{font-size:11px;color:#4b5563;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-logout{width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#f87171;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:background .2s;}
+.btn-logout:hover{background:rgba(239,68,68,.18);}
+@media(max-width:768px){.sidebar{display:none;}.main-wrap{width:100%;}.page{padding:24px 16px 80px;}}
 
 /* ── LAYOUT ── */
 .page{max-width:720px;margin:0 auto;padding:40px 20px 80px;}
@@ -147,13 +162,33 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:14px
 </head>
 <body>
 
-<nav>
-  <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-      <img src="/assets/omda-icon.png" alt="" style="height:36px;width:36px;object-fit:contain;">
-      <img src="/assets/omda-logo.png" alt="OMDA רכוש" style="height:30px;object-fit:contain;filter:brightness(0) invert(1);">
+<div class="app">
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+      <img src="/assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;">
+      <img src="/assets/omda-logo.png" alt="OMDA" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
     </a>
-  <a class="nav-back" href="/app/dashboard.html">← חזרה לדשבורד</a>
-</nav>
+  </div>
+  <nav class="sb-nav">
+    <a href="/app/dashboard.html"><span class="nav-icon">📊</span> דשבורד</a>
+    <a href="/app/reports.html"><span class="nav-icon">📄</span> דוחות</a>
+    <a href="/app/clients.html"><span class="nav-icon">👥</span> לקוחות</a>
+    <a href="/app/payments.html"><span class="nav-icon">💰</span> תשלומים</a>
+    <div class="sb-sep"></div>
+    <a href="/app/account-billing.html" class="active"><span class="nav-icon">💳</span> מנוי</a>
+    <a href="/app/settings.html"><span class="nav-icon">⚙️</span> הגדרות</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user-name" id="sidebarUser"></div>
+    <button class="btn-logout" onclick="document.querySelector('script[type=module]') && window._doSignOut ? window._doSignOut() : (firebase?.auth().signOut().then(()=>location.href='/'))">🚪 התנתקות</button>
+  </div>
+</aside>
+
+<!-- ── Main wrap ── -->
+<div class="main-wrap">
 
 <div class="page">
   <div class="page-title">ניהול מנוי</div>
@@ -166,6 +201,7 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:14px
     </div>
   </div>
 </div>
+
 
 <!-- Cancel Confirmation Modal -->
 <div class="modal-backdrop" id="cancelModal">
@@ -494,11 +530,17 @@ onAuthStateChanged(auth, async user => {
     return;
   }
   _user = user;
+  const sb = document.getElementById('sidebarUser');
+  if(sb) sb.textContent = user.displayName || user.email;
+  window._doSignOut = async () => { await signOut(auth); window.location.href = '/'; };
   await loadBilling(user);
 });
 </script>
 
 <script>if("serviceWorker"in navigator){navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});}</script>
+
+</div><!-- /.main-wrap -->
+</div><!-- /.app -->
 
 <style>
 .omdan-footer{background:#0d1117;border-top:none;padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}

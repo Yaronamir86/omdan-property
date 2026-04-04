@@ -20,13 +20,6 @@
   --text:#F9FAFB;--muted:#9CA3AF;--subtle:#6B7280;--border:#1F2937;
   --card:#111827;--bg:#030712;
   --shadow:0 4px 20px rgba(0,0,0,0.4);
-  summary:{openingOverride:'',appraisalNotes:'',explanations:'',recommendations:'',signature:'',claimTotal:'',rehabTime:'',rehabNotes:''},
-  reportTheme:'classic',
-  taxSubMode:'',  // 'residential' | 'business'
-  taxRes:{ familyStatus:'single', numChildren:0, numAdults:0, contentsItems:[], emergencyItems:[] },
-  taxBiz:{ bizName:'', bizId:'', bizType:'', activity:'', equipItems:[], inventoryItems:[], sideExpenses:[] },
-  taxDecision:{ causalLink:'yes', notes:'' },
-  propertyDesc:{propertyType:'דירת מגורים',floors:'',area:'',buildingType:'קונבנציונלי',damagedAreas:'',damagedAreaSqm:'',notes:''}
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;}
@@ -655,6 +648,41 @@ body.field-mode #main{padding:12px;}
 .gen-item-cb{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:12px;background:var(--primary2);}
 .gen-item-cb input[type=checkbox]{width:14px;height:14px;accent-color:var(--accent);}
 .gen-item-cb.checked{border-color:var(--accent);background:rgba(245,158,11,.08);}
+
+/* ── LANDING MOBILE FIX ── */
+#landing{
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+html, body{
+  height:100%;
+}
+
+@media(max-width:768px){
+  #landing{
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    justify-content:flex-start;
+    padding:20px 16px 32px;
+  }
+  .land-title{font-size:24px;margin-bottom:4px;}
+  .land-sub{font-size:12px;margin-bottom:20px;}
+  .mode-grid{grid-template-columns:1fr;gap:10px;width:100%;}
+  .mode-card{padding:16px 14px;width:100%;box-sizing:border-box;}
+  .mode-icon{font-size:26px;margin-bottom:8px;}
+  .mode-name{font-size:15px;}
+  .mode-desc{font-size:11px;}
+  .mode-cta{margin-top:12px;}
+}
+
+@media(max-width:380px){
+  .land-title{font-size:20px;}
+  .land-sub{margin-bottom:14px;}
+  .mode-card{padding:13px 12px;}
+}
+
 </style>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -5204,7 +5232,8 @@ function shareReport(){
       <title>${title}</title>
       <style>body{font-family:'Heebo',Arial,sans-serif;direction:rtl;padding:20px;max-width:900px;margin:0 auto;}
       table{width:100%;border-collapse:collapse;}td,th{padding:6px 8px;border:1px solid #ddd;}
-      .rpt-table td,.rpt-table th{padding:6px 8px;border:1px solid #e5e7eb;}</style>
+      .rpt-table td,.rpt-table th{padding:6px 8px;border:1px solid #e5e7eb;}
+</style>
       </head><body>${html}
 <\!-- ══════════════════ BOQ LIBRARY MODAL ══════════════════ \-\->
 <div id="boqLibModal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.75);align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;">

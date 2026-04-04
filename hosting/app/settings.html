@@ -173,6 +173,7 @@ body::before{
 .sb-nav a:hover{color:var(--text);background:rgba(255,255,255,.04);}
 .sb-nav a.active{color:var(--accent);border-right-color:var(--accent);background:rgba(245,158,11,.06);}
 .sb-nav .nav-icon{font-size:16px;width:20px;text-align:center;}
+.sb-sep{height:1px;background:var(--border);margin:6px 20px;}
 
 .sb-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);}
 .sb-user{font-size:11px;color:var(--subtle);margin-bottom:8px;word-break:break-all;}
@@ -723,11 +724,21 @@ body.ob-lock{overflow:hidden;}
     <a href="/app/dashboard.html">
       <span class="nav-icon">📊</span> דשבורד
     </a>
+    <a href="/app/reports.html">
+      <span class="nav-icon">📄</span> דוחות
+    </a>
+    <a href="/app/clients.html">
+      <span class="nav-icon">👥</span> לקוחות
+    </a>
+    <a href="/app/payments.html">
+      <span class="nav-icon">💰</span> תשלומים
+    </a>
+    <div class="sb-sep"></div>
     <a href="/app/account-billing.html" class="sb-nav-item">
-      <span class="nav-icon">💳</span> ניהול מנוי
+      <span class="nav-icon">💳</span> מנוי
     </a>
     <a href="/app/settings.html" class="active">
-      <span class="nav-icon">⚙️</span> פרופיל והגדרות
+      <span class="nav-icon">⚙️</span> הגדרות
     </a>
   </nav>
   <div class="sb-footer">
@@ -956,18 +967,6 @@ body.ob-lock{overflow:hidden;}
     </div>
   </div>
 
-  <!-- ══ SECTION 6: Report Theme ══ -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title"><span class="icon">🎨</span> נושא צבע לדוח</div>
-    </div>
-    <div class="section-body">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">בחר נושא צבע שיחול על כל הדוחות שלך. השינוי ישמר בפרופיל.</div>
-      <div id="themeGrid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
-        <!-- נוצר ב-JS -->
-      </div>
-    </div>
-  </div>
 
     </div>
   </div>
@@ -1888,25 +1887,20 @@ document.addEventListener('keydown', e=>{
   <br><span style="margin-top:6px;display:block;">© 2026 OMDA. כל הזכויות שמורות.</span>
 </footer>
 
-<style>.settings-mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;padding-bottom:max(16px,env(safe-area-inset-bottom));z-index:200;
+<style>.settings-mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
   background:#111827;border-top:1px solid #1F2937;padding:8px 0 max(8px,env(safe-area-inset-bottom));
   grid-template-columns:repeat(4,1fr);}
 .settings-mob-nav a,.settings-mob-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:4px;color:#9CA3AF;font-family:'Heebo',sans-serif;font-size:9px;font-weight:600;
-  background:none;border:none;cursor:pointer;text-decoration:none;}
+  background:none;border:none;cursor:pointer;text-decoration:none;transition:color .15s;}
+.settings-mob-nav a:hover,.settings-mob-nav button:hover{color:#F9FAFB;}
 .settings-mob-nav a.active{color:#F59E0B;}
 @media(max-width:768px){.settings-mob-nav{display:grid;}.app{padding-bottom:72px;}}
-
-
-
-
-
-
 </style>
 <nav class="settings-mob-nav">
-  <a href="/app/dashboard.html"><span style="font-size:20px">📊</span>תיקים</a>
+  <a href="/app/dashboard.html"><span style="font-size:20px">📊</span>דשבורד</a>
+  <a href="/app/account-billing.html"><span style="font-size:20px">💳</span>מנוי</a>
   <a href="/app/case.html"><span style="font-size:20px">➕</span>תיק חדש</a>
-  <a href="/app/settings.html" class="active"><span style="font-size:20px">⚙️</span>הגדרות</a>
   <button onclick="window._doLogout()"><span style="font-size:20px">🚪</span>יציאה</button>
 </nav>
 </body>
