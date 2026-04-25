@@ -1,302 +1,808 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OMDA | דוחות</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{
-  --primary:#111827;--primary2:#1F2937;--primary3:#374151;
-  --accent:#F59E0B;--accent3:#D97706;
-  --blue:#3B82F6;--red:#EF4444;--green:#10B981;--purple:#8B5CF6;
-  --text:#F9FAFB;--muted:#9CA3AF;--subtle:#6B7280;--border:#1F2937;
-  --card:#111827;--bg:#030712;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OMDA | דוחות</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #111827;
+        --primary2: #1f2937;
+        --primary3: #374151;
+        --accent: #f59e0b;
+        --accent3: #d97706;
+        --blue: #3b82f6;
+        --red: #ef4444;
+        --green: #10b981;
+        --purple: #8b5cf6;
+        --text: #f9fafb;
+        --muted: #9ca3af;
+        --subtle: #6b7280;
+        --border: #1f2937;
+        --card: #111827;
+        --bg: #030712;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Heebo", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        font-size: 14px;
+      }
 
-/* ── Layout ── */
-.app{display:flex;min-height:100vh;}
-.sidebar{width:240px;flex-shrink:0;background:var(--primary);border-left:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:150;}
-.main-wrap{flex:1;min-width:0;display:flex;flex-direction:column;}
+      /* ── Layout ── */
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 240px;
+        flex-shrink: 0;
+        background: var(--primary);
+        border-left: 1px solid var(--border);
+        padding: 24px 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        z-index: 150;
+      }
+      .main-wrap {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
 
-/* ── Sidebar ── */
-.sb-logo{display:flex;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-.sb-nav{flex:1;}
-.sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;border-right:3px solid transparent;white-space:nowrap;}
-.sb-nav a:hover{color:var(--text);background:rgba(255,255,255,.04);}
-.sb-nav a.active{color:var(--accent);border-right-color:var(--accent);background:rgba(245,158,11,.06);}
-.sb-nav .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
-.sb-sep{height:1px;background:var(--border);margin:6px 20px;}
-.sb-footer{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;}
-.sb-user-name{font-size:11px;color:var(--subtle);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.btn-logout{width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#f87171;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:background .2s;}
-.btn-logout:hover{background:rgba(239,68,68,.18);}
+      /* ── Sidebar ── */
+      .sb-logo {
+        display: flex;
+        align-items: center;
+        padding: 0 20px 20px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 8px;
+      }
+      .sb-nav {
+        flex: 1;
+      }
+      .sb-nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        text-decoration: none;
+        transition: all 0.15s;
+        border-right: 3px solid transparent;
+        white-space: nowrap;
+      }
+      .sb-nav a:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .sb-nav a.active {
+        color: var(--accent);
+        border-right-color: var(--accent);
+        background: rgba(245, 158, 11, 0.06);
+      }
+      .sb-nav .nav-icon {
+        font-size: 16px;
+        width: 22px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .sb-sep {
+        height: 1px;
+        background: var(--border);
+        margin: 6px 20px;
+      }
+      .sb-footer {
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        margin-top: auto;
+      }
+      .sb-user-name {
+        font-size: 11px;
+        color: var(--subtle);
+        margin-bottom: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .btn-logout {
+        width: 100%;
+        padding: 9px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        color: #f87171;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: "Heebo", sans-serif;
+        transition: background 0.2s;
+      }
+      .btn-logout:hover {
+        background: rgba(239, 68, 68, 0.18);
+      }
 
-/* ── Topbar ── */
-#topbar{background:var(--primary);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
-.tb-left{display:flex;align-items:center;gap:10px;}
-.tb-page{font-size:13px;font-weight:700;color:var(--muted);}
+      /* ── Topbar ── */
+      #topbar {
+        background: var(--primary);
+        border-bottom: 1px solid var(--border);
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .tb-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .tb-page {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+      }
 
-/* ── Main ── */
-main{max-width:1100px;margin:0 auto;padding:28px 20px;width:100%;}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
-.page-title{font-size:20px;font-weight:800;}
-.page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+      /* ── Main ── */
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 20px;
+        width: 100%;
+      }
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .page-title {
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .page-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
 
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border:none;border-radius:12px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;transition:all .18s;text-decoration:none;}
-.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#111;box-shadow:0 3px 12px rgba(245,158,11,.3);}
-.btn-primary:hover{transform:translateY(-1px);}
-.btn-ghost{background:transparent;border:1px solid var(--primary3);color:var(--muted);}
-.btn-ghost:hover{color:var(--text);border-color:var(--muted);}
-.btn-sm{padding:6px 14px;font-size:12px;border-radius:10px;}
+      /* ── Buttons ── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 20px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-family: "Heebo", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        transition: all 0.18s;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent3));
+        color: #111;
+        box-shadow: 0 3px 12px rgba(245, 158, 11, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--primary3);
+        color: var(--muted);
+      }
+      .btn-ghost:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+      .btn-sm {
+        padding: 6px 14px;
+        font-size: 12px;
+        border-radius: 10px;
+      }
 
-/* ── Stats ── */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
-.sc .label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
-.sc .value{font-size:26px;font-weight:900;letter-spacing:-1px;}
-.sc-green{border-top:3px solid var(--green);}
-.sc-blue{border-top:3px solid var(--blue);}
-.sc-accent{border-top:3px solid var(--accent);}
-.sc-purple{border-top:3px solid var(--purple);}
+      /* ── Stats ── */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .sc {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+      }
+      .sc .label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+      }
+      .sc .value {
+        font-size: 26px;
+        font-weight: 900;
+        letter-spacing: -1px;
+      }
+      .sc-green {
+        border-top: 3px solid var(--green);
+      }
+      .sc-blue {
+        border-top: 3px solid var(--blue);
+      }
+      .sc-accent {
+        border-top: 3px solid var(--accent);
+      }
+      .sc-purple {
+        border-top: 3px solid var(--purple);
+      }
 
-/* ── Toolbar ── */
-.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
-.toolbar-title{font-size:16px;font-weight:800;}
-.filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.search-wrap{position:relative;}
-.search-wrap input{background:var(--primary2);border:1.5px solid var(--primary3);border-radius:10px;padding:9px 12px 9px 36px;font-size:13px;font-family:'Heebo',sans-serif;color:var(--text);direction:rtl;outline:none;width:260px;transition:border-color .2s;}
-.search-wrap input:focus{border-color:var(--accent);}
-.search-wrap .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none;}
-.filter-select{background:var(--primary2);border:1.5px solid var(--primary3);border-radius:10px;padding:9px 34px 9px 12px;font-size:13px;font-family:'Heebo',sans-serif;color:var(--text);outline:none;min-width:130px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 3px),calc(100% - 13px) calc(50% - 3px);background-size:5px 5px;background-repeat:no-repeat;}
-.filter-select:focus{border-color:var(--accent);}
+      /* ── Toolbar ── */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .toolbar-title {
+        font-size: 16px;
+        font-weight: 800;
+      }
+      .filters {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .search-wrap {
+        position: relative;
+      }
+      .search-wrap input {
+        background: var(--primary2);
+        border: 1.5px solid var(--primary3);
+        border-radius: 10px;
+        padding: 9px 12px 9px 36px;
+        font-size: 13px;
+        font-family: "Heebo", sans-serif;
+        color: var(--text);
+        direction: rtl;
+        outline: none;
+        width: 260px;
+        transition: border-color 0.2s;
+      }
+      .search-wrap input:focus {
+        border-color: var(--accent);
+      }
+      .search-wrap .ico {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 15px;
+        pointer-events: none;
+      }
+      .filter-select {
+        background: var(--primary2);
+        border: 1.5px solid var(--primary3);
+        border-radius: 10px;
+        padding: 9px 34px 9px 12px;
+        font-size: 13px;
+        font-family: "Heebo", sans-serif;
+        color: var(--text);
+        outline: none;
+        min-width: 130px;
+        appearance: none;
+        background-image:
+          linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+          linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+        background-position:
+          calc(100% - 18px) calc(50% - 3px),
+          calc(100% - 13px) calc(50% - 3px);
+        background-size: 5px 5px;
+        background-repeat: no-repeat;
+      }
+      .filter-select:focus {
+        border-color: var(--accent);
+      }
 
-/* ── Table ── */
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-table{width:100%;border-collapse:collapse;}
-thead{background:var(--primary2);}
-th{padding:11px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
-td{padding:13px 16px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle;}
-tr{position:relative;}
-tr:hover td{background:rgba(245,158,11,.04);cursor:pointer;}
-.row-actions{position:absolute;top:50%;left:12px;transform:translateY(-50%);display:flex;align-items:center;gap:6px;transition:opacity .15s;}
-.row-menu-btn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-size:16px;font-weight:900;transition:background .15s,color .15s,opacity .15s;opacity:1;visibility:visible;pointer-events:auto;font-family:inherit;}
-@media (hover: hover) and (pointer: fine){
-  .row-actions{opacity:0;visibility:hidden;pointer-events:none;}
-  tr:hover .row-actions{opacity:1;visibility:visible;pointer-events:auto;}
-}
-@media (hover: none), (pointer: coarse){
-  .row-actions{opacity:1;visibility:visible;pointer-events:auto;}
-}
-.row-menu-btn:hover{background:var(--primary2);color:var(--text);}
-.row-dropdown{position:fixed;z-index:500;min-width:160px;background:#1F2937;border:1px solid var(--primary3);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);padding:6px;display:none;}
-.row-dropdown.open{display:block;}
-.row-dropdown-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);transition:background .12s;white-space:nowrap;}
-.row-dropdown-item:hover{background:rgba(255,255,255,.06);}
+      /* ── Table ── */
+      .table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead {
+        background: var(--primary2);
+      }
+      th {
+        padding: 11px 16px;
+        text-align: right;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      td {
+        padding: 13px 16px;
+        font-size: 13px;
+        border-top: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      tr {
+        position: relative;
+      }
+      tr:hover td {
+        background: rgba(245, 158, 11, 0.04);
+        cursor: pointer;
+      }
+      .row-actions {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: opacity 0.15s;
+      }
+      .row-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 900;
+        transition:
+          background 0.15s,
+          color 0.15s,
+          opacity 0.15s;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        font-family: inherit;
+      }
+      @media (hover: hover) and (pointer: fine) {
+        .row-actions {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
+        tr:hover .row-actions {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+      }
+      @media (hover: none), (pointer: coarse) {
+        .row-actions {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+      }
+      .row-menu-btn:hover {
+        background: var(--primary2);
+        color: var(--text);
+      }
+      .row-dropdown {
+        position: fixed;
+        z-index: 500;
+        min-width: 160px;
+        background: #1f2937;
+        border: 1px solid var(--primary3);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        padding: 6px;
+        display: none;
+      }
+      .row-dropdown.open {
+        display: block;
+      }
+      .row-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        transition: background 0.12s;
+        white-space: nowrap;
+      }
+      .row-dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
 
-/* ── Badges ── */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-.badge-done{background:rgba(16,185,129,.15);color:var(--green);}
-.mode-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;}
-.mode-private{background:rgba(59,130,246,.12);color:var(--blue);}
-.mode-insurance{background:rgba(239,68,68,.12);color:var(--red);}
-.mode-tax{background:rgba(16,185,129,.12);color:var(--green);}
+      /* ── Badges ── */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .badge-done {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--green);
+      }
+      .mode-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .mode-private {
+        background: rgba(59, 130, 246, 0.12);
+        color: var(--blue);
+      }
+      .mode-insurance {
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--red);
+      }
+      .mode-tax {
+        background: rgba(16, 185, 129, 0.12);
+        color: var(--green);
+      }
 
-/* ── Empty/Loading ── */
-.empty{text-align:center;padding:60px 20px;color:var(--muted);}
-.empty .icon{font-size:40px;margin-bottom:10px;}
-.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--primary3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
+      /* ── Empty/Loading ── */
+      .empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+      }
+      .empty .icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+      }
+      .spin {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--primary3);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-@media(max-width:768px){
-  .sidebar{display:none;}
-  main{padding:16px 12px 100px;}
-  .stats{grid-template-columns:repeat(2,1fr);}
-  th:nth-child(3),td:nth-child(3),th:nth-child(5),td:nth-child(5){display:none;}
-  .search-wrap input{width:100%;}
-  .toolbar{flex-direction:column;align-items:stretch;}
-  .filters{width:100%;}
-}
-</style>
-</head>
-<body>
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        main {
+          padding: 16px 12px 100px;
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        th:nth-child(3),
+        td:nth-child(3),
+        th:nth-child(5),
+        td:nth-child(5) {
+          display: none;
+        }
+        .search-wrap input {
+          width: 100%;
+        }
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .filters {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sb-logo">
+          <a
+            href="/"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              text-decoration: none;
+            "
+          >
+            <img
+              src="/assets/img/omda-icon.png"
+              alt=""
+              style="height: 32px; width: 32px; object-fit: contain"
+            />
+            <img
+              src="/assets/img/omda-logo.png"
+              alt="OMDA"
+              style="
+                height: 26px;
+                object-fit: contain;
+                filter: brightness(0) invert(1);
+              "
+            />
+          </a>
+        </div>
+        <nav class="sb-nav">
+          <a href="/app/dashboard.html"
+            ><span class="nav-icon">📊</span> דשבורד</a
+          >
+          <a href="/app/reports.html" class="active"
+            ><span class="nav-icon">📄</span> דוחות</a
+          >
+          <a href="/app/clients.html"
+            ><span class="nav-icon">👥</span> לקוחות</a
+          >
+          <a href="/app/payments.html"
+            ><span class="nav-icon">💰</span> תשלומים</a
+          >
+          <div class="sb-sep"></div>
+          <a href="/app/account-billing.html"
+            ><span class="nav-icon">💳</span> מנוי</a
+          >
+          <a href="/app/settings.html"
+            ><span class="nav-icon">⚙️</span> הגדרות</a
+          >
+        </nav>
+        <div class="sb-footer">
+          <div class="sb-user-name" id="sidebarUser"></div>
+          <button class="btn-logout" onclick="doLogout()">🚪 התנתקות</button>
+        </div>
+      </aside>
 
-<div class="app">
+      <div class="main-wrap">
+        <div id="topbar">
+          <div class="tb-left">
+            <div class="tb-page">דוחות סגורים</div>
+          </div>
+        </div>
 
-<aside class="sidebar">
-  <div class="sb-logo">
-    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-      <img src="/assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;">
-      <img src="/assets/omda-logo.png" alt="OMDA" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
-    </a>
-  </div>
-  <nav class="sb-nav">
-    <a href="/app/dashboard.html"><span class="nav-icon">📊</span> דשבורד</a>
-    <a href="/app/reports.html" class="active"><span class="nav-icon">📄</span> דוחות</a>
-    <a href="/app/clients.html"><span class="nav-icon">👥</span> לקוחות</a>
-    <a href="/app/payments.html"><span class="nav-icon">💰</span> תשלומים</a>
-    <div class="sb-sep"></div>
-    <a href="/app/account-billing.html"><span class="nav-icon">💳</span> מנוי</a>
-    <a href="/app/settings.html"><span class="nav-icon">⚙️</span> הגדרות</a>
-  </nav>
-  <div class="sb-footer">
-    <div class="sb-user-name" id="sidebarUser"></div>
-    <button class="btn-logout" onclick="doLogout()">🚪 התנתקות</button>
-  </div>
-</aside>
+        <main>
+          <div class="page-header">
+            <div>
+              <div class="page-title">דוחות</div>
+              <div class="page-sub" id="pageSubtitle">דוחות שהושלמו ונסגרו</div>
+            </div>
+          </div>
 
-<div class="main-wrap">
-<div id="topbar">
-  <div class="tb-left">
-    <div class="tb-page">דוחות סגורים</div>
-  </div>
-</div>
+          <div class="stats">
+            <div class="sc sc-green">
+              <div class="label">סה"כ דוחות</div>
+              <div class="value" id="statTotal">0</div>
+            </div>
+            <div class="sc sc-blue">
+              <div class="label">ביטוח</div>
+              <div class="value" id="statInsurance">0</div>
+            </div>
+            <div class="sc sc-accent">
+              <div class="label">שומה פרטית</div>
+              <div class="value" id="statPrivate">0</div>
+            </div>
+            <div class="sc sc-purple">
+              <div class="label">מס רכוש</div>
+              <div class="value" id="statTax">0</div>
+            </div>
+          </div>
 
-<main>
-  <div class="page-header">
-    <div>
-      <div class="page-title">דוחות</div>
-      <div class="page-sub" id="pageSubtitle">דוחות שהושלמו ונסגרו</div>
-    </div>
-  </div>
+          <div class="toolbar">
+            <div class="toolbar-title">כל הדוחות הסגורים</div>
+            <div class="filters">
+              <div class="search-wrap">
+                <span class="ico">🔍</span>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="חפש לפי שם / תביעה"
+                  oninput="filterReports()"
+                />
+              </div>
+              <select
+                id="modeFilter"
+                class="filter-select"
+                onchange="filterReports()"
+              >
+                <option value="">כל הסוגים</option>
+                <option value="insurance">ביטוח</option>
+                <option value="private">שומה פרטית</option>
+                <option value="tax">מס רכוש</option>
+              </select>
+            </div>
+          </div>
 
-  <div class="stats">
-    <div class="sc sc-green">
-      <div class="label">סה"כ דוחות</div>
-      <div class="value" id="statTotal">0</div>
-    </div>
-    <div class="sc sc-blue">
-      <div class="label">ביטוח</div>
-      <div class="value" id="statInsurance">0</div>
-    </div>
-    <div class="sc sc-accent">
-      <div class="label">שומה פרטית</div>
-      <div class="value" id="statPrivate">0</div>
-    </div>
-    <div class="sc sc-purple">
-      <div class="label">מס רכוש</div>
-      <div class="value" id="statTax">0</div>
-    </div>
-  </div>
-
-  <div class="toolbar">
-    <div class="toolbar-title">כל הדוחות הסגורים</div>
-    <div class="filters">
-      <div class="search-wrap">
-        <span class="ico">🔍</span>
-        <input type="text" id="searchInput" placeholder="חפש לפי שם / תביעה" oninput="filterReports()">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>מספר</th>
+                  <th>שם / כותרת</th>
+                  <th>סוג</th>
+                  <th>נזק</th>
+                  <th>תאריך סגירה</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="reportsBody">
+                <tr>
+                  <td
+                    colspan="6"
+                    style="
+                      text-align: center;
+                      padding: 60px;
+                      color: var(--muted);
+                    "
+                  >
+                    <div class="spin"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </main>
       </div>
-      <select id="modeFilter" class="filter-select" onchange="filterReports()">
-        <option value="">כל הסוגים</option>
-        <option value="insurance">ביטוח</option>
-        <option value="private">שומה פרטית</option>
-        <option value="tax">מס רכוש</option>
-      </select>
+      <!-- /.main-wrap -->
     </div>
-  </div>
+    <!-- /.app -->
 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>מספר</th>
-          <th>שם / כותרת</th>
-          <th>סוג</th>
-          <th>נזק</th>
-          <th>תאריך סגירה</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="reportsBody">
-        <tr><td colspan="6" style="text-align:center;padding:60px;color:var(--muted);"><div class="spin"></div></td></tr>
-      </tbody>
-    </table>
-  </div>
-</main>
-</div><!-- /.main-wrap -->
-</div><!-- /.app -->
+    <div class="row-dropdown" id="rowDropdown"></div>
 
-<div class="row-dropdown" id="rowDropdown"></div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
-  authDomain:"omdan-property.firebaseapp.com",
-  projectId:"omdan-property",
-  storageBucket:"omdan-property.firebasestorage.app",
-  messagingSenderId:"1028931108038",
-  appId:"1:1028931108038:web:01731ca2a152b700ea6bc7"
-});
-const auth=firebase.auth(), db=firebase.firestore();
-let allReports=[], currentUser=null;
-
-function isCaseDone(c){
-  return c.status==="completed" || !!(c.state?.summary?.claimTotal || c.state?.summary?.rehabTime);
-}
-
-auth.onAuthStateChanged(async u=>{
-  if(!u){window.location.href='/';return;}
-  currentUser=u;
-  const sb=document.getElementById('sidebarUser');
-  if(sb) sb.textContent=u.displayName||u.email;
-  loadReports();
-});
-
-async function loadReports(){
-  try{
-    const snap=await db.collection('cases')
-      .where('uid','==',currentUser.uid)
-      .limit(200).get();
-    allReports=snap.docs
-      .map(d=>({id:d.id,...d.data()}))
-      .filter(isCaseDone)
-      .sort((a,b)=>{
-        const ta=a.updatedAt?.seconds||a.createdAt?.seconds||0;
-        const tb=b.updatedAt?.seconds||b.createdAt?.seconds||0;
-        return tb-ta;
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        apiKey: "AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+        authDomain: "omdan-property.firebaseapp.com",
+        projectId: "omdan-property",
+        storageBucket: "omdan-property.firebasestorage.app",
+        messagingSenderId: "1028931108038",
+        appId: "1:1028931108038:web:01731ca2a152b700ea6bc7",
       });
-    renderStats(allReports);
-    renderTable(allReports);
-    document.getElementById('pageSubtitle').textContent=`${allReports.length} דוחות סגורים`;
-  }catch(e){
-    document.getElementById('reportsBody').innerHTML=
-      `<tr><td colspan="6"><div class="empty"><div class="icon">⚠️</div><p>${e.message}</p></div></td></tr>`;
-  }
-}
+      const auth = firebase.auth(),
+        db = firebase.firestore();
+      let allReports = [],
+        currentUser = null;
 
-function renderStats(r){
-  document.getElementById('statTotal').textContent=r.length;
-  document.getElementById('statInsurance').textContent=r.filter(c=>c.mode==='insurance').length;
-  document.getElementById('statPrivate').textContent=r.filter(c=>c.mode==='private').length;
-  document.getElementById('statTax').textContent=r.filter(c=>c.mode==='tax').length;
-}
+      function isCaseDone(c) {
+        return (
+          c.status === "completed" ||
+          !!(c.state?.summary?.claimTotal || c.state?.summary?.rehabTime)
+        );
+      }
 
-function renderTable(reports){
-  const tbody=document.getElementById('reportsBody');
-  if(!reports.length){
-    tbody.innerHTML=`<tr><td colspan="6"><div class="empty">
+      auth.onAuthStateChanged(async (u) => {
+        if (!u) {
+          window.location.href = "/";
+          return;
+        }
+        currentUser = u;
+        const sb = document.getElementById("sidebarUser");
+        if (sb) sb.textContent = u.displayName || u.email;
+        loadReports();
+      });
+
+      async function loadReports() {
+        try {
+          const snap = await db
+            .collection("cases")
+            .where("uid", "==", currentUser.uid)
+            .limit(200)
+            .get();
+          allReports = snap.docs
+            .map((d) => ({ id: d.id, ...d.data() }))
+            .filter(isCaseDone)
+            .sort((a, b) => {
+              const ta = a.updatedAt?.seconds || a.createdAt?.seconds || 0;
+              const tb = b.updatedAt?.seconds || b.createdAt?.seconds || 0;
+              return tb - ta;
+            });
+          renderStats(allReports);
+          renderTable(allReports);
+          document.getElementById("pageSubtitle").textContent =
+            `${allReports.length} דוחות סגורים`;
+        } catch (e) {
+          document.getElementById("reportsBody").innerHTML =
+            `<tr><td colspan="6"><div class="empty"><div class="icon">⚠️</div><p>${e.message}</p></div></td></tr>`;
+        }
+      }
+
+      function renderStats(r) {
+        document.getElementById("statTotal").textContent = r.length;
+        document.getElementById("statInsurance").textContent = r.filter(
+          (c) => c.mode === "insurance",
+        ).length;
+        document.getElementById("statPrivate").textContent = r.filter(
+          (c) => c.mode === "private",
+        ).length;
+        document.getElementById("statTax").textContent = r.filter(
+          (c) => c.mode === "tax",
+        ).length;
+      }
+
+      function renderTable(reports) {
+        const tbody = document.getElementById("reportsBody");
+        if (!reports.length) {
+          tbody.innerHTML = `<tr><td colspan="6"><div class="empty">
       <div class="icon">📄</div>
       <p style="font-size:15px;font-weight:700;margin-bottom:8px;">אין דוחות סגורים עדיין</p>
       <p>דוחות יופיעו כאן לאחר שתסגור תיקים</p>
     </div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML=reports.map(c=>{
-    const name=c.state?.base?.fullName||c.name||'';
-    const claim=c.state?.insurance?.claimNum||c.state?.base?.claimNum||'';
-    const title=[name,claim].filter(Boolean).join(' — ')||'ללא כותרת';
-    const evMap={water:'💧 מים',fire:'🔥 שריפה',burglary:'🚪 פריצה',storm:'🌪️ סערה',electrical:'⚡ חשמל',other:'📋 אחר'};
-    const ev=evMap[c.state?.event?.eventType]||'';
-    const ts=c.updatedAt?.seconds||c.createdAt?.seconds;
-    const date=ts?new Date(ts*1000).toLocaleDateString('he-IL'):'';
-    return `<tr onclick="openReport('${c.id}')">
-      <td style="font-weight:800;color:var(--accent);font-size:12px;">${c.id?.replace('case_','#')?.slice(-6)||''}</td>
+          return;
+        }
+        tbody.innerHTML = reports
+          .map((c) => {
+            const name = c.state?.base?.fullName || c.name || "";
+            const claim =
+              c.state?.insurance?.claimNum || c.state?.base?.claimNum || "";
+            const title =
+              [name, claim].filter(Boolean).join(" — ") || "ללא כותרת";
+            const evMap = {
+              water: "💧 מים",
+              fire: "🔥 שריפה",
+              burglary: "🚪 פריצה",
+              storm: "🌪️ סערה",
+              electrical: "⚡ חשמל",
+              other: "📋 אחר",
+            };
+            const ev = evMap[c.state?.event?.eventType] || "";
+            const ts = c.updatedAt?.seconds || c.createdAt?.seconds;
+            const date = ts
+              ? new Date(ts * 1000).toLocaleDateString("he-IL")
+              : "";
+            return `<tr onclick="openReport('${c.id}')">
+      <td style="font-weight:800;color:var(--accent);font-size:12px;">${c.id?.replace("case_", "#")?.slice(-6) || ""}</td>
       <td style="font-weight:600;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(title)}</td>
       <td>${modeTag(c.mode)}</td>
       <td style="font-size:12px;">${ev}</td>
@@ -307,54 +813,90 @@ function renderTable(reports){
         </div>
       </td>
     </tr>`;
-  }).join('');
-}
+          })
+          .join("");
+      }
 
-function filterReports(){
-  const q=(document.getElementById('searchInput').value||'').toLowerCase().trim();
-  const mode=(document.getElementById('modeFilter').value||'').trim();
-  const filtered=allReports.filter(c=>{
-    const name=(c.state?.base?.fullName||c.name||'').toLowerCase();
-    const claim=(c.state?.insurance?.claimNum||c.state?.base?.claimNum||'').toLowerCase();
-    const addr=([c.state?.base?.city,c.state?.base?.street].filter(Boolean).join(' ')).toLowerCase();
-    const matchText=!q||name.includes(q)||claim.includes(q)||addr.includes(q);
-    const matchMode=!mode||c.mode===mode;
-    return matchText&&matchMode;
-  });
-  renderTable(filtered);
-}
+      function filterReports() {
+        const q = (document.getElementById("searchInput").value || "")
+          .toLowerCase()
+          .trim();
+        const mode = (document.getElementById("modeFilter").value || "").trim();
+        const filtered = allReports.filter((c) => {
+          const name = (c.state?.base?.fullName || c.name || "").toLowerCase();
+          const claim = (
+            c.state?.insurance?.claimNum ||
+            c.state?.base?.claimNum ||
+            ""
+          ).toLowerCase();
+          const addr = [c.state?.base?.city, c.state?.base?.street]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          const matchText =
+            !q || name.includes(q) || claim.includes(q) || addr.includes(q);
+          const matchMode = !mode || c.mode === mode;
+          return matchText && matchMode;
+        });
+        renderTable(filtered);
+      }
 
-function modeTag(m){
-  const map={private:['mode-private','שומה פרטית'],insurance:['mode-insurance','ביטוח'],tax:['mode-tax','מס רכוש']};
-  const[cls,lbl]=map[m]||['mode-private',m||'שומה'];
-  return`<span class="mode-tag ${cls}">${lbl}</span>`;
-}
+      function modeTag(m) {
+        const map = {
+          private: ["mode-private", "שומה פרטית"],
+          insurance: ["mode-insurance", "ביטוח"],
+          tax: ["mode-tax", "מס רכוש"],
+        };
+        const [cls, lbl] = map[m] || ["mode-private", m || "שומה"];
+        return `<span class="mode-tag ${cls}">${lbl}</span>`;
+      }
 
-let _activeMenu=null;
-function openMenu(e,caseId){
-  e.stopPropagation();
-  const dd=document.getElementById('rowDropdown');
-  if(_activeMenu===caseId&&dd.classList.contains('open')){closeMenu();return;}
-  _activeMenu=caseId;
-  dd.innerHTML=`
+      let _activeMenu = null;
+      function openMenu(e, caseId) {
+        e.stopPropagation();
+        const dd = document.getElementById("rowDropdown");
+        if (_activeMenu === caseId && dd.classList.contains("open")) {
+          closeMenu();
+          return;
+        }
+        _activeMenu = caseId;
+        dd.innerHTML = `
     <div class="row-dropdown-item" onclick="closeMenu();openReport('${caseId}')">📄 הצג דוח</div>
     <div class="row-dropdown-item" onclick="closeMenu();downloadPDF('${caseId}')">⬇️ הורד PDF</div>
     <div class="row-dropdown-item" onclick="closeMenu();goToPayment('${caseId}')">💰 תשלום לדוח זה</div>`;
-  dd.classList.add('open');
-  const r=e.currentTarget.getBoundingClientRect();
-  let top=r.bottom+6, left=r.left-160+r.width;
-  if(top+120>window.innerHeight-12) top=r.top-120-6;
-  if(left<8) left=8;
-  dd.style.top=top+'px';dd.style.left=left+'px';
-}
-function closeMenu(){document.getElementById('rowDropdown').classList.remove('open');_activeMenu=null;}
-document.addEventListener('click',closeMenu);
+        dd.classList.add("open");
+        const r = e.currentTarget.getBoundingClientRect();
+        let top = r.bottom + 6,
+          left = r.left - 160 + r.width;
+        if (top + 120 > window.innerHeight - 12) top = r.top - 120 - 6;
+        if (left < 8) left = 8;
+        dd.style.top = top + "px";
+        dd.style.left = left + "px";
+      }
+      function closeMenu() {
+        document.getElementById("rowDropdown").classList.remove("open");
+        _activeMenu = null;
+      }
+      document.addEventListener("click", closeMenu);
 
-function openReport(id){window.location.href=`/app/case.html?case=${id}&view=report`;}
-function downloadPDF(id){window.open(`/app/case.html?case=${id}&view=report&print=1`,'_blank');}
-function goToPayment(id){window.location.href=`/app/payments.html?case=${id}`;}
-function doLogout(){auth.signOut().then(()=>window.location.href='/');}
-function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-</script>
-</body>
+      function openReport(id) {
+        window.location.href = `/app/case.html?case=${id}&view=report`;
+      }
+      function downloadPDF(id) {
+        window.open(`/app/case.html?case=${id}&view=report&print=1`, "_blank");
+      }
+      function goToPayment(id) {
+        window.location.href = `/app/payments.html?case=${id}`;
+      }
+      function doLogout() {
+        auth.signOut().then(() => (window.location.href = "/"));
+      }
+      function escHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+    </script>
+  </body>
 </html>

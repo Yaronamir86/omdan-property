@@ -867,3 +867,149 @@ exports.cardcomRenewSubscriptions = onSchedule(
     }
   }
 );
+
+// ════════════════════════════════════════════════════════════
+//  generatePDF  — Puppeteer PDF via httpsCallable
+//  נקרא מ-case.html דרך firebase.app().functions().httpsCallable("generatePDF")
+// ════════════════════════════════════════════════════════════
+const functionsV1 = require("firebase-functions");
+const chromium    = require("@sparticuz/chromium");
+const puppeteer   = require("puppeteer-core");
+const { v4: uuidv4 } = require("uuid");
+
+const PDF_BASE_CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    direction: rtl;
+    font-family: 'Heebo', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #1a202c;
+    background: #ffffff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .rpt-body   { max-width: 820px; margin: 0 auto; padding: 32px 24px; }
+  .rpt-header { padding-bottom: 20px; margin-bottom: 28px; border-bottom: 2px solid #e5e7eb; }
+  h1 { font-size: 24px; font-weight: 900; color: #111827; }
+  h2 { font-size: 18px; font-weight: 800; color: #1f2937; margin: 20px 0 10px; }
+  h3 { font-size: 15px; font-weight: 800; color: #374151; margin: 16px 0 8px; }
+  p  { margin-bottom: 10px; }
+  .rpt-section { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f3f4f6; page-break-inside: avoid; break-inside: avoid; }
+  .rpt-section:last-of-type { border-bottom: none; }
+  .rpt-section-title { font-size: 14px; font-weight: 800; color: #92400e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .rpt-section-title::before { content: ''; display: inline-block; width: 4px; height: 16px; background: #f59e0b; border-radius: 2px; flex-shrink: 0; }
+  .rpt-p { font-size: 13px; color: #374151; line-height: 1.8; white-space: pre-line; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; }
+  th { background: #fef3c7; color: #92400e; font-weight: 800; padding: 9px 12px; border: 1px solid #fde68a; text-align: right; }
+  td { padding: 8px 12px; border: 1px solid #e5e7eb; color: #374151; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .photo-grid-pdf { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 12px 0; }
+  .photo-grid-pdf img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; display: block; }
+  .photo-caption-pdf { font-size: 10px; color: #6b7280; text-align: center; margin-top: 3px; }
+  .rpt-signature { border-top: 2px solid #e5e7eb; padding-top: 24px; margin-top: 32px; text-align: center; color: #6b7280; font-size: 12px; }
+  .page-break { page-break-after: always; break-after: page; }
+  img { page-break-inside: avoid; break-inside: avoid; }
+  .no-print, .voice-btn, .photo-del, button { display: none !important; }
+`;
+
+function wrapHtml(body) {
+  return `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>דוח שמאות רכוש — OMDA</title>
+  <style>${PDF_BASE_CSS}</style>
+</head>
+<body>${body}</body>
+</html>`;
+}
+
+exports.generatePDF = functionsV1
+  .runWith({ timeoutSeconds: 120, memory: "1GB" })
+  .region("us-central1")
+  .https.onCall(async (data, context) => {
+
+    if (!context.auth) {
+      throw new functionsV1.https.HttpsError("unauthenticated", "יש להתחבר כדי ליצור PDF");
+    }
+
+    const { htmlPayload, caseId } = data;
+    if (!htmlPayload?.trim()) {
+      throw new functionsV1.https.HttpsError("invalid-argument", "htmlPayload ריק");
+    }
+
+    let browser;
+    try {
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+      });
+
+      const page = await browser.newPage();
+
+      await page.setRequestInterception(true);
+      page.on("request", (req) => {
+        const t = req.resourceType();
+        const u = req.url();
+        if (t === "media" || (t === "font" && !u.includes("fonts.gstatic.com"))) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
+
+      await page.setContent(wrapHtml(htmlPayload), {
+        waitUntil: ["networkidle0", "domcontentloaded"],
+        timeout: 90000,
+      });
+
+      // המתן לטעינת תמונות
+      await page.evaluate(() =>
+        Promise.all(
+          Array.from(document.images)
+            .filter((i) => !i.complete)
+            .map((i) => new Promise((r) => { i.onload = i.onerror = r; }))
+        )
+      );
+
+      const pdfBuffer = await page.pdf({
+        format: "A4",
+        printBackground: true,
+        margin: { top: "15mm", bottom: "18mm", left: "12mm", right: "12mm" },
+        displayHeaderFooter: true,
+        headerTemplate: `<div style="width:100%;font-size:9px;color:#9ca3af;text-align:left;padding:0 12mm;font-family:Arial,sans-serif;">דוח שמאות רכוש — OMDA</div>`,
+        footerTemplate: `<div style="width:100%;display:flex;justify-content:space-between;padding:0 12mm;font-size:9px;color:#9ca3af;font-family:Arial,sans-serif;"><span>הופק באמצעות OMDA רכוש</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>`,
+      });
+
+      await browser.close();
+      browser = null;
+
+      // העלאה ל-Storage
+      const uid      = context.auth.uid;
+      const fname    = `rechushPdfs/${uid}/${caseId || "report"}_${Date.now()}.pdf`;
+      const bucket   = admin.storage().bucket();
+      const file     = bucket.file(fname);
+      const token    = uuidv4();
+
+      await file.save(pdfBuffer, {
+        metadata: {
+          contentType: "application/pdf",
+          metadata: { firebaseStorageDownloadTokens: token },
+        },
+      });
+
+      const url = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fname)}?alt=media&token=${token}`;
+      logger.info("generatePDF success", { uid, caseId, fname });
+      return { url };
+
+    } catch (err) {
+      if (browser) { try { await browser.close(); } catch (_) {} }
+      logger.error("generatePDF error", { message: err.message });
+      throw new functionsV1.https.HttpsError("internal", err.message || "שגיאה ביצירת PDF");
+    }
+  });

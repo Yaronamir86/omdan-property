@@ -1,320 +1,813 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>OMDA | ניהול מנוי</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#030712;--surface:#0d1117;--card:#111827;--border:rgba(255,255,255,.07);
-  --accent:#f59e0b;--green:#10b981;--red:#ef4444;--blue:#3b82f6;
-  --text:#f9fafb;--muted:#9ca3af;--subtle:#4b5563;
-}
-body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>OMDA | ניהול מנוי</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #030712;
+        --surface: #0d1117;
+        --card: #111827;
+        --border: rgba(255, 255, 255, 0.07);
+        --accent: #f59e0b;
+        --green: #10b981;
+        --red: #ef4444;
+        --blue: #3b82f6;
+        --text: #f9fafb;
+        --muted: #9ca3af;
+        --subtle: #4b5563;
+      }
+      body {
+        font-family: "Heebo", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
 
-/* ── APP LAYOUT ── */
-.app{display:flex;min-height:100vh;}
-.sidebar{
-  width:240px;flex-shrink:0;background:#0d1117;
-  border-left:1px solid var(--border);
-  padding:24px 0;position:sticky;top:0;height:100vh;
-  overflow-y:auto;display:flex;flex-direction:column;z-index:150;
-}
-.main-wrap{flex:1;overflow:auto;}
-.sb-logo{display:flex;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-.sb-nav{flex:1;}
-.sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;border-right:3px solid transparent;white-space:nowrap;}
-.sb-nav a:hover{color:var(--text);background:rgba(255,255,255,.04);}
-.sb-nav a.active{color:var(--accent);border-right-color:var(--accent);background:rgba(245,158,11,.06);}
-.sb-nav .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
-.sb-sep{height:1px;background:var(--border);margin:6px 20px;}
-.sb-footer{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;}
-.sb-user-name{font-size:11px;color:#4b5563;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.btn-logout{width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#f87171;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:background .2s;}
-.btn-logout:hover{background:rgba(239,68,68,.18);}
-@media(max-width:768px){.sidebar{display:none;}.main-wrap{width:100%;}.page{padding:24px 16px 80px;}}
+      /* ── APP LAYOUT ── */
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 240px;
+        flex-shrink: 0;
+        background: #0d1117;
+        border-left: 1px solid var(--border);
+        padding: 24px 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        z-index: 150;
+      }
+      .main-wrap {
+        flex: 1;
+        overflow: auto;
+      }
+      .sb-logo {
+        display: flex;
+        align-items: center;
+        padding: 0 20px 20px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 8px;
+      }
+      .sb-nav {
+        flex: 1;
+      }
+      .sb-nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        text-decoration: none;
+        transition: all 0.15s;
+        border-right: 3px solid transparent;
+        white-space: nowrap;
+      }
+      .sb-nav a:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .sb-nav a.active {
+        color: var(--accent);
+        border-right-color: var(--accent);
+        background: rgba(245, 158, 11, 0.06);
+      }
+      .sb-nav .nav-icon {
+        font-size: 16px;
+        width: 22px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .sb-sep {
+        height: 1px;
+        background: var(--border);
+        margin: 6px 20px;
+      }
+      .sb-footer {
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        margin-top: auto;
+      }
+      .sb-user-name {
+        font-size: 11px;
+        color: #4b5563;
+        margin-bottom: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .btn-logout {
+        width: 100%;
+        padding: 9px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        color: #f87171;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: "Heebo", sans-serif;
+        transition: background 0.2s;
+      }
+      .btn-logout:hover {
+        background: rgba(239, 68, 68, 0.18);
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        .main-wrap {
+          width: 100%;
+        }
+        .page {
+          padding: 24px 16px 80px;
+        }
+      }
 
-/* ── LAYOUT ── */
-.page{max-width:720px;margin:0 auto;padding:40px 20px 80px;}
-.page-title{font-size:24px;font-weight:900;margin-bottom:6px;}
-.page-sub{font-size:14px;color:var(--muted);margin-bottom:36px;}
+      /* ── LAYOUT ── */
+      .page {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 40px 20px 80px;
+      }
+      .page-title {
+        font-size: 24px;
+        font-weight: 900;
+        margin-bottom: 6px;
+      }
+      .page-sub {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 36px;
+      }
 
-/* ── CARD ── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:16px;}
-.card-title{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+      /* ── CARD ── */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 28px;
+        margin-bottom: 16px;
+      }
+      .card-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-/* ── PLAN STATUS ── */
-.plan-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-.plan-name{font-size:22px;font-weight:900;}
-.plan-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;}
-.badge-active{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;}
-.badge-trial{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--accent);}
-.badge-canceled{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;}
-.badge-expired{background:rgba(107,114,128,.1);border:1px solid rgba(107,114,128,.3);color:var(--muted);}
+      /* ── PLAN STATUS ── */
+      .plan-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .plan-name {
+        font-size: 22px;
+        font-weight: 900;
+      }
+      .plan-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 5px 14px;
+        border-radius: 20px;
+      }
+      .badge-active {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+      }
+      .badge-trial {
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: var(--accent);
+      }
+      .badge-canceled {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
+      .badge-expired {
+        background: rgba(107, 114, 128, 0.1);
+        border: 1px solid rgba(107, 114, 128, 0.3);
+        color: var(--muted);
+      }
 
-/* ── DETAILS GRID ── */
-.details-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
-.detail-item{padding:14px 18px;background:var(--surface);border-radius:10px;border:1px solid var(--border);}
+      /* ── DETAILS GRID ── */
+      .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .detail-item {
+        padding: 14px 18px;
+        background: var(--surface);
+        border-radius: 10px;
+        border: 1px solid var(--border);
+      }
 
+      .detail-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+      }
+      .detail-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .detail-value.green {
+        color: var(--green);
+      }
+      .detail-value.yellow {
+        color: var(--accent);
+      }
+      .detail-value.red {
+        color: var(--red);
+      }
 
-.detail-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
-.detail-value{font-size:14px;font-weight:700;color:var(--text);}
-.detail-value.green{color:var(--green);}
-.detail-value.yellow{color:var(--accent);}
-.detail-value.red{color:var(--red);}
+      /* ── USAGE ── */
+      .usage-bar-wrap {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        height: 8px;
+        overflow: hidden;
+        margin: 10px 0 6px;
+        position: relative;
+      }
+      .usage-bar {
+        height: 100%;
+        border-radius: 8px;
+        background: linear-gradient(90deg, var(--blue), var(--accent));
+        transition: width 0.6s ease;
+      }
 
-/* ── USAGE ── */
-.usage-bar-wrap{background:rgba(255,255,255,.05);border-radius:8px;height:8px;overflow:hidden;margin:10px 0 6px;position:relative;}
-.usage-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--accent));transition:width .6s ease;}
+      /* ── ACTIONS ── */
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        border: none;
+        transition:
+          opacity 0.2s,
+          transform 0.1s;
+        text-decoration: none;
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #d97706);
+        color: #000;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        color: var(--accent);
+      }
+      .btn-outline:hover {
+        background: rgba(245, 158, 11, 0.08);
+        border-color: var(--accent);
+        color: var(--text);
+      }
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+      }
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.15);
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
 
-/* ── ACTIONS ── */
-.actions{display:flex;flex-direction:column;gap:10px;}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:opacity .2s,transform .1s;text-decoration:none;}
-.btn:active{transform:scale(.98);}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#d97706);color:#000;}
-.btn-outline{background:transparent;border:1px solid rgba(245,158,11,.4);color:var(--accent);}
-.btn-outline:hover{background:rgba(245,158,11,.08);border-color:var(--accent);color:var(--text);}
-.btn-danger{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5;}
-.btn-danger:hover{background:rgba(239,68,68,.15);}
-.btn:disabled{opacity:.4;cursor:not-allowed;}
+      /* ── HISTORY ── */
+      .history-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .history-item:last-child {
+        border-bottom: none;
+      }
+      .history-date {
+        color: var(--muted);
+      }
+      .history-amount {
+        font-weight: 800;
+        color: var(--green);
+      }
+      .history-plan {
+        color: var(--muted);
+        font-size: 12px;
+      }
 
-/* ── HISTORY ── */
-.history-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;}
-.history-item:last-child{border-bottom:none;}
-.history-date{color:var(--muted);}
-.history-amount{font-weight:800;color:var(--green);}
-.history-plan{color:var(--muted);font-size:12px;}
+      /* ── MODAL ── */
+      .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(6px);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-backdrop.open {
+        display: flex;
+      }
+      .modal {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 36px;
+        max-width: 420px;
+        width: 100%;
+        text-align: center;
+      }
+      .modal h2 {
+        font-size: 20px;
+        font-weight: 900;
+        margin-bottom: 10px;
+      }
+      .modal p {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 24px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
 
-/* ── MODAL ── */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:100;align-items:center;justify-content:center;padding:20px;}
-.modal-backdrop.open{display:flex;}
-.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;max-width:420px;width:100%;text-align:center;}
-.modal h2{font-size:20px;font-weight:900;margin-bottom:10px;}
-.modal p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px;}
-.modal-actions{display:flex;gap:10px;justify-content:center;}
+      /* ── LOADER ── */
+      .loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .spin {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(245, 158, 11, 0.15);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-/* ── LOADER ── */
-.loader{display:flex;align-items:center;justify-content:center;padding:60px;flex-direction:column;gap:12px;}
-.spin{width:32px;height:32px;border:3px solid rgba(245,158,11,.15);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
+      /* ── EMPTY ── */
+      .empty {
+        text-align: center;
+        padding: 60px 20px;
+      }
+      .empty-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
 
-/* ── EMPTY ── */
-.empty{text-align:center;padding:60px 20px;}
-.empty-icon{font-size:48px;margin-bottom:16px;}
+      /* ── BILLING UX UPGRADE ── */
+      .trial-hero {
+        background: linear-gradient(
+          135deg,
+          rgba(245, 158, 11, 0.08) 0%,
+          rgba(245, 158, 11, 0.02) 100%
+        );
+        border: 1.5px solid rgba(245, 158, 11, 0.25);
+        border-radius: 16px;
+        padding: 24px 28px;
+        margin-bottom: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+      .trial-hero::before {
+        content: "";
+        position: absolute;
+        top: -40px;
+        left: -40px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(
+          circle,
+          rgba(245, 158, 11, 0.08),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .trial-days-big {
+        font-size: 52px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+      .trial-days-big.urgent {
+        color: var(--red);
+      }
+      .trial-days-big.normal {
+        color: var(--accent);
+      }
+      .trial-days-label {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .trial-end-date {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .trial-end-date strong {
+        color: var(--text);
+      }
+      .usage-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent);
+        text-decoration: none;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 8px;
+        padding: 5px 12px;
+        transition: background 0.2s;
+      }
+      .usage-cta:hover {
+        background: rgba(245, 158, 11, 0.08);
+      }
+      .upgrade-banner {
+        background: linear-gradient(135deg, var(--accent), #d97706);
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .upgrade-banner-text {
+        color: #000;
+      }
+      .upgrade-banner-title {
+        font-size: 16px;
+        font-weight: 900;
+        margin-bottom: 3px;
+      }
+      .upgrade-banner-sub {
+        font-size: 12px;
+        opacity: 0.75;
+      }
+      .btn-upgrade {
+        background: #000;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: opacity 0.2s;
+      }
+      .btn-upgrade:hover {
+        opacity: 0.85;
+      }
+      .empty h3 {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .empty p {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
 
-/* ── BILLING UX UPGRADE ── */
-.trial-hero{
-  background:linear-gradient(135deg,rgba(245,158,11,.08) 0%,rgba(245,158,11,.02) 100%);
-  border:1.5px solid rgba(245,158,11,.25);
-  border-radius:16px;padding:24px 28px;margin-bottom:16px;
-  position:relative;overflow:hidden;
-}
-.trial-hero::before{
-  content:'';position:absolute;top:-40px;left:-40px;
-  width:200px;height:200px;
-  background:radial-gradient(circle,rgba(245,158,11,.08),transparent 70%);
-  pointer-events:none;
-}
-.trial-days-big{
-  font-size:52px;font-weight:900;line-height:1;
-  letter-spacing:-.03em;
-}
-.trial-days-big.urgent{color:var(--red);}
-.trial-days-big.normal{color:var(--accent);}
-.trial-days-label{font-size:13px;color:var(--muted);font-weight:600;margin-top:4px;}
-.trial-end-date{font-size:12px;color:var(--muted);margin-top:8px;}
-.trial-end-date strong{color:var(--text);}
-.usage-cta{
-  display:inline-flex;align-items:center;gap:6px;
-  margin-top:10px;font-size:12px;font-weight:700;
-  color:var(--accent);text-decoration:none;
-  border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:5px 12px;
-  transition:background .2s;
-}
-.usage-cta:hover{background:rgba(245,158,11,.08);}
-.upgrade-banner{
-  background:linear-gradient(135deg,var(--accent),#d97706);
-  border-radius:14px;padding:18px 22px;margin-bottom:16px;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-}
-.upgrade-banner-text{color:#000;}
-.upgrade-banner-title{font-size:16px;font-weight:900;margin-bottom:3px;}
-.upgrade-banner-sub{font-size:12px;opacity:.75;}
-.btn-upgrade{
-  background:#000;color:#fff;border:none;border-radius:10px;
-  padding:10px 22px;font-size:14px;font-weight:800;
-  cursor:pointer;font-family:inherit;text-decoration:none;
-  white-space:nowrap;transition:opacity .2s;
-}
-.btn-upgrade:hover{opacity:.85;}
-.empty h3{font-size:18px;font-weight:800;margin-bottom:8px;}
-.empty p{font-size:14px;color:var(--muted);margin-bottom:24px;}
+      @media (max-width: 600px) {
+        .details-grid {
+          grid-template-columns: 1fr;
+        }
+        .detail-item:nth-child(odd) {
+          border-left: none;
+        }
+        .detail-item:last-child {
+          border-bottom: none;
+        }
+        .detail-item {
+          border-bottom: 1px solid var(--border);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- ── Sidebar ── -->
+      <aside class="sidebar">
+        <div class="sb-logo">
+          <a
+            href="/"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              text-decoration: none;
+            "
+          >
+            <img
+              src="/assets/img/omda-icon.png"
+              alt=""
+              style="height: 32px; width: 32px; object-fit: contain"
+            />
+            <img
+              src="/assets/img/omda-logo.png"
+              alt="OMDA"
+              style="
+                height: 26px;
+                object-fit: contain;
+                filter: brightness(0) invert(1);
+              "
+            />
+          </a>
+        </div>
+        <nav class="sb-nav">
+          <a href="/app/dashboard.html"
+            ><span class="nav-icon">📊</span> דשבורד</a
+          >
+          <a href="/app/reports.html"><span class="nav-icon">📄</span> דוחות</a>
+          <a href="/app/clients.html"
+            ><span class="nav-icon">👥</span> לקוחות</a
+          >
+          <a href="/app/payments.html"
+            ><span class="nav-icon">💰</span> תשלומים</a
+          >
+          <div class="sb-sep"></div>
+          <a href="/app/account-billing.html" class="active"
+            ><span class="nav-icon">💳</span> מנוי</a
+          >
+          <a href="/app/settings.html"
+            ><span class="nav-icon">⚙️</span> הגדרות</a
+          >
+        </nav>
+        <div class="sb-footer">
+          <div class="sb-user-name" id="sidebarUser"></div>
+          <button
+            class="btn-logout"
+            onclick="
+              document.querySelector('script[type=module]') && window._doSignOut
+                ? window._doSignOut()
+                : firebase
+                    ?.auth()
+                    .signOut()
+                    .then(() => (location.href = '/'))
+            "
+          >
+            🚪 התנתקות
+          </button>
+        </div>
+      </aside>
 
-@media(max-width:600px){
-  .details-grid{grid-template-columns:1fr;}
-  .detail-item:nth-child(odd){border-left:none;}
-  .detail-item:last-child{border-bottom:none;}
-  .detail-item{border-bottom:1px solid var(--border);}
-}
-</style>
-</head>
-<body>
+      <!-- ── Main wrap ── -->
+      <div class="main-wrap">
+        <div class="page">
+          <div class="page-title">ניהול מנוי</div>
+          <div class="page-sub">צפה ונהל את פרטי המנוי שלך</div>
 
-<div class="app">
+          <div id="content">
+            <div class="loader">
+              <div class="spin"></div>
+              <span style="font-size: 13px; color: var(--muted)"
+                >טוען נתונים...</span
+              >
+            </div>
+          </div>
+        </div>
 
-<!-- ── Sidebar ── -->
-<aside class="sidebar">
-  <div class="sb-logo">
-    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-      <img src="/assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;">
-      <img src="/assets/omda-logo.png" alt="OMDA" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
-    </a>
-  </div>
-  <nav class="sb-nav">
-    <a href="/app/dashboard.html"><span class="nav-icon">📊</span> דשבורד</a>
-    <a href="/app/reports.html"><span class="nav-icon">📄</span> דוחות</a>
-    <a href="/app/clients.html"><span class="nav-icon">👥</span> לקוחות</a>
-    <a href="/app/payments.html"><span class="nav-icon">💰</span> תשלומים</a>
-    <div class="sb-sep"></div>
-    <a href="/app/account-billing.html" class="active"><span class="nav-icon">💳</span> מנוי</a>
-    <a href="/app/settings.html"><span class="nav-icon">⚙️</span> הגדרות</a>
-  </nav>
-  <div class="sb-footer">
-    <div class="sb-user-name" id="sidebarUser"></div>
-    <button class="btn-logout" onclick="document.querySelector('script[type=module]') && window._doSignOut ? window._doSignOut() : (firebase?.auth().signOut().then(()=>location.href='/'))">🚪 התנתקות</button>
-  </div>
-</aside>
+        <!-- Cancel Confirmation Modal -->
+        <div class="modal-backdrop" id="cancelModal">
+          <div class="modal">
+            <div style="font-size: 40px; margin-bottom: 16px">⚠️</div>
+            <h2>ביטול מנוי</h2>
+            <p>
+              המנוי יישאר פעיל עד
+              <strong id="cancelUntilDate" style="color: var(--accent)"></strong
+              >.<br />
+              לאחר מכן לא יחויב כרטיסך ותאבד גישה למערכת.
+            </p>
+            <div class="modal-actions">
+              <button class="btn btn-outline" onclick="closeModal()">
+                ביטול
+              </button>
+              <button
+                class="btn btn-danger"
+                id="confirmCancelBtn"
+                onclick="confirmCancel()"
+              >
+                אישור ביטול מנוי
+              </button>
+            </div>
+          </div>
+        </div>
 
-<!-- ── Main wrap ── -->
-<div class="main-wrap">
+        <script type="module">
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+          import {
+            getAuth,
+            onAuthStateChanged,
+          } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+          import {
+            getFirestore,
+            doc,
+            getDoc,
+            updateDoc,
+            collection,
+            query,
+            where,
+            orderBy,
+            limit,
+            getDocs,
+          } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<div class="page">
-  <div class="page-title">ניהול מנוי</div>
-  <div class="page-sub">צפה ונהל את פרטי המנוי שלך</div>
+          const app = initializeApp({
+            apiKey: "AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+            authDomain: "omdan-property.firebaseapp.com",
+            projectId: "omdan-property",
+            storageBucket: "omdan-property.firebasestorage.app",
+            messagingSenderId: "1028931108038",
+            appId: "1:1028931108038:web:d5843d9641dce3adabc8ed",
+          });
+          const auth = getAuth(app);
+          const db = getFirestore(app);
 
-  <div id="content">
-    <div class="loader">
-      <div class="spin"></div>
-      <span style="font-size:13px;color:var(--muted);">טוען נתונים...</span>
-    </div>
-  </div>
-</div>
+          const PLANS = {
+            starter: { name: "Starter", monthly: 129, annual: 990 },
+            pro: { name: "Pro", monthly: 249, annual: 2190 },
+            office: { name: "Office", monthly: 499, annual: 4500 },
+            trial: { name: "ניסיון חינמי", monthly: 0, annual: 0 },
+          };
+          const BILLING_LABELS = { monthly: "חודשי", annual: "שנתי" };
 
+          let _user = null;
+          let _billing = null;
 
-<!-- Cancel Confirmation Modal -->
-<div class="modal-backdrop" id="cancelModal">
-  <div class="modal">
-    <div style="font-size:40px;margin-bottom:16px;">⚠️</div>
-    <h2>ביטול מנוי</h2>
-    <p>
-      המנוי יישאר פעיל עד <strong id="cancelUntilDate" style="color:var(--accent);"></strong>.<br>
-      לאחר מכן לא יחויב כרטיסך ותאבד גישה למערכת.
-    </p>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()">ביטול</button>
-      <button class="btn btn-danger" id="confirmCancelBtn" onclick="confirmCancel()">אישור ביטול מנוי</button>
-    </div>
-  </div>
-</div>
+          function fmtDate(ts) {
+            if (!ts) return "—";
+            const d = ts.toDate ? ts.toDate() : new Date(ts);
+            return d.toLocaleDateString("he-IL", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            });
+          }
 
-<script type="module">
-import { initializeApp }      from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, doc, getDoc, updateDoc, collection, query, where, orderBy, limit, getDocs }
-  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+          function fmtAmount(a) {
+            return a ? `₪${Number(a).toLocaleString("he-IL")}` : "—";
+          }
 
-const app  = initializeApp({
-  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
-  authDomain:"omdan-property.firebaseapp.com",
-  projectId:"omdan-property",
-  storageBucket:"omdan-property.firebasestorage.app",
-  messagingSenderId:"1028931108038",
-  appId:"1:1028931108038:web:d5843d9641dce3adabc8ed"
-});
-const auth = getAuth(app);
-const db   = getFirestore(app);
+          function statusBadge(status, cancelAtEnd) {
+            if (cancelAtEnd)
+              return `<span class="plan-badge badge-canceled">🔴 בוטל — פעיל עד תום התקופה</span>`;
+            const map = {
+              active: `<span class="plan-badge badge-active">✓ פעיל</span>`,
+              trial: `<span class="plan-badge badge-trial">⏳ ניסיון</span>`,
+              canceled: `<span class="plan-badge badge-canceled">🔴 בוטל</span>`,
+              expired: `<span class="plan-badge badge-expired">פג תוקף</span>`,
+              renewal_failed: `<span class="plan-badge badge-canceled">⚠️ חיוב נכשל</span>`,
+            };
+            return (
+              map[status] ||
+              `<span class="plan-badge badge-expired">${status}</span>`
+            );
+          }
 
-const PLANS = {
-  starter: { name:'Starter', monthly:129, annual:990 },
-  pro:     { name:'Pro',     monthly:249, annual:2190 },
-  office:  { name:'Office',  monthly:499, annual:4500 },
-  trial:   { name:'ניסיון חינמי', monthly:0, annual:0 },
-};
-const BILLING_LABELS = { monthly:'חודשי', annual:'שנתי' };
+          async function loadPaymentHistory(uid) {
+            try {
+              const q = query(
+                collection(db, "payments"),
+                where("uid", "==", uid),
+                orderBy("processedAt", "desc"),
+                limit(5),
+              );
+              const snap = await getDocs(q);
+              return snap.docs.map((d) => d.data());
+            } catch (e) {
+              return [];
+            }
+          }
 
-let _user    = null;
-let _billing = null;
+          async function render(user, billing) {
+            const plan = PLANS[billing?.plan] || PLANS.trial;
+            const isTrial = !billing || billing.plan === "trial";
+            const isActive = billing?.status === "active";
+            const isCanceled = billing?.cancelAtEnd === true;
+            const subEnd = billing?.subscriptionEnd;
+            const trialEnd = billing?.trialEnd;
+            const usage = billing?.reportsThisMonth || 0;
 
-function fmtDate(ts) {
-  if (!ts) return '—';
-  const d = ts.toDate ? ts.toDate() : new Date(ts);
-  return d.toLocaleDateString('he-IL', { day:'numeric', month:'long', year:'numeric' });
-}
+            // Usage limit by plan
+            const usageLimits = {
+              trial: 5,
+              starter: 30,
+              pro: 999,
+              office: 999,
+            };
+            const usageLimit = usageLimits[billing?.plan] || 5;
+            const usagePct = Math.min(
+              100,
+              Math.round((usage / usageLimit) * 100),
+            );
 
-function fmtAmount(a) {
-  return a ? `₪${Number(a).toLocaleString('he-IL')}` : '—';
-}
+            // Payment history
+            const history = isActive ? await loadPaymentHistory(user.uid) : [];
 
-function statusBadge(status, cancelAtEnd) {
-  if(cancelAtEnd) return `<span class="plan-badge badge-canceled">🔴 בוטל — פעיל עד תום התקופה</span>`;
-  const map = {
-    active:  `<span class="plan-badge badge-active">✓ פעיל</span>`,
-    trial:   `<span class="plan-badge badge-trial">⏳ ניסיון</span>`,
-    canceled:`<span class="plan-badge badge-canceled">🔴 בוטל</span>`,
-    expired: `<span class="plan-badge badge-expired">פג תוקף</span>`,
-    renewal_failed:`<span class="plan-badge badge-canceled">⚠️ חיוב נכשל</span>`,
-  };
-  return map[status] || `<span class="plan-badge badge-expired">${status}</span>`;
-}
+            let html = "";
 
-async function loadPaymentHistory(uid) {
-  try {
-    const q = query(
-      collection(db, 'payments'),
-      where('uid','==', uid),
-      orderBy('processedAt','desc'),
-      limit(5)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map(d => d.data());
-  } catch(e) {
-    return [];
-  }
-}
+            // ── 1: Plan Status Card ──
+            const nextBillingDate = isTrial
+              ? trialEnd
+                ? fmtDate({ toDate: () => new Date(trialEnd) })
+                : null
+              : !isCanceled && subEnd
+                ? fmtDate(subEnd)
+                : null;
 
-async function render(user, billing) {
-  const plan = PLANS[billing?.plan] || PLANS.trial;
-  const isTrial    = !billing || billing.plan === 'trial';
-  const isActive   = billing?.status === 'active';
-  const isCanceled = billing?.cancelAtEnd === true;
-  const subEnd     = billing?.subscriptionEnd;
-  const trialEnd   = billing?.trialEnd;
-  const usage      = billing?.reportsThisMonth || 0;
+            if (isTrial) {
+              const end = trialEnd ? new Date(trialEnd) : null;
+              const daysLeft = end
+                ? Math.max(
+                    0,
+                    Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)),
+                  )
+                : 0;
+              const isUrgent = daysLeft <= 3;
 
-  // Usage limit by plan
-  const usageLimits = { trial:5, starter:30, pro:999, office:999 };
-  const usageLimit  = usageLimits[billing?.plan] || 5;
-  const usagePct    = Math.min(100, Math.round((usage/usageLimit)*100));
-
-  // Payment history
-  const history = isActive ? await loadPaymentHistory(user.uid) : [];
-
-  let html = '';
-
-  // ── 1: Plan Status Card ──
-  const nextBillingDate = isTrial
-    ? (trialEnd ? fmtDate({toDate:()=>new Date(trialEnd)}) : null)
-    : (!isCanceled && subEnd ? fmtDate(subEnd) : null);
-
-  if(isTrial) {
-    const end = trialEnd ? new Date(trialEnd) : null;
-    const daysLeft = end ? Math.max(0, Math.ceil((end-new Date())/(1000*60*60*24))) : 0;
-    const isUrgent = daysLeft <= 3;
-
-    // Upgrade banner — prominent
-    html += `<a href="/pricing.html" class="upgrade-banner" style="display:flex;">
+              // Upgrade banner — prominent
+              html += `<a href="/pricing.html" class="upgrade-banner" style="display:flex;">
       <div class="upgrade-banner-text">
         <div class="upgrade-banner-title">⚡ שדרג עכשיו לגרסה מלאה</div>
         <div class="upgrade-banner-sub">החל מ-89₪/חודש — ביטול בכל עת, ללא התחייבות</div>
@@ -322,24 +815,24 @@ async function render(user, billing) {
       <span class="btn-upgrade">בחר מסלול →</span>
     </a>`;
 
-    // Trial hero — focused
-    html += `<div class="section-label">ניסיון חינם פעיל</div>
+              // Trial hero — focused
+              html += `<div class="section-label">ניסיון חינם פעיל</div>
     <div class="trial-hero">
       <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;">
         <div>
-          <div class="trial-days-big ${isUrgent?'urgent':'normal'}">${daysLeft}</div>
+          <div class="trial-days-big ${isUrgent ? "urgent" : "normal"}">${daysLeft}</div>
           <div class="trial-days-label">ימים נותרו לניסיון</div>
         </div>
         <div style="flex:1;">
-          ${end ? `<div class="trial-end-date">הניסיון מסתיים ב-<strong>${fmtDate({toDate:()=>end})}</strong></div>` : ''}
+          ${end ? `<div class="trial-end-date">הניסיון מסתיים ב-<strong>${fmtDate({ toDate: () => end })}</strong></div>` : ""}
           <div class="trial-end-date" style="margin-top:4px;">אחרי הניסיון: <strong>129₪/חודש</strong></div>
-          ${isUrgent ? `<div style="margin-top:8px;font-size:12px;font-weight:700;color:var(--red);">⚠️ פחות מ-3 ימים נותרו — שדרג כדי לא לאבד גישה</div>` : ''}
+          ${isUrgent ? `<div style="margin-top:8px;font-size:12px;font-weight:700;color:var(--red);">⚠️ פחות מ-3 ימים נותרו — שדרג כדי לא לאבד גישה</div>` : ""}
         </div>
       </div>
     </div>`;
 
-    html += `<div class="section-label">סטטוס מנוי</div><div class="card"><div class="details-grid">`;
-    html += `
+              html += `<div class="section-label">סטטוס מנוי</div><div class="card"><div class="details-grid">`;
+              html += `
       <div class="detail-item">
         <div class="detail-label">סטטוס</div>
         <div class="detail-value yellow">ניסיון חינמי</div>
@@ -348,23 +841,22 @@ async function render(user, billing) {
         <div class="detail-label">מחיר לאחר הניסיון</div>
         <div class="detail-value">129₪/חודש</div>
       </div>`;
-
-  } else {
-    html += `<div class="section-label">סטטוס מנוי</div>
+            } else {
+              html += `<div class="section-label">סטטוס מנוי</div>
     <div class="card">
     <div class="plan-hero">
       <div>
         <div class="plan-hero-name">מסלול ${plan.name}</div>
-        <div class="plan-hero-sub">${billing?.billingMode ? BILLING_LABELS[billing.billingMode]||'' : ''}</div>
+        <div class="plan-hero-sub">${billing?.billingMode ? BILLING_LABELS[billing.billingMode] || "" : ""}</div>
       </div>
-      ${statusBadge(billing?.status || 'active', isCanceled)}
+      ${statusBadge(billing?.status || "active", isCanceled)}
     </div>
-    ${nextBillingDate && !isCanceled ? `<div class="next-billing">📅 החיוב הבא: <span class="nb-date">${nextBillingDate}</span></div>` : ''}
-    ${isCanceled ? `<div class="next-billing" style="border-color:rgba(239,68,68,.2);color:var(--red);">🔴 המנוי פעיל עד ${fmtDate(subEnd)} ולא יחודש</div>` : ''}
+    ${nextBillingDate && !isCanceled ? `<div class="next-billing">📅 החיוב הבא: <span class="nb-date">${nextBillingDate}</span></div>` : ""}
+    ${isCanceled ? `<div class="next-billing" style="border-color:rgba(239,68,68,.2);color:var(--red);">🔴 המנוי פעיל עד ${fmtDate(subEnd)} ולא יחודש</div>` : ""}
     <div class="details-grid">
       <div class="detail-item">
         <div class="detail-label">תאריך חידוש הבא</div>
-        <div class="detail-value ${isCanceled?'red':'green'}">${isCanceled ? 'בוטל' : fmtDate(subEnd)}</div>
+        <div class="detail-value ${isCanceled ? "red" : "green"}">${isCanceled ? "בוטל" : fmtDate(subEnd)}</div>
       </div>
       <div class="detail-item">
         <div class="detail-label">תשלום אחרון</div>
@@ -372,7 +864,7 @@ async function render(user, billing) {
       </div>
       <div class="detail-item">
         <div class="detail-label">מחיר מסלול</div>
-        <div class="detail-value">${fmtAmount(billing?.billingMode==='annual' ? plan.annual : plan.monthly)} / ${BILLING_LABELS[billing?.billingMode]||'חודש'}</div>
+        <div class="detail-value">${fmtAmount(billing?.billingMode === "annual" ? plan.annual : plan.monthly)} / ${BILLING_LABELS[billing?.billingMode] || "חודש"}</div>
       </div>
       <div class="detail-item">
         <div class="detail-label">פעיל מתאריך</div>
@@ -380,76 +872,83 @@ async function render(user, billing) {
       </div>
     </div>
     </div>`;
-  }
+            }
 
-  // ── Usage Card ──
-  const usageCta = usage === 0
-    ? `<a href="/app/case.html" class="usage-cta">📄 צור דוח ראשון →</a>`
-    : usagePct >= 80 && usageLimit !== 999
-      ? `<a href="/pricing.html" class="usage-cta" style="color:var(--red);border-color:rgba(239,68,68,.3);">⚠️ קרוב למגבלה — שדרג</a>`
-      : '';
-  html += `<div class="card">
+            // ── Usage Card ──
+            const usageCta =
+              usage === 0
+                ? `<a href="/app/case.html" class="usage-cta">📄 צור דוח ראשון →</a>`
+                : usagePct >= 80 && usageLimit !== 999
+                  ? `<a href="/pricing.html" class="usage-cta" style="color:var(--red);border-color:rgba(239,68,68,.3);">⚠️ קרוב למגבלה — שדרג</a>`
+                  : "";
+            html += `<div class="card">
     <div class="card-title">📊 שימוש החודש</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
       <span style="font-size:20px;font-weight:900;color:var(--text);">${usage}</span>
-      <span style="font-size:13px;color:var(--muted);">${usageLimit === 999 ? 'ללא הגבלה' : `מתוך ${usageLimit} דוחות`}</span>
+      <span style="font-size:13px;color:var(--muted);">${usageLimit === 999 ? "ללא הגבלה" : `מתוך ${usageLimit} דוחות`}</span>
     </div>
-    ${usageLimit !== 999 ? `
+    ${
+      usageLimit !== 999
+        ? `
     <div class="usage-bar-wrap">
-      <div class="usage-bar" style="width:${usagePct}%;${usagePct>80?'background:linear-gradient(90deg,#f59e0b,#ef4444)':''}"></div>
+      <div class="usage-bar" style="width:${usagePct}%;${usagePct > 80 ? "background:linear-gradient(90deg,#f59e0b,#ef4444)" : ""}"></div>
     </div>
-    <div style="font-size:11px;color:var(--muted);">איפוס ב-${fmtDate(billing?.reportsResetAt)}</div>` : ''}
+    <div style="font-size:11px;color:var(--muted);">איפוס ב-${fmtDate(billing?.reportsResetAt)}</div>`
+        : ""
+    }
     ${usageCta}
   </div>`;
 
-  // ── 2: Actions Card ──
-  html += `<div class="section-label">פעולות</div>
+            // ── 2: Actions Card ──
+            html += `<div class="section-label">פעולות</div>
   <div class="card">
     <div class="actions">`;
 
-  if(isTrial || !isActive || isCanceled) {
-    html += `<a class="btn btn-primary" href="/pricing.html">⚡ בחר מסלול ושדרג</a>`;
-    html += `<div class="cancel-note">קבל גישה מלאה לכל הדוחות והתכונות — ביטול בכל עת</div>`;
-  } else {
-    html += `<a class="btn btn-outline" href="/pricing.html">🔄 שנה מסלול</a>`;
-    html += `<button class="btn btn-danger" onclick="window._showCancelModal('${fmtDate(subEnd)}')">ביטול מנוי</button>`;
-    html += `<div class="cancel-note">לאחר הביטול, הגישה תישמר עד <strong>${fmtDate(subEnd)}</strong>. לא יתבצע חיוב נוסף.</div>`;
-  }
+            if (isTrial || !isActive || isCanceled) {
+              html += `<a class="btn btn-primary" href="/pricing.html">⚡ בחר מסלול ושדרג</a>`;
+              html += `<div class="cancel-note">קבל גישה מלאה לכל הדוחות והתכונות — ביטול בכל עת</div>`;
+            } else {
+              html += `<a class="btn btn-outline" href="/pricing.html">🔄 שנה מסלול</a>`;
+              html += `<button class="btn btn-danger" onclick="window._showCancelModal('${fmtDate(subEnd)}')">ביטול מנוי</button>`;
+              html += `<div class="cancel-note">לאחר הביטול, הגישה תישמר עד <strong>${fmtDate(subEnd)}</strong>. לא יתבצע חיוב נוסף.</div>`;
+            }
 
-  html += `</div></div>`;
+            html += `</div></div>`;
 
-  // ── 3: Payment History — clean table ──
-  html += `<div class="section-label">היסטוריית תשלומים</div>`;
-  if(history.length > 0) {
-    html += `<div class="card" style="padding:20px 0 0;">
+            // ── 3: Payment History — clean table ──
+            html += `<div class="section-label">היסטוריית תשלומים</div>`;
+            if (history.length > 0) {
+              html += `<div class="card" style="padding:20px 0 0;">
       <table class="history-table">
         <thead><tr>
           <th>תאריך</th><th>מסלול</th><th>סכום</th><th>סטטוס</th><th>קבלה</th>
         </tr></thead>
         <tbody>`;
-    history.forEach(p => {
-      const d = p.processedAt?.toDate ? p.processedAt.toDate() : new Date();
-      const planName = PLANS[p.planId]?.name || p.planId;
-      const type = p.type === 'renewal' ? 'חידוש' : 'רכישה';
-      html += `<tr>
-        <td style="color:var(--muted);">${d.toLocaleDateString('he-IL')}</td>
+              history.forEach((p) => {
+                const d = p.processedAt?.toDate
+                  ? p.processedAt.toDate()
+                  : new Date();
+                const planName = PLANS[p.planId]?.name || p.planId;
+                const type = p.type === "renewal" ? "חידוש" : "רכישה";
+                html += `<tr>
+        <td style="color:var(--muted);">${d.toLocaleDateString("he-IL")}</td>
         <td>מסלול ${planName} <span style="font-size:11px;color:var(--muted);">${type}</span></td>
         <td class="hist-amount">${fmtAmount(p.amount)}</td>
         <td><span class="hist-status">✓ שולם</span></td>
         <td>${p.receiptUrl ? `<a href="${p.receiptUrl}" target="_blank" class="hist-receipt">הורד</a>` : `<span style="color:var(--subtle);font-size:11px;">—</span>`}</td>
       </tr>`;
-    });
-    html += `</tbody></table></div>`;
-  } else if(isActive) {
-    html += `<div class="card" style="text-align:center;padding:32px;color:var(--muted);">
+              });
+              html += `</tbody></table></div>`;
+            } else if (isActive) {
+              html += `<div class="card" style="text-align:center;padding:32px;color:var(--muted);">
       <div style="font-size:32px;margin-bottom:10px;">🧾</div>
       <div style="font-weight:700;margin-bottom:4px;">אין היסטוריית תשלומים עדיין</div>
       <div style="font-size:12px;">התשלומים יופיעו כאן לאחר החיוב הראשון</div>
     </div>`;
-  }
+            }
 
-  // ── Account Info ──
-  html += `<div class="card">
+            // ── Account Info ──
+            html += `<div class="card">
     <div class="card-title">👤 פרטי חשבון</div>
     <div class="details-grid">
       <div class="detail-item">
@@ -458,102 +957,147 @@ async function render(user, billing) {
       </div>
       <div class="detail-item">
         <div class="detail-label">מזהה משתמש</div>
-        <div class="detail-value" style="font-size:11px;color:var(--muted);">${user.uid.slice(0,16)}...</div>
+        <div class="detail-value" style="font-size:11px;color:var(--muted);">${user.uid.slice(0, 16)}...</div>
       </div>
     </div>
   </div>`;
 
-  document.getElementById('content').innerHTML = html;
-}
+            document.getElementById("content").innerHTML = html;
+          }
 
-// ── Cancel Flow ──
-window._showCancelModal = function(dateStr) {
-  document.getElementById('cancelUntilDate').textContent = dateStr;
-  document.getElementById('cancelModal').classList.add('open');
-};
+          // ── Cancel Flow ──
+          window._showCancelModal = function (dateStr) {
+            document.getElementById("cancelUntilDate").textContent = dateStr;
+            document.getElementById("cancelModal").classList.add("open");
+          };
 
-window.closeModal = function() {
-  document.getElementById('cancelModal').classList.remove('open');
-};
+          window.closeModal = function () {
+            document.getElementById("cancelModal").classList.remove("open");
+          };
 
-// ── Checkout from billing page ──
-window._doUpgradeCheckout = async function(planId, billingMode) {
-  const btn = document.querySelector('.btn-upgrade');
-  if(btn){ btn.textContent = '⏳ מעביר...'; btn.style.opacity = '.6'; btn.style.pointerEvents = 'none'; }
-  try {
-    const token = await _user.getIdToken(true);
-    const res = await fetch(
-      'https://us-central1-omdan-property.cloudfunctions.net/cardcomCreatePayment',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({ planId: planId || 'pro', billingMode: billingMode || 'monthly' }),
+          // ── Checkout from billing page ──
+          window._doUpgradeCheckout = async function (planId, billingMode) {
+            const btn = document.querySelector(".btn-upgrade");
+            if (btn) {
+              btn.textContent = "⏳ מעביר...";
+              btn.style.opacity = ".6";
+              btn.style.pointerEvents = "none";
+            }
+            try {
+              const token = await _user.getIdToken(true);
+              const res = await fetch(
+                "https://us-central1-omdan-property.cloudfunctions.net/cardcomCreatePayment",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                  },
+                  body: JSON.stringify({
+                    planId: planId || "pro",
+                    billingMode: billingMode || "monthly",
+                  }),
+                },
+              );
+              const data = await res.json();
+              if (data.url) {
+                window.location.href = data.url;
+                return;
+              }
+              throw new Error(data.error || "שגיאה");
+            } catch (e) {
+              if (btn) {
+                btn.textContent = "שדרג →";
+                btn.style.opacity = "";
+                btn.style.pointerEvents = "";
+              }
+              alert("שגיאה: " + (e.message || "נסה שוב"));
+            }
+          };
+
+          window.confirmCancel = async function () {
+            const btn = document.getElementById("confirmCancelBtn");
+            btn.disabled = true;
+            btn.textContent = "⏳ מבטל...";
+            try {
+              await updateDoc(doc(db, "billing", _user.uid), {
+                cancelAtEnd: true,
+              });
+              closeModal();
+              // רענן את הדף
+              await loadBilling(_user);
+            } catch (e) {
+              btn.disabled = false;
+              btn.textContent = "אישור ביטול מנוי";
+              console.error("Cancel error:", e);
+            }
+          };
+
+          async function loadBilling(user) {
+            const snap = await getDoc(doc(db, "billing", user.uid));
+            _billing = snap.exists() ? snap.data() : null;
+            await render(user, _billing);
+          }
+
+          // ── Auth ──
+          onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+              window.location.href = "dashboard.html";
+              return;
+            }
+            _user = user;
+            const sb = document.getElementById("sidebarUser");
+            if (sb) sb.textContent = user.displayName || user.email;
+            window._doSignOut = async () => {
+              await signOut(auth);
+              window.location.href = "/";
+            };
+            await loadBilling(user);
+          });
+        </script>
+
+        <script>
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker
+              .register("/sw.js", { updateViaCache: "none" })
+              .then((r) => r.update())
+              .catch(() => {});
+          }
+        </script>
+      </div>
+      <!-- /.main-wrap -->
+    </div>
+    <!-- /.app -->
+
+    <style>
+      .omdan-footer {
+        background: #0d1117;
+        border-top: none;
+        padding: 20px 5%;
+        text-align: center;
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 40px;
       }
-    );
-    const data = await res.json();
-    if(data.url){ window.location.href = data.url; return; }
-    throw new Error(data.error || 'שגיאה');
-  } catch(e) {
-    if(btn){ btn.textContent = 'שדרג →'; btn.style.opacity = ''; btn.style.pointerEvents = ''; }
-    alert('שגיאה: ' + (e.message || 'נסה שוב'));
-  }
-};
-
-window.confirmCancel = async function() {
-  const btn = document.getElementById('confirmCancelBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ מבטל...';
-  try {
-    await updateDoc(doc(db, 'billing', _user.uid), {
-      cancelAtEnd: true,
-    });
-    closeModal();
-    // רענן את הדף
-    await loadBilling(_user);
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = 'אישור ביטול מנוי';
-    console.error('Cancel error:', e);
-  }
-};
-
-async function loadBilling(user) {
-  const snap = await getDoc(doc(db, 'billing', user.uid));
-  _billing = snap.exists() ? snap.data() : null;
-  await render(user, _billing);
-}
-
-// ── Auth ──
-onAuthStateChanged(auth, async user => {
-  if (!user) {
-    window.location.href = 'dashboard.html';
-    return;
-  }
-  _user = user;
-  const sb = document.getElementById('sidebarUser');
-  if(sb) sb.textContent = user.displayName || user.email;
-  window._doSignOut = async () => { await signOut(auth); window.location.href = '/'; };
-  await loadBilling(user);
-});
-</script>
-
-<script>if("serviceWorker"in navigator){navigator.serviceWorker.register("/sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});}</script>
-
-</div><!-- /.main-wrap -->
-</div><!-- /.app -->
-
-<style>
-.omdan-footer{background:#0d1117;border-top:none;padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}
-.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;transition:color .2s;}
-.omdan-footer a:hover{color:#f59e0b;}
-</style>
-<footer class="omdan-footer">
-  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
-  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
-  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
-  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
-  <a href="/legal/index.html">מסמכים משפטיים</a>
-  <br><span style="margin-top:6px;display:block;">© 2026 OMDA. כל הזכויות שמורות.</span>
-</footer>
-</body>
+      .omdan-footer a {
+        color: #9ca3af;
+        text-decoration: none;
+        margin: 0 6px;
+        transition: color 0.2s;
+      }
+      .omdan-footer a:hover {
+        color: #f59e0b;
+      }
+    </style>
+    <footer class="omdan-footer">
+      <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
+      <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
+      <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
+      <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
+      <a href="/legal/index.html">מסמכים משפטיים</a>
+      <br /><span style="margin-top: 6px; display: block"
+        >© 2026 OMDA. כל הזכויות שמורות.</span
+      >
+    </footer>
+  </body>
 </html>

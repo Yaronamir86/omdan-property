@@ -1,407 +1,1000 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OMDA | תשלומים</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{
-  --primary:#111827;--primary2:#1F2937;--primary3:#374151;
-  --accent:#F59E0B;--accent3:#D97706;
-  --blue:#3B82F6;--red:#EF4444;--green:#10B981;--purple:#8B5CF6;
-  --text:#F9FAFB;--muted:#9CA3AF;--subtle:#6B7280;--border:#1F2937;
-  --card:#111827;--bg:#030712;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OMDA | תשלומים</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #111827;
+        --primary2: #1f2937;
+        --primary3: #374151;
+        --accent: #f59e0b;
+        --accent3: #d97706;
+        --blue: #3b82f6;
+        --red: #ef4444;
+        --green: #10b981;
+        --purple: #8b5cf6;
+        --text: #f9fafb;
+        --muted: #9ca3af;
+        --subtle: #6b7280;
+        --border: #1f2937;
+        --card: #111827;
+        --bg: #030712;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Heebo", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        font-size: 14px;
+      }
 
-/* ── Layout ── */
-.app{display:flex;min-height:100vh;}
-.sidebar{width:240px;flex-shrink:0;background:var(--primary);border-left:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;z-index:150;}
-.main-wrap{flex:1;min-width:0;display:flex;flex-direction:column;}
-.sb-logo{display:flex;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
-.sb-nav{flex:1;}
-.sb-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:all .15s;border-right:3px solid transparent;white-space:nowrap;}
-.sb-nav a:hover{color:var(--text);background:rgba(255,255,255,.04);}
-.sb-nav a.active{color:var(--accent);border-right-color:var(--accent);background:rgba(245,158,11,.06);}
-.sb-nav .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
-.sb-sep{height:1px;background:var(--border);margin:6px 20px;}
-.sb-footer{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;}
-.sb-user-name{font-size:11px;color:var(--subtle);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.btn-logout{width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#f87171;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:background .2s;}
-.btn-logout:hover{background:rgba(239,68,68,.18);}
+      /* ── Layout ── */
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 240px;
+        flex-shrink: 0;
+        background: var(--primary);
+        border-left: 1px solid var(--border);
+        padding: 24px 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        z-index: 150;
+      }
+      .main-wrap {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .sb-logo {
+        display: flex;
+        align-items: center;
+        padding: 0 20px 20px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 8px;
+      }
+      .sb-nav {
+        flex: 1;
+      }
+      .sb-nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        text-decoration: none;
+        transition: all 0.15s;
+        border-right: 3px solid transparent;
+        white-space: nowrap;
+      }
+      .sb-nav a:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .sb-nav a.active {
+        color: var(--accent);
+        border-right-color: var(--accent);
+        background: rgba(245, 158, 11, 0.06);
+      }
+      .sb-nav .nav-icon {
+        font-size: 16px;
+        width: 22px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .sb-sep {
+        height: 1px;
+        background: var(--border);
+        margin: 6px 20px;
+      }
+      .sb-footer {
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        margin-top: auto;
+      }
+      .sb-user-name {
+        font-size: 11px;
+        color: var(--subtle);
+        margin-bottom: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .btn-logout {
+        width: 100%;
+        padding: 9px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        color: #f87171;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: "Heebo", sans-serif;
+        transition: background 0.2s;
+      }
+      .btn-logout:hover {
+        background: rgba(239, 68, 68, 0.18);
+      }
 
-/* ── Topbar ── */
-#topbar{background:var(--primary);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:100;}
-.tb-page{font-size:13px;font-weight:700;color:var(--muted);}
+      /* ── Topbar ── */
+      #topbar {
+        background: var(--primary);
+        border-bottom: 1px solid var(--border);
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        height: 56px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .tb-page {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
+      }
 
-/* ── Main ── */
-main{max-width:1100px;margin:0 auto;padding:28px 20px;width:100%;}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
-.page-title{font-size:20px;font-weight:800;}
-.page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+      /* ── Main ── */
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 20px;
+        width: 100%;
+      }
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .page-title {
+        font-size: 20px;
+        font-weight: 800;
+      }
+      .page-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
 
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border:none;border-radius:12px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;transition:all .18s;}
-.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#111;box-shadow:0 3px 12px rgba(245,158,11,.3);}
-.btn-primary:hover{transform:translateY(-1px);}
-.btn-ghost{background:transparent;border:1px solid var(--primary3);color:var(--muted);}
-.btn-ghost:hover{color:var(--text);border-color:var(--muted);}
-.btn-sm{padding:6px 14px;font-size:12px;border-radius:10px;}
-.btn-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;}
-.btn-danger:hover{background:rgba(239,68,68,.18);}
+      /* ── Buttons ── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 20px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-family: "Heebo", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        transition: all 0.18s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent3));
+        color: #111;
+        box-shadow: 0 3px 12px rgba(245, 158, 11, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--primary3);
+        color: var(--muted);
+      }
+      .btn-ghost:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+      .btn-sm {
+        padding: 6px 14px;
+        font-size: 12px;
+        border-radius: 10px;
+      }
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #f87171;
+      }
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.18);
+      }
 
-/* ── Stats ── */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
-.sc .label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
-.sc .value{font-size:26px;font-weight:900;letter-spacing:-1px;}
-.sc .sub{font-size:12px;color:var(--subtle);margin-top:3px;}
-.sc-green{border-top:3px solid var(--green);}
-.sc-red{border-top:3px solid var(--red);}
-.sc-accent{border-top:3px solid var(--accent);}
-.sc-blue{border-top:3px solid var(--blue);}
+      /* ── Stats ── */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .sc {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+      }
+      .sc .label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+      }
+      .sc .value {
+        font-size: 26px;
+        font-weight: 900;
+        letter-spacing: -1px;
+      }
+      .sc .sub {
+        font-size: 12px;
+        color: var(--subtle);
+        margin-top: 3px;
+      }
+      .sc-green {
+        border-top: 3px solid var(--green);
+      }
+      .sc-red {
+        border-top: 3px solid var(--red);
+      }
+      .sc-accent {
+        border-top: 3px solid var(--accent);
+      }
+      .sc-blue {
+        border-top: 3px solid var(--blue);
+      }
 
-/* ── Toolbar ── */
-.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
-.toolbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.filter-select{background:var(--primary2);border:1.5px solid var(--primary3);border-radius:10px;padding:9px 34px 9px 12px;font-size:13px;font-family:'Heebo',sans-serif;color:var(--text);outline:none;min-width:130px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 3px),calc(100% - 13px) calc(50% - 3px);background-size:5px 5px;background-repeat:no-repeat;}
-.filter-select:focus{border-color:var(--accent);}
+      /* ── Toolbar ── */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .filter-select {
+        background: var(--primary2);
+        border: 1.5px solid var(--primary3);
+        border-radius: 10px;
+        padding: 9px 34px 9px 12px;
+        font-size: 13px;
+        font-family: "Heebo", sans-serif;
+        color: var(--text);
+        outline: none;
+        min-width: 130px;
+        appearance: none;
+        background-image:
+          linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+          linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+        background-position:
+          calc(100% - 18px) calc(50% - 3px),
+          calc(100% - 13px) calc(50% - 3px);
+        background-size: 5px 5px;
+        background-repeat: no-repeat;
+      }
+      .filter-select:focus {
+        border-color: var(--accent);
+      }
 
-/* ── Table ── */
-.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-table{width:100%;border-collapse:collapse;}
-thead{background:var(--primary2);}
-th{padding:11px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
-td{padding:13px 16px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle;}
-tr.pay-row{cursor:default;}
-tr.pay-row:hover td{background:rgba(245,158,11,.03);}
-.col-actions{text-align:left;width:70px;}
+      /* ── Table ── */
+      .table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead {
+        background: var(--primary2);
+      }
+      th {
+        padding: 11px 16px;
+        text-align: right;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      td {
+        padding: 13px 16px;
+        font-size: 13px;
+        border-top: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      tr.pay-row {
+        cursor: default;
+      }
+      tr.pay-row:hover td {
+        background: rgba(245, 158, 11, 0.03);
+      }
+      .col-actions {
+        text-align: left;
+        width: 70px;
+      }
 
-/* ── Status badges ── */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
-.badge-unpaid{background:rgba(239,68,68,.15);color:var(--red);}
-.badge-paid{background:rgba(16,185,129,.15);color:var(--green);}
-.badge-partial{background:rgba(245,158,11,.15);color:var(--accent);}
+      /* ── Status badges ── */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .badge-unpaid {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--red);
+      }
+      .badge-paid {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--green);
+      }
+      .badge-partial {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--accent);
+      }
 
-/* ── Doc type ── */
-.doc-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700;}
-.doc-receipt{background:rgba(16,185,129,.1);color:var(--green);}
-.doc-invoice{background:rgba(59,130,246,.1);color:var(--blue);}
-.doc-none{color:var(--subtle);font-size:11px;}
+      /* ── Doc type ── */
+      .doc-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .doc-receipt {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--green);
+      }
+      .doc-invoice {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--blue);
+      }
+      .doc-none {
+        color: var(--subtle);
+        font-size: 11px;
+      }
 
-/* ── Empty/Loading ── */
-.empty{text-align:center;padding:60px 20px;color:var(--muted);}
-.spin{display:inline-block;width:20px;height:20px;border:2px solid var(--primary3);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
+      /* ── Empty/Loading ── */
+      .empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+      }
+      .spin {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--primary3);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-/* ── MODAL ── */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:400;align-items:center;justify-content:center;padding:20px;}
-.modal-backdrop.open{display:flex;}
-.modal{background:#1a2332;border:1px solid var(--primary3);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
-.modal-title{font-size:17px;font-weight:900;margin-bottom:4px;}
-.modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
-.modal-linked{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:13px;}
-.modal-linked strong{color:var(--accent);}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
-.field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
-.field input,.field select,.field textarea{background:var(--primary2);border:1px solid var(--primary3);border-radius:10px;padding:10px 13px;color:var(--text);font-size:14px;font-family:'Heebo',sans-serif;outline:none;width:100%;transition:border-color .2s;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
-.field textarea{resize:vertical;min-height:60px;}
-.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+      /* ── MODAL ── */
+      .modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 400;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-backdrop.open {
+        display: flex;
+      }
+      .modal {
+        background: #1a2332;
+        border: 1px solid var(--primary3);
+        border-radius: 20px;
+        padding: 28px;
+        width: 100%;
+        max-width: 480px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      .modal-title {
+        font-size: 17px;
+        font-weight: 900;
+        margin-bottom: 4px;
+      }
+      .modal-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 20px;
+      }
+      .modal-linked {
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 20px;
+        font-size: 13px;
+      }
+      .modal-linked strong {
+        color: var(--accent);
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .field label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .field input,
+      .field select,
+      .field textarea {
+        background: var(--primary2);
+        border: 1px solid var(--primary3);
+        border-radius: 10px;
+        padding: 10px 13px;
+        color: var(--text);
+        font-size: 14px;
+        font-family: "Heebo", sans-serif;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.2s;
+      }
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: var(--accent);
+      }
+      .field textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+      .modal-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
 
-/* ── Case selector in modal ── */
-.case-select-wrap{position:relative;}
-.case-select-wrap select{padding-right:12px;}
-option{background:#1F2937;}
+      /* ── Case selector in modal ── */
+      .case-select-wrap {
+        position: relative;
+      }
+      .case-select-wrap select {
+        padding-right: 12px;
+      }
+      option {
+        background: #1f2937;
+      }
 
-/* ── Inline action btns ── */
-.action-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Heebo',sans-serif;transition:all .15s;text-decoration:none;}
-.action-btn-edit{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.2);color:var(--blue);}
-.action-btn-edit:hover{background:rgba(59,130,246,.18);}
-.action-btn-del{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.15);color:#f87171;}
-.action-btn-del:hover{background:rgba(239,68,68,.18);}
+      /* ── Inline action btns ── */
+      .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid transparent;
+        font-family: "Heebo", sans-serif;
+        transition: all 0.15s;
+        text-decoration: none;
+      }
+      .action-btn-edit {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.2);
+        color: var(--blue);
+      }
+      .action-btn-edit:hover {
+        background: rgba(59, 130, 246, 0.18);
+      }
+      .action-btn-del {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+      }
+      .action-btn-del:hover {
+        background: rgba(239, 68, 68, 0.18);
+      }
 
-/* ── Row menu (hover on desktop, always visible on mobile) ── */
-.row-menu-btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:32px;height:32px;border-radius:8px;border:1px solid var(--primary3);
-  background:var(--primary2);color:var(--muted);cursor:pointer;
-  font-size:16px;font-weight:900;transition:all .15s;font-family:'Heebo',sans-serif;
-  opacity:1;visibility:visible;pointer-events:auto;
-}
-@media (hover: hover) and (pointer: fine){
-  .pay-row .row-menu-btn{
-    opacity:0;visibility:hidden;pointer-events:none;
-  }
-  .pay-row:hover .row-menu-btn{
-    opacity:1;visibility:visible;pointer-events:auto;
-  }
-}
-@media (hover: none), (pointer: coarse){
-  .pay-row .row-menu-btn{
-    opacity:1;visibility:visible;pointer-events:auto;
-  }
-}
-.row-menu-btn:hover{background:var(--primary3);color:var(--text);}
-.row-dropdown{
-  position:fixed;z-index:700;min-width:150px;background:#1F2937;
-  border:1px solid var(--primary3);border-radius:12px;
-  box-shadow:0 8px 32px rgba(0,0,0,.5);padding:6px;display:none;
-}
-.row-dropdown.open{display:block;}
-.row-dropdown-item{
-  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;
-  cursor:pointer;font-size:13px;font-weight:600;color:var(--text);
-  transition:background .12s;white-space:nowrap;
-}
-.row-dropdown-item:hover{background:rgba(255,255,255,.06);}
+      /* ── Row menu (hover on desktop, always visible on mobile) ── */
+      .row-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--primary3);
+        background: var(--primary2);
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 900;
+        transition: all 0.15s;
+        font-family: "Heebo", sans-serif;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      @media (hover: hover) and (pointer: fine) {
+        .pay-row .row-menu-btn {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
+        .pay-row:hover .row-menu-btn {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+      }
+      @media (hover: none), (pointer: coarse) {
+        .pay-row .row-menu-btn {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+      }
+      .row-menu-btn:hover {
+        background: var(--primary3);
+        color: var(--text);
+      }
+      .row-dropdown {
+        position: fixed;
+        z-index: 700;
+        min-width: 150px;
+        background: #1f2937;
+        border: 1px solid var(--primary3);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        padding: 6px;
+        display: none;
+      }
+      .row-dropdown.open {
+        display: block;
+      }
+      .row-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text);
+        transition: background 0.12s;
+        white-space: nowrap;
+      }
+      .row-dropdown-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
 
-/* ── Toast ── */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1F2937;border:1px solid var(--primary3);color:var(--text);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:9999;display:none;}
-.toast.show{display:block;}
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1f2937;
+        border: 1px solid var(--primary3);
+        color: var(--text);
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        z-index: 9999;
+        display: none;
+      }
+      .toast.show {
+        display: block;
+      }
 
-@media(max-width:768px){
-  .sidebar{display:none;}
-  main{padding:16px 12px 80px;}
-  .stats{grid-template-columns:repeat(2,1fr);}
-  th:nth-child(4),td:nth-child(4),th:nth-child(5),td:nth-child(5){display:none;}
-  .toolbar{flex-direction:column;align-items:stretch;}
-}
-</style>
-</head>
-<body>
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        main {
+          padding: 16px 12px 80px;
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        th:nth-child(4),
+        td:nth-child(4),
+        th:nth-child(5),
+        td:nth-child(5) {
+          display: none;
+        }
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sb-logo">
+          <a
+            href="/"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              text-decoration: none;
+            "
+          >
+            <img
+              src="/assets/img/omda-icon.png"
+              alt=""
+              style="height: 32px; width: 32px; object-fit: contain"
+            />
+            <img
+              src="/assets/img/omda-logo.png"
+              alt="OMDA"
+              style="
+                height: 26px;
+                object-fit: contain;
+                filter: brightness(0) invert(1);
+              "
+            />
+          </a>
+        </div>
+        <nav class="sb-nav">
+          <a href="/app/dashboard.html"
+            ><span class="nav-icon">📊</span> דשבורד</a
+          >
+          <a href="/app/reports.html"><span class="nav-icon">📄</span> דוחות</a>
+          <a href="/app/clients.html"
+            ><span class="nav-icon">👥</span> לקוחות</a
+          >
+          <a href="/app/payments.html" class="active"
+            ><span class="nav-icon">💰</span> תשלומים</a
+          >
+          <div class="sb-sep"></div>
+          <a href="/app/account-billing.html"
+            ><span class="nav-icon">💳</span> מנוי</a
+          >
+          <a href="/app/settings.html"
+            ><span class="nav-icon">⚙️</span> הגדרות</a
+          >
+        </nav>
+        <div class="sb-footer">
+          <div class="sb-user-name" id="sidebarUser"></div>
+          <button class="btn-logout" onclick="doLogout()">🚪 התנתקות</button>
+        </div>
+      </aside>
 
-<div class="app">
+      <div class="main-wrap">
+        <div id="topbar">
+          <div class="tb-page">תשלומים</div>
+        </div>
 
-<aside class="sidebar">
-  <div class="sb-logo">
-    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-      <img src="/assets/omda-icon.png" alt="" style="height:32px;width:32px;object-fit:contain;">
-      <img src="/assets/omda-logo.png" alt="OMDA" style="height:26px;object-fit:contain;filter:brightness(0) invert(1);">
-    </a>
-  </div>
-  <nav class="sb-nav">
-    <a href="/app/dashboard.html"><span class="nav-icon">📊</span> דשבורד</a>
-    <a href="/app/reports.html"><span class="nav-icon">📄</span> דוחות</a>
-    <a href="/app/clients.html"><span class="nav-icon">👥</span> לקוחות</a>
-    <a href="/app/payments.html" class="active"><span class="nav-icon">💰</span> תשלומים</a>
-    <div class="sb-sep"></div>
-    <a href="/app/account-billing.html"><span class="nav-icon">💳</span> מנוי</a>
-    <a href="/app/settings.html"><span class="nav-icon">⚙️</span> הגדרות</a>
-  </nav>
-  <div class="sb-footer">
-    <div class="sb-user-name" id="sidebarUser"></div>
-    <button class="btn-logout" onclick="doLogout()">🚪 התנתקות</button>
-  </div>
-</aside>
+        <main>
+          <div class="page-header">
+            <div>
+              <div class="page-title">תשלומים</div>
+              <div class="page-sub">מעקב תשלומים לפי דוח</div>
+            </div>
+            <button class="btn btn-primary" onclick="openAddModal()">
+              + רישום תשלום
+            </button>
+          </div>
 
-<div class="main-wrap">
-<div id="topbar">
-  <div class="tb-page">תשלומים</div>
-</div>
+          <div class="stats">
+            <div class="sc sc-green">
+              <div class="label">שולם</div>
+              <div class="value" id="statPaid">₪0</div>
+              <div class="sub" id="statPaidCount">0 רשומות</div>
+            </div>
+            <div class="sc sc-red">
+              <div class="label">לא שולם</div>
+              <div class="value" id="statUnpaid">₪0</div>
+              <div class="sub" id="statUnpaidCount">0 רשומות</div>
+            </div>
+            <div class="sc sc-accent">
+              <div class="label">חלקי</div>
+              <div class="value" id="statPartial">₪0</div>
+              <div class="sub" id="statPartialCount">0 רשומות</div>
+            </div>
+            <div class="sc sc-blue">
+              <div class="label">סה"כ צפוי</div>
+              <div class="value" id="statTotal">₪0</div>
+              <div class="sub">כלל הרשומות</div>
+            </div>
+          </div>
 
-<main>
-  <div class="page-header">
-    <div>
-      <div class="page-title">תשלומים</div>
-      <div class="page-sub">מעקב תשלומים לפי דוח</div>
-    </div>
-    <button class="btn btn-primary" onclick="openAddModal()">+ רישום תשלום</button>
-  </div>
+          <div class="toolbar">
+            <div style="font-size: 16px; font-weight: 800">כל הרשומות</div>
+            <div class="toolbar-right">
+              <select
+                id="statusFilter"
+                class="filter-select"
+                onchange="filterPayments()"
+              >
+                <option value="">כל הסטטוסים</option>
+                <option value="unpaid">לא שולם</option>
+                <option value="partial">חלקי</option>
+                <option value="paid">שולם</option>
+              </select>
+            </div>
+          </div>
 
-  <div class="stats">
-    <div class="sc sc-green">
-      <div class="label">שולם</div>
-      <div class="value" id="statPaid">₪0</div>
-      <div class="sub" id="statPaidCount">0 רשומות</div>
-    </div>
-    <div class="sc sc-red">
-      <div class="label">לא שולם</div>
-      <div class="value" id="statUnpaid">₪0</div>
-      <div class="sub" id="statUnpaidCount">0 רשומות</div>
-    </div>
-    <div class="sc sc-accent">
-      <div class="label">חלקי</div>
-      <div class="value" id="statPartial">₪0</div>
-      <div class="sub" id="statPartialCount">0 רשומות</div>
-    </div>
-    <div class="sc sc-blue">
-      <div class="label">סה"כ צפוי</div>
-      <div class="value" id="statTotal">₪0</div>
-      <div class="sub">כלל הרשומות</div>
-    </div>
-  </div>
-
-  <div class="toolbar">
-    <div style="font-size:16px;font-weight:800;">כל הרשומות</div>
-    <div class="toolbar-right">
-      <select id="statusFilter" class="filter-select" onchange="filterPayments()">
-        <option value="">כל הסטטוסים</option>
-        <option value="unpaid">לא שולם</option>
-        <option value="partial">חלקי</option>
-        <option value="paid">שולם</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>לקוח</th>
-          <th>דוח מקושר</th>
-          <th>סכום</th>
-          <th>סוג מסמך</th>
-          <th>תאריך</th>
-          <th>סטטוס</th>
-          <th class="col-actions"></th>
-        </tr>
-      </thead>
-      <tbody id="paymentsBody">
-        <tr><td colspan="7" style="text-align:center;padding:60px;color:var(--muted);"><div class="spin"></div></td></tr>
-      </tbody>
-    </table>
-  </div>
-</main>
-</div><!-- /.main-wrap -->
-</div><!-- /.app -->
-
-<!-- ── Add/Edit Modal ── -->
-<div class="modal-backdrop" id="payModal">
-  <div class="modal">
-    <div class="modal-title" id="modalTitle">רישום תשלום חדש</div>
-    <div class="modal-sub">שייך תשלום לדוח קיים במערכת</div>
-
-    <div class="modal-linked" id="modalLinkedCase" style="display:none;"></div>
-
-    <div class="field">
-      <label>דוח מקושר</label>
-      <select id="fCaseId" onchange="onCaseSelect()">
-        <option value="">— בחר דוח —</option>
-      </select>
-    </div>
-
-    <div class="modal-row">
-      <div class="field">
-        <label>שם לקוח</label>
-        <input type="text" id="fClientName" placeholder="שם מבוטח / לקוח">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>לקוח</th>
+                  <th>דוח מקושר</th>
+                  <th>סכום</th>
+                  <th>סוג מסמך</th>
+                  <th>תאריך</th>
+                  <th>סטטוס</th>
+                  <th class="col-actions"></th>
+                </tr>
+              </thead>
+              <tbody id="paymentsBody">
+                <tr>
+                  <td
+                    colspan="7"
+                    style="
+                      text-align: center;
+                      padding: 60px;
+                      color: var(--muted);
+                    "
+                  >
+                    <div class="spin"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </main>
       </div>
-      <div class="field">
-        <label>סכום (₪)</label>
-        <input type="number" id="fAmount" placeholder="0" min="0" step="0.01">
+      <!-- /.main-wrap -->
+    </div>
+    <!-- /.app -->
+
+    <!-- ── Add/Edit Modal ── -->
+    <div class="modal-backdrop" id="payModal">
+      <div class="modal">
+        <div class="modal-title" id="modalTitle">רישום תשלום חדש</div>
+        <div class="modal-sub">שייך תשלום לדוח קיים במערכת</div>
+
+        <div
+          class="modal-linked"
+          id="modalLinkedCase"
+          style="display: none"
+        ></div>
+
+        <div class="field">
+          <label>דוח מקושר</label>
+          <select id="fCaseId" onchange="onCaseSelect()">
+            <option value="">— בחר דוח —</option>
+          </select>
+        </div>
+
+        <div class="modal-row">
+          <div class="field">
+            <label>שם לקוח</label>
+            <input type="text" id="fClientName" placeholder="שם מבוטח / לקוח" />
+          </div>
+          <div class="field">
+            <label>סכום (₪)</label>
+            <input
+              type="number"
+              id="fAmount"
+              placeholder="0"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <div class="modal-row">
+          <div class="field">
+            <label>סטטוס תשלום</label>
+            <select id="fStatus">
+              <option value="unpaid">לא שולם</option>
+              <option value="partial">חלקי</option>
+              <option value="paid">שולם</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>תאריך</label>
+            <input type="date" id="fDate" />
+          </div>
+        </div>
+
+        <div class="modal-row">
+          <div class="field">
+            <label>סוג מסמך</label>
+            <select id="fDocType">
+              <option value="">— ללא —</option>
+              <option value="receipt">קבלה</option>
+              <option value="invoice">חשבונית</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>מספר מסמך</label>
+            <input
+              type="text"
+              id="fDocNumber"
+              placeholder="מספר קבלה / חשבונית"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>הערות</label>
+          <textarea id="fNotes" placeholder="הערות חופשיות..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost btn-sm" onclick="closeModal()">
+            ביטול
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            id="saveBtn"
+            onclick="savePayment()"
+          >
+            💾 שמור
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="modal-row">
-      <div class="field">
-        <label>סטטוס תשלום</label>
-        <select id="fStatus">
-          <option value="unpaid">לא שולם</option>
-          <option value="partial">חלקי</option>
-          <option value="paid">שולם</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>תאריך</label>
-        <input type="date" id="fDate">
-      </div>
-    </div>
+    <div class="toast" id="toast"></div>
+    <div class="row-dropdown" id="paymentDropdown"></div>
 
-    <div class="modal-row">
-      <div class="field">
-        <label>סוג מסמך</label>
-        <select id="fDocType">
-          <option value="">— ללא —</option>
-          <option value="receipt">קבלה</option>
-          <option value="invoice">חשבונית</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>מספר מסמך</label>
-        <input type="text" id="fDocNumber" placeholder="מספר קבלה / חשבונית">
-      </div>
-    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        apiKey: "AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+        authDomain: "omdan-property.firebaseapp.com",
+        projectId: "omdan-property",
+        storageBucket: "omdan-property.firebasestorage.app",
+        messagingSenderId: "1028931108038",
+        appId: "1:1028931108038:web:01731ca2a152b700ea6bc7",
+      });
+      const auth = firebase.auth(),
+        db = firebase.firestore();
+      let currentUser = null,
+        allPayments = [],
+        allCases = [],
+        editingId = null;
 
-    <div class="field">
-      <label>הערות</label>
-      <textarea id="fNotes" placeholder="הערות חופשיות..."></textarea>
-    </div>
+      // ── Firestore path helper ──
+      const payCol = () => db.collection("reportPayments");
 
-    <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeModal()">ביטול</button>
-      <button class="btn btn-primary btn-sm" id="saveBtn" onclick="savePayment()">💾 שמור</button>
-    </div>
-  </div>
-</div>
+      auth.onAuthStateChanged(async (u) => {
+        if (!u) {
+          window.location.href = "/";
+          return;
+        }
+        currentUser = u;
+        const sb = document.getElementById("sidebarUser");
+        if (sb) sb.textContent = u.displayName || u.email;
+        // Check for pre-selected case from URL
+        const urlCase = new URLSearchParams(location.search).get("case");
+        await Promise.all([loadCases(), loadPayments()]);
+        if (urlCase) openAddModal(urlCase);
+      });
 
-<div class="toast" id="toast"></div>
-<div class="row-dropdown" id="paymentDropdown"></div>
+      async function loadCases() {
+        try {
+          const snap = await db
+            .collection("cases")
+            .where("uid", "==", currentUser.uid)
+            .limit(200)
+            .get();
+          allCases = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          // Populate case select
+          const sel = document.getElementById("fCaseId");
+          allCases.forEach((c) => {
+            const name = c.state?.base?.fullName || c.name || "";
+            const claim =
+              c.state?.insurance?.claimNum || c.state?.base?.claimNum || "";
+            const label =
+              [name, claim].filter(Boolean).join(" — ") || c.id.slice(-8);
+            const opt = document.createElement("option");
+            opt.value = c.id;
+            opt.textContent = label;
+            opt.dataset.name = name;
+            sel.appendChild(opt);
+          });
+        } catch (e) {
+          console.warn("loadCases", e);
+        }
+      }
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
-  authDomain:"omdan-property.firebaseapp.com",
-  projectId:"omdan-property",
-  storageBucket:"omdan-property.firebasestorage.app",
-  messagingSenderId:"1028931108038",
-  appId:"1:1028931108038:web:01731ca2a152b700ea6bc7"
-});
-const auth=firebase.auth(), db=firebase.firestore();
-let currentUser=null, allPayments=[], allCases=[], editingId=null;
-
-// ── Firestore path helper ──
-const payCol=()=>db.collection('reportPayments');
-
-auth.onAuthStateChanged(async u=>{
-  if(!u){window.location.href='/';return;}
-  currentUser=u;
-  const sb=document.getElementById('sidebarUser');
-  if(sb) sb.textContent=u.displayName||u.email;
-  // Check for pre-selected case from URL
-  const urlCase=new URLSearchParams(location.search).get('case');
-  await Promise.all([loadCases(), loadPayments()]);
-  if(urlCase) openAddModal(urlCase);
-});
-
-async function loadCases(){
-  try{
-    const snap=await db.collection('cases').where('uid','==',currentUser.uid).limit(200).get();
-    allCases=snap.docs.map(d=>({id:d.id,...d.data()}));
-    // Populate case select
-    const sel=document.getElementById('fCaseId');
-    allCases.forEach(c=>{
-      const name=c.state?.base?.fullName||c.name||'';
-      const claim=c.state?.insurance?.claimNum||c.state?.base?.claimNum||'';
-      const label=[name,claim].filter(Boolean).join(' — ')||c.id.slice(-8);
-      const opt=document.createElement('option');
-      opt.value=c.id; opt.textContent=label; opt.dataset.name=name;
-      sel.appendChild(opt);
-    });
-  }catch(e){console.warn('loadCases',e);}
-}
-
-async function loadPayments(){
-  const tbody=document.getElementById('paymentsBody');
-  tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--muted);"><div class="spin"></div></td></tr>`;
-  try{
-    const snap=await payCol().where('uid','==',currentUser.uid).orderBy('createdAt','desc').limit(200).get();
-    allPayments=snap.docs.map(d=>({_id:d.id,...d.data()}));
-    renderStats(allPayments);
-    renderTable(allPayments);
-  }catch(e){
-    const isPermission = e.code==='permission-denied' || (e.message||'').includes('permissions') || (e.message||'').includes('Missing');
-    if(isPermission){
-      // הרשאות חסרות — הצג empty state ידידותי + הוראה למפתח
-      console.warn('[payments] Firestore permissions missing for reportPayments collection. Add rule: match /reportPayments/{paymentId} { allow create: if request.auth != null && request.auth.uid == request.resource.data.uid; allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.uid; }');
-      allPayments=[];
-      renderStats([]);
-      tbody.innerHTML=`<tr><td colspan="7"><div class="empty">
+      async function loadPayments() {
+        const tbody = document.getElementById("paymentsBody");
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--muted);"><div class="spin"></div></td></tr>`;
+        try {
+          const snap = await payCol()
+            .where("uid", "==", currentUser.uid)
+            .orderBy("createdAt", "desc")
+            .limit(200)
+            .get();
+          allPayments = snap.docs.map((d) => ({ _id: d.id, ...d.data() }));
+          renderStats(allPayments);
+          renderTable(allPayments);
+        } catch (e) {
+          const isPermission =
+            e.code === "permission-denied" ||
+            (e.message || "").includes("permissions") ||
+            (e.message || "").includes("Missing");
+          if (isPermission) {
+            // הרשאות חסרות — הצג empty state ידידותי + הוראה למפתח
+            console.warn(
+              "[payments] Firestore permissions missing for reportPayments collection. Add rule: match /reportPayments/{paymentId} { allow create: if request.auth != null && request.auth.uid == request.resource.data.uid; allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.uid; }",
+            );
+            allPayments = [];
+            renderStats([]);
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty">
         <div style="font-size:40px;margin-bottom:12px;">💰</div>
         <p style="font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text);">אין תשלומים עדיין</p>
         <p style="margin-bottom:20px;">לחץ "רישום תשלום" כדי להוסיף רשומה ראשונה</p>
@@ -411,279 +1004,341 @@ async function loadPayments(){
           <code style="display:block;margin-top:6px;direction:ltr;text-align:left;background:rgba(0,0,0,.3);padding:8px;border-radius:6px;font-size:11px;line-height:1.6;">match /reportPayments/{paymentId} {<br>&nbsp;&nbsp;allow create: if request.auth != null &amp;&amp; request.auth.uid == request.resource.data.uid;<br>&nbsp;&nbsp;allow read, update, delete: if request.auth != null &amp;&amp; request.auth.uid == resource.data.uid;<br>}</code>
         </div>
       </div></td></tr>`;
-    } else {
-      // שגיאה אחרת — נסה בלי orderBy (index חסר)
-      try{
-        const snap=await payCol().where('uid','==',currentUser.uid).get();
-        allPayments=snap.docs.map(d=>({_id:d.id,...d.data()}))
-          .sort((a,b)=>((b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)));
-        renderStats(allPayments);
-        renderTable(allPayments);
-      }catch(e2){
-        const isPermission2 = e2.code==='permission-denied' || (e2.message||'').includes('permissions');
-        allPayments=[];
-        renderStats([]);
-        if(isPermission2){
-          tbody.innerHTML=`<tr><td colspan="7"><div class="empty">
+          } else {
+            // שגיאה אחרת — נסה בלי orderBy (index חסר)
+            try {
+              const snap = await payCol()
+                .where("uid", "==", currentUser.uid)
+                .get();
+              allPayments = snap.docs
+                .map((d) => ({ _id: d.id, ...d.data() }))
+                .sort(
+                  (a, b) =>
+                    (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0),
+                );
+              renderStats(allPayments);
+              renderTable(allPayments);
+            } catch (e2) {
+              const isPermission2 =
+                e2.code === "permission-denied" ||
+                (e2.message || "").includes("permissions");
+              allPayments = [];
+              renderStats([]);
+              if (isPermission2) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty">
             <div style="font-size:40px;margin-bottom:12px;">💰</div>
             <p style="font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text);">אין תשלומים עדיין</p>
             <p>לחץ "רישום תשלום" כדי להוסיף רשומה ראשונה</p>
           </div></td></tr>`;
-        } else {
-          tbody.innerHTML=`<tr><td colspan="7"><div class="empty">
+              } else {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty">
             <div style="font-size:32px;margin-bottom:10px;">⚠️</div>
             <p style="font-weight:700;margin-bottom:6px;color:var(--red);">שגיאה בטעינת נתונים</p>
-            <p style="font-size:12px;">${escHtml(e2.message||'')}</p>
+            <p style="font-size:12px;">${escHtml(e2.message || "")}</p>
             <button class="btn btn-ghost btn-sm" style="margin-top:14px;" onclick="loadPayments()">🔄 נסה שוב</button>
           </div></td></tr>`;
+              }
+            }
+          }
         }
       }
-    }
-  }
-}
 
-function renderStats(pays){
-  const fmt=n=>'₪'+n.toLocaleString('he-IL');
-  const paid=pays.filter(p=>p.status==='paid');
-  const unpaid=pays.filter(p=>p.status==='unpaid');
-  const partial=pays.filter(p=>p.status==='partial');
-  const sum=arr=>arr.reduce((a,p)=>a+(Number(p.amount)||0),0);
-  document.getElementById('statPaid').textContent=fmt(sum(paid));
-  document.getElementById('statPaidCount').textContent=`${paid.length} רשומות`;
-  document.getElementById('statUnpaid').textContent=fmt(sum(unpaid));
-  document.getElementById('statUnpaidCount').textContent=`${unpaid.length} רשומות`;
-  document.getElementById('statPartial').textContent=fmt(sum(partial));
-  document.getElementById('statPartialCount').textContent=`${partial.length} רשומות`;
-  document.getElementById('statTotal').textContent=fmt(sum(pays));
-}
+      function renderStats(pays) {
+        const fmt = (n) => "₪" + n.toLocaleString("he-IL");
+        const paid = pays.filter((p) => p.status === "paid");
+        const unpaid = pays.filter((p) => p.status === "unpaid");
+        const partial = pays.filter((p) => p.status === "partial");
+        const sum = (arr) =>
+          arr.reduce((a, p) => a + (Number(p.amount) || 0), 0);
+        document.getElementById("statPaid").textContent = fmt(sum(paid));
+        document.getElementById("statPaidCount").textContent =
+          `${paid.length} רשומות`;
+        document.getElementById("statUnpaid").textContent = fmt(sum(unpaid));
+        document.getElementById("statUnpaidCount").textContent =
+          `${unpaid.length} רשומות`;
+        document.getElementById("statPartial").textContent = fmt(sum(partial));
+        document.getElementById("statPartialCount").textContent =
+          `${partial.length} רשומות`;
+        document.getElementById("statTotal").textContent = fmt(sum(pays));
+      }
 
-function renderTable(pays){
-  const tbody=document.getElementById('paymentsBody');
-  if(!pays.length){
-    tbody.innerHTML=`<tr><td colspan="7"><div class="empty">
+      function renderTable(pays) {
+        const tbody = document.getElementById("paymentsBody");
+        if (!pays.length) {
+          tbody.innerHTML = `<tr><td colspan="7"><div class="empty">
       <div style="font-size:40px;margin-bottom:10px;">💰</div>
       <p style="font-size:15px;font-weight:700;margin-bottom:6px;">אין רשומות תשלום עדיין</p>
       <p>לחץ "רישום תשלום" כדי להוסיף רשומה ראשונה</p>
     </div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML=pays.map(p=>{
-    const date=p.date||formatDate(p.createdAt?.seconds);
-    return `<tr class="pay-row">
-      <td style="font-weight:600;">${escHtml(p.clientName||'—')}</td>
-      <td>${caseLink(p.caseId,p.caseTitle)}</td>
-      <td style="font-weight:800;color:var(--text);">${p.amount?'₪'+Number(p.amount).toLocaleString('he-IL'):'—'}</td>
-      <td>${docTag(p.docType,p.docNumber)}</td>
+          return;
+        }
+        tbody.innerHTML = pays
+          .map((p) => {
+            const date = p.date || formatDate(p.createdAt?.seconds);
+            return `<tr class="pay-row">
+      <td style="font-weight:600;">${escHtml(p.clientName || "—")}</td>
+      <td>${caseLink(p.caseId, p.caseTitle)}</td>
+      <td style="font-weight:800;color:var(--text);">${p.amount ? "₪" + Number(p.amount).toLocaleString("he-IL") : "—"}</td>
+      <td>${docTag(p.docType, p.docNumber)}</td>
       <td style="color:var(--muted);font-size:12px;">${date}</td>
       <td>${statusBadge(p.status)}</td>
       <td class="col-actions">
         <button class="row-menu-btn" onclick="event.stopPropagation();openPaymentMenu(event,'${p._id}')">⋯</button>
       </td>
     </tr>`;
-  }).join('');
-}
+          })
+          .join("");
+      }
 
-function filterPayments(){
-  const status=document.getElementById('statusFilter').value;
-  const filtered=status?allPayments.filter(p=>p.status===status):allPayments;
-  renderTable(filtered);
-}
+      function filterPayments() {
+        const status = document.getElementById("statusFilter").value;
+        const filtered = status
+          ? allPayments.filter((p) => p.status === status)
+          : allPayments;
+        renderTable(filtered);
+      }
 
-function caseLink(caseId,caseTitle){
-  if(!caseId) return `<span style="color:var(--subtle);font-size:12px;">לא משויך</span>`;
-  const label=caseTitle||caseId.slice(-8);
-  return `<a href="/app/case.html?case=${caseId}&view=report" style="color:var(--accent);font-size:12px;font-weight:700;text-decoration:none;" target="_blank">${escHtml(label)} ↗</a>`;
-}
+      function caseLink(caseId, caseTitle) {
+        if (!caseId)
+          return `<span style="color:var(--subtle);font-size:12px;">לא משויך</span>`;
+        const label = caseTitle || caseId.slice(-8);
+        return `<a href="/app/case.html?case=${caseId}&view=report" style="color:var(--accent);font-size:12px;font-weight:700;text-decoration:none;" target="_blank">${escHtml(label)} ↗</a>`;
+      }
 
-function docTag(type,num){
-  if(!type) return `<span class="doc-none">—</span>`;
-  const cls=type==='receipt'?'doc-receipt':'doc-invoice';
-  const label=type==='receipt'?'קבלה':'חשבונית';
-  return `<span class="doc-tag ${cls}">${label}${num?' #'+num:''}</span>`;
-}
+      function docTag(type, num) {
+        if (!type) return `<span class="doc-none">—</span>`;
+        const cls = type === "receipt" ? "doc-receipt" : "doc-invoice";
+        const label = type === "receipt" ? "קבלה" : "חשבונית";
+        return `<span class="doc-tag ${cls}">${label}${num ? " #" + num : ""}</span>`;
+      }
 
-function statusBadge(s){
-  const map={paid:['badge-paid','✓ שולם'],unpaid:['badge-unpaid','✗ לא שולם'],partial:['badge-partial','~ חלקי']};
-  const[cls,lbl]=map[s]||['badge-unpaid','לא שולם'];
-  return`<span class="badge ${cls}">${lbl}</span>`;
-}
+      function statusBadge(s) {
+        const map = {
+          paid: ["badge-paid", "✓ שולם"],
+          unpaid: ["badge-unpaid", "✗ לא שולם"],
+          partial: ["badge-partial", "~ חלקי"],
+        };
+        const [cls, lbl] = map[s] || ["badge-unpaid", "לא שולם"];
+        return `<span class="badge ${cls}">${lbl}</span>`;
+      }
 
-// ── Modal ──
-function openAddModal(preCaseId=null){
-  editingId=null;
-  clearForm();
-  document.getElementById('modalTitle').textContent='רישום תשלום חדש';
-  document.getElementById('fDate').value=todayISO();
-  if(preCaseId){
-    const sel=document.getElementById('fCaseId');
-    sel.value=preCaseId;
-    onCaseSelect();
-  }
-  document.getElementById('payModal').classList.add('open');
-}
+      // ── Modal ──
+      function openAddModal(preCaseId = null) {
+        editingId = null;
+        clearForm();
+        document.getElementById("modalTitle").textContent = "רישום תשלום חדש";
+        document.getElementById("fDate").value = todayISO();
+        if (preCaseId) {
+          const sel = document.getElementById("fCaseId");
+          sel.value = preCaseId;
+          onCaseSelect();
+        }
+        document.getElementById("payModal").classList.add("open");
+      }
 
-function openEditModal(id){
-  const p=allPayments.find(x=>x._id===id);
-  if(!p) return;
-  editingId=id;
-  clearForm();
-  document.getElementById('modalTitle').textContent='עריכת רשומה';
-  document.getElementById('fCaseId').value=p.caseId||'';
-  document.getElementById('fClientName').value=p.clientName||'';
-  document.getElementById('fAmount').value=p.amount||'';
-  document.getElementById('fStatus').value=p.status||'unpaid';
-  document.getElementById('fDate').value=p.date||'';
-  document.getElementById('fDocType').value=p.docType||'';
-  document.getElementById('fDocNumber').value=p.docNumber||'';
-  document.getElementById('fNotes').value=p.notes||'';
-  if(p.caseId&&p.caseTitle){
-    const box=document.getElementById('modalLinkedCase');
-    box.innerHTML=`מקושר לדוח: <strong>${escHtml(p.caseTitle)}</strong>`;
-    box.style.display='block';
-  }
-  document.getElementById('payModal').classList.add('open');
-}
+      function openEditModal(id) {
+        const p = allPayments.find((x) => x._id === id);
+        if (!p) return;
+        editingId = id;
+        clearForm();
+        document.getElementById("modalTitle").textContent = "עריכת רשומה";
+        document.getElementById("fCaseId").value = p.caseId || "";
+        document.getElementById("fClientName").value = p.clientName || "";
+        document.getElementById("fAmount").value = p.amount || "";
+        document.getElementById("fStatus").value = p.status || "unpaid";
+        document.getElementById("fDate").value = p.date || "";
+        document.getElementById("fDocType").value = p.docType || "";
+        document.getElementById("fDocNumber").value = p.docNumber || "";
+        document.getElementById("fNotes").value = p.notes || "";
+        if (p.caseId && p.caseTitle) {
+          const box = document.getElementById("modalLinkedCase");
+          box.innerHTML = `מקושר לדוח: <strong>${escHtml(p.caseTitle)}</strong>`;
+          box.style.display = "block";
+        }
+        document.getElementById("payModal").classList.add("open");
+      }
 
-function closeModal(){
-  document.getElementById('payModal').classList.remove('open');
-  editingId=null;
-}
+      function closeModal() {
+        document.getElementById("payModal").classList.remove("open");
+        editingId = null;
+      }
 
-function clearForm(){
-  ['fCaseId','fClientName','fAmount','fStatus','fDocType','fDocNumber','fNotes'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el.tagName==='SELECT') el.selectedIndex=0;
-    else el.value='';
-  });
-  document.getElementById('fStatus').value='unpaid';
-  document.getElementById('modalLinkedCase').style.display='none';
-}
+      function clearForm() {
+        [
+          "fCaseId",
+          "fClientName",
+          "fAmount",
+          "fStatus",
+          "fDocType",
+          "fDocNumber",
+          "fNotes",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el.tagName === "SELECT") el.selectedIndex = 0;
+          else el.value = "";
+        });
+        document.getElementById("fStatus").value = "unpaid";
+        document.getElementById("modalLinkedCase").style.display = "none";
+      }
 
-function onCaseSelect(){
-  const sel=document.getElementById('fCaseId');
-  const caseId=sel.value;
-  if(!caseId) return;
-  const c=allCases.find(x=>x.id===caseId);
-  if(!c) return;
-  const name=c.state?.base?.fullName||c.name||'';
-  if(name) document.getElementById('fClientName').value=name;
-  // Show linked case
-  const title=name||(c.state?.insurance?.claimNum)||caseId.slice(-8);
-  const box=document.getElementById('modalLinkedCase');
-  box.innerHTML=`מקושר לדוח: <strong>${escHtml(title)}</strong>`;
-  box.style.display='block';
-}
+      function onCaseSelect() {
+        const sel = document.getElementById("fCaseId");
+        const caseId = sel.value;
+        if (!caseId) return;
+        const c = allCases.find((x) => x.id === caseId);
+        if (!c) return;
+        const name = c.state?.base?.fullName || c.name || "";
+        if (name) document.getElementById("fClientName").value = name;
+        // Show linked case
+        const title = name || c.state?.insurance?.claimNum || caseId.slice(-8);
+        const box = document.getElementById("modalLinkedCase");
+        box.innerHTML = `מקושר לדוח: <strong>${escHtml(title)}</strong>`;
+        box.style.display = "block";
+      }
 
-async function savePayment(){
-  const btn=document.getElementById('saveBtn');
-  btn.disabled=true; btn.textContent='שומר...';
-  try{
-    const caseId=document.getElementById('fCaseId').value;
-    const c=allCases.find(x=>x.id===caseId);
-    const caseTitle=c?(c.state?.base?.fullName||c.name||c.state?.insurance?.claimNum||caseId.slice(-8)):'';
-    if(!caseId){
-      alert('חובה לבחור דוח');
-      btn.disabled=false; btn.textContent='💾 שמור';
-      return;
-    }
-    if(!document.getElementById('fClientName').value.trim()){
-      alert('חובה להזין שם לקוח');
-      btn.disabled=false; btn.textContent='💾 שמור';
-      return;
-    }
-    const amountVal = Number(document.getElementById('fAmount').value)||0;
-    if(amountVal <= 0){
-      alert('סכום לא תקין');
-      btn.disabled=false; btn.textContent='💾 שמור';
-      return;
-    }
-    const data={
-      caseId:caseId||null,
-      caseTitle:caseTitle||document.getElementById('fCaseId').selectedOptions[0]?.textContent||'',
-      clientName:document.getElementById('fClientName').value.trim(),
-      amount:amountVal,
-      status:document.getElementById('fStatus').value||'unpaid',
-      date:document.getElementById('fDate').value||todayISO(),
-      docType:document.getElementById('fDocType').value||null,
-      docNumber:document.getElementById('fDocNumber').value.trim()||null,
-      notes:document.getElementById('fNotes').value.trim()||null,
-      updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
-    };
-    if(editingId){
-      await payCol().doc(editingId).update(data);
-      showToast('✓ עודכן בהצלחה');
-    } else {
-      data.uid=currentUser.uid;
-      data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
-      await payCol().add(data);
-      showToast('✓ נשמר בהצלחה');
-    }
-    closeModal();
-    await loadPayments();
-  }catch(e){
-    alert('שגיאה: '+e.message);
-  }finally{
-    btn.disabled=false; btn.textContent='💾 שמור';
-  }
-}
+      async function savePayment() {
+        const btn = document.getElementById("saveBtn");
+        btn.disabled = true;
+        btn.textContent = "שומר...";
+        try {
+          const caseId = document.getElementById("fCaseId").value;
+          const c = allCases.find((x) => x.id === caseId);
+          const caseTitle = c
+            ? c.state?.base?.fullName ||
+              c.name ||
+              c.state?.insurance?.claimNum ||
+              caseId.slice(-8)
+            : "";
+          if (!caseId) {
+            alert("חובה לבחור דוח");
+            btn.disabled = false;
+            btn.textContent = "💾 שמור";
+            return;
+          }
+          if (!document.getElementById("fClientName").value.trim()) {
+            alert("חובה להזין שם לקוח");
+            btn.disabled = false;
+            btn.textContent = "💾 שמור";
+            return;
+          }
+          const amountVal =
+            Number(document.getElementById("fAmount").value) || 0;
+          if (amountVal <= 0) {
+            alert("סכום לא תקין");
+            btn.disabled = false;
+            btn.textContent = "💾 שמור";
+            return;
+          }
+          const data = {
+            caseId: caseId || null,
+            caseTitle:
+              caseTitle ||
+              document.getElementById("fCaseId").selectedOptions[0]
+                ?.textContent ||
+              "",
+            clientName: document.getElementById("fClientName").value.trim(),
+            amount: amountVal,
+            status: document.getElementById("fStatus").value || "unpaid",
+            date: document.getElementById("fDate").value || todayISO(),
+            docType: document.getElementById("fDocType").value || null,
+            docNumber:
+              document.getElementById("fDocNumber").value.trim() || null,
+            notes: document.getElementById("fNotes").value.trim() || null,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          };
+          if (editingId) {
+            await payCol().doc(editingId).update(data);
+            showToast("✓ עודכן בהצלחה");
+          } else {
+            data.uid = currentUser.uid;
+            data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            await payCol().add(data);
+            showToast("✓ נשמר בהצלחה");
+          }
+          closeModal();
+          await loadPayments();
+        } catch (e) {
+          alert("שגיאה: " + e.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "💾 שמור";
+        }
+      }
 
-async function deletePayment(id){
-  if(!confirm('למחוק רשומה זו?')) return;
-  try{
-    await payCol().doc(id).delete();
-    allPayments=allPayments.filter(p=>p._id!==id);
-    renderStats(allPayments);
-    renderTable(allPayments);
-    showToast('🗑️ נמחק');
-  }catch(e){alert('שגיאה: '+e.message);}
-}
+      async function deletePayment(id) {
+        if (!confirm("למחוק רשומה זו?")) return;
+        try {
+          await payCol().doc(id).delete();
+          allPayments = allPayments.filter((p) => p._id !== id);
+          renderStats(allPayments);
+          renderTable(allPayments);
+          showToast("🗑️ נמחק");
+        } catch (e) {
+          alert("שגיאה: " + e.message);
+        }
+      }
 
-let activePaymentMenu = null;
+      let activePaymentMenu = null;
 
-function openPaymentMenu(e, paymentId){
-  e.stopPropagation();
-  const dd = document.getElementById('paymentDropdown');
-  if(activePaymentMenu === paymentId && dd.classList.contains('open')){
-    closePaymentMenu();
-    return;
-  }
-  activePaymentMenu = paymentId;
-  dd.innerHTML = `
+      function openPaymentMenu(e, paymentId) {
+        e.stopPropagation();
+        const dd = document.getElementById("paymentDropdown");
+        if (activePaymentMenu === paymentId && dd.classList.contains("open")) {
+          closePaymentMenu();
+          return;
+        }
+        activePaymentMenu = paymentId;
+        dd.innerHTML = `
     <div class="row-dropdown-item" onclick="closePaymentMenu();openEditModal('${paymentId}')">✏️ עריכה</div>
     <div class="row-dropdown-item" onclick="closePaymentMenu();deletePayment('${paymentId}')">🗑️ מחיקה</div>
   `;
-  dd.classList.add('open');
-  const rect = e.currentTarget.getBoundingClientRect();
-  let top = rect.bottom + 6;
-  let left = rect.left - 150 + rect.width;
-  if(top + 120 > window.innerHeight - 12) top = rect.top - 120 - 6;
-  if(left < 8) left = 8;
-  dd.style.top = top + 'px';
-  dd.style.left = left + 'px';
-}
+        dd.classList.add("open");
+        const rect = e.currentTarget.getBoundingClientRect();
+        let top = rect.bottom + 6;
+        let left = rect.left - 150 + rect.width;
+        if (top + 120 > window.innerHeight - 12) top = rect.top - 120 - 6;
+        if (left < 8) left = 8;
+        dd.style.top = top + "px";
+        dd.style.left = left + "px";
+      }
 
-function closePaymentMenu(){
-  document.getElementById('paymentDropdown').classList.remove('open');
-  activePaymentMenu = null;
-}
+      function closePaymentMenu() {
+        document.getElementById("paymentDropdown").classList.remove("open");
+        activePaymentMenu = null;
+      }
 
-document.addEventListener('click', closePaymentMenu);
+      document.addEventListener("click", closePaymentMenu);
 
-// ── Helpers ──
-function todayISO(){return new Date().toISOString().split('T')[0];}
-function formatDate(seconds){if(!seconds) return '';return new Date(seconds*1000).toLocaleDateString('he-IL');}
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
-function doLogout(){auth.signOut().then(()=>window.location.href='/');}
-function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      // ── Helpers ──
+      function todayISO() {
+        return new Date().toISOString().split("T")[0];
+      }
+      function formatDate(seconds) {
+        if (!seconds) return "";
+        return new Date(seconds * 1000).toLocaleDateString("he-IL");
+      }
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 2200);
+      }
+      function doLogout() {
+        auth.signOut().then(() => (window.location.href = "/"));
+      }
+      function escHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
 
-// Close modal on backdrop click
-document.getElementById('payModal').addEventListener('click',function(e){
-  if(e.target===this) closeModal();
-});
-</script>
-</body>
+      // Close modal on backdrop click
+      document
+        .getElementById("payModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeModal();
+        });
+    </script>
+  </body>
 </html>

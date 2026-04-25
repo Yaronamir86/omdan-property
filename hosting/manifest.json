@@ -12,13 +12,13 @@
   "dir": "rtl",
   "icons": [
     {
-      "src": "/assets/omda-icon-192.png",
+      "src": "/assets/img/omda-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/omda-icon-512.png",
+      "src": "/assets/img/omda-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -31,7 +31,7 @@
       "url": "/app/dashboard.html",
       "icons": [
         {
-          "src": "/assets/omda-icon-192.png",
+          "src": "/assets/img/omda-icon-192.png",
           "sizes": "192x192"
         }
       ]
@@ -42,7 +42,7 @@
       "url": "/app/case.html",
       "icons": [
         {
-          "src": "/assets/omda-icon-192.png",
+          "src": "/assets/img/omda-icon-192.png",
           "sizes": "192x192"
         }
       ]

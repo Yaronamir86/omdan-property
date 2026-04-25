@@ -1,218 +1,645 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OMDA | כניסה</title>
-  <link rel="icon" type="image/png" href="/assets/omda-icon.png">
-  <link rel="manifest" href="/manifest.json">
-  
-  <link rel="apple-touch-icon" href="/assets/omda-icon.png">
-  <meta name="theme-color" content="#F59E0B">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="OMDA">
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
-  <style>
-    :root{
-      --primary:#111827;--primary2:#1F2937;--primary3:#374151;
-      --accent:#F59E0B;--accent3:#D97706;
-      --text:#F9FAFB;--muted:#9CA3AF;--subtle:#6B7280;--border:#1F2937;
-      --bg:#030712;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
-    /* grid removed */
-    body::after{content:"";position:fixed;top:-20%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(245,158,11,.07) 0%,transparent 70%);pointer-events:none;}
-    .wrap{width:100%;max-width:520px;padding:24px;position:relative;z-index:1;animation:fadeUp .45s ease both;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    .logo-row{display:flex;flex-direction:column;align-items:center;margin-bottom:36px;gap:8px;}
-    .logo-img{height:52px;object-fit:contain;}
-    .logo-fallback{font-size:28px;font-weight:900;color:var(--accent);letter-spacing:2px;display:none;}
-    .tagline{font-size:13px;color:var(--muted);margin-top:8px;}
-    .card{background:var(--primary);border:1px solid var(--border);border-radius:18px;padding:36px 40px;box-shadow:0 24px 80px rgba(0,0,0,.5);}
-    .card h2{font-size:20px;font-weight:800;margin-bottom:4px;}
-    .card>p{font-size:13px;color:var(--muted);margin-bottom:24px;}
-    .field{margin-bottom:14px;}
-    label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
-    input{width:100%;background:var(--primary2);border:1.5px solid var(--primary3);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Heebo',sans-serif;color:var(--text);transition:border-color .2s;outline:none;}
-    input:focus{border-color:var(--accent);}
-    .btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:14px;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;}
-    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#111;box-shadow:0 3px 12px rgba(245,158,11,.3);}
-    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(245,158,11,.4);}
-    .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-    .btn-google{background:var(--primary2);color:var(--text);border:1px solid var(--primary3);}
-    .btn-google:hover{border-color:var(--muted);}
-    .divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--subtle);font-size:12px;}
-    .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border);}
-    .toggle-link{text-align:center;margin-top:18px;font-size:13px;color:var(--muted);}
-    .toggle-link a{color:var(--accent);cursor:pointer;font-weight:700;text-decoration:none;}
-    .forgot{text-align:left;margin-top:-6px;margin-bottom:14px;}
-    .forgot a{font-size:12px;color:var(--subtle);cursor:pointer;text-decoration:none;}
-    .forgot a:hover{color:var(--accent);}
-    .error-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:14px;display:none;}
-    .spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#111;border-radius:50%;animation:spin .7s linear infinite;}
-    @keyframes spin{to{transform:rotate(360deg)}}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OMDA | כניסה</title>
+    <link rel="icon" type="image/png" href="/assets/img/omda-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
 
-    @media(max-width:480px){
-      .wrap{padding:16px;}
-      .card{padding:24px 20px;}
-      .logo-img{height:40px;}
-    }
-  </style>
+    <link rel="apple-touch-icon" href="/assets/img/omda-icon.png" />
+    <meta name="theme-color" content="#F59E0B" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="OMDA" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #111827;
+        --primary2: #1f2937;
+        --primary3: #374151;
+        --accent: #f59e0b;
+        --accent3: #d97706;
+        --text: #f9fafb;
+        --muted: #9ca3af;
+        --subtle: #6b7280;
+        --border: #1f2937;
+        --bg: #030712;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Heebo", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      /* grid removed */
+      body::after {
+        content: "";
+        position: fixed;
+        top: -20%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(245, 158, 11, 0.07) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .wrap {
+        width: 100%;
+        max-width: 520px;
+        padding: 24px;
+        position: relative;
+        z-index: 1;
+        animation: fadeUp 0.45s ease both;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .logo-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 36px;
+        gap: 8px;
+      }
+      .logo-img {
+        height: 52px;
+        object-fit: contain;
+      }
+      .logo-fallback {
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--accent);
+        letter-spacing: 2px;
+        display: none;
+      }
+      .tagline {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .card {
+        background: var(--primary);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 36px 40px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+      }
+      .card h2 {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .card > p {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
+      .field {
+        margin-bottom: 14px;
+      }
+      label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 6px;
+      }
+      input {
+        width: 100%;
+        background: var(--primary2);
+        border: 1.5px solid var(--primary3);
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-size: 14px;
+        font-family: "Heebo", sans-serif;
+        color: var(--text);
+        transition: border-color 0.2s;
+        outline: none;
+      }
+      input:focus {
+        border-color: var(--accent);
+      }
+      .btn {
+        width: 100%;
+        padding: 13px;
+        border-radius: 10px;
+        border: none;
+        font-size: 14px;
+        font-family: "Heebo", sans-serif;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent3));
+        color: #111;
+        box-shadow: 0 3px 12px rgba(245, 158, 11, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 18px rgba(245, 158, 11, 0.4);
+      }
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .btn-google {
+        background: var(--primary2);
+        color: var(--text);
+        border: 1px solid var(--primary3);
+      }
+      .btn-google:hover {
+        border-color: var(--muted);
+      }
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 18px 0;
+        color: var(--subtle);
+        font-size: 12px;
+      }
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .toggle-link {
+        text-align: center;
+        margin-top: 18px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .toggle-link a {
+        color: var(--accent);
+        cursor: pointer;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .forgot {
+        text-align: left;
+        margin-top: -6px;
+        margin-bottom: 14px;
+      }
+      .forgot a {
+        font-size: 12px;
+        color: var(--subtle);
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .forgot a:hover {
+        color: var(--accent);
+      }
+      .error-box {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #fca5a5;
+        margin-bottom: 14px;
+        display: none;
+      }
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        border-top-color: #111;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-<style>
-@media(max-width:768px){
-  nav{padding:10px 4% !important;flex-wrap:nowrap;}
-  .nav-links{display:none;}
-  .hero h1,.hero-title{font-size:28px !important;}
-  .pricing-grid{grid-template-columns:1fr !important;}
-  .pricing-section{padding:0 16px !important;}
-  .plan-card.popular{order:-1;}
-  .faq-section{padding:0 16px !important;}
-}
-@media(max-width:480px){
-  body{font-size:13px;}
-  h1{font-size:24px !important;}
-  .card{padding:24px 16px !important;}
-  .btn{font-size:13px !important;}
-}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="logo-row">
-    <img src="/assets/omda-icon.png" alt="" style="height:60px;width:60px;object-fit:contain;">
-    <img src="/assets/omda-logo.png" alt="OMDA רכוש" style="height:44px;object-fit:contain;filter:brightness(0) invert(1);">
-    <div class="tagline">מערכת ניהול תיקי שמאות מקצועית</div>
-  </div>
-  <div class="card">
-    <h2 id="fTitle">כניסה למערכת</h2>
-    <p id="fSub">הזן את פרטיך כדי להמשיך</p>
-    <div class="error-box" id="errBox"></div>
+      @media (max-width: 480px) {
+        .wrap {
+          padding: 16px;
+        }
+        .card {
+          padding: 24px 20px;
+        }
+        .logo-img {
+          height: 40px;
+        }
+      }
+    </style>
 
-    <div id="loginForm">
-      <div class="field"><label>אימייל</label><input type="email" id="email" placeholder="you@example.com" /></div>
-      <div class="field"><label>סיסמה</label><input type="password" id="password" placeholder="••••••••" /></div>
-      <div class="forgot"><a onclick="forgotPw()">שכחתי סיסמה</a></div>
-      <button class="btn btn-primary" id="loginBtn" onclick="loginEmail()" data-lbl="כניסה">כניסה</button>
-      <div class="divider">או</div>
-      <button class="btn btn-google" onclick="loginGoogle()">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        כניסה עם Google
-      </button>
-      <div class="toggle-link">אין לך חשבון? <a href="/register.html">הרשמה</a></div>
+    <style>
+      @media (max-width: 768px) {
+        nav {
+          padding: 10px 4% !important;
+          flex-wrap: nowrap;
+        }
+        .nav-links {
+          display: none;
+        }
+        .hero h1,
+        .hero-title {
+          font-size: 28px !important;
+        }
+        .pricing-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .pricing-section {
+          padding: 0 16px !important;
+        }
+        .plan-card.popular {
+          order: -1;
+        }
+        .faq-section {
+          padding: 0 16px !important;
+        }
+      }
+      @media (max-width: 480px) {
+        body {
+          font-size: 13px;
+        }
+        h1 {
+          font-size: 24px !important;
+        }
+        .card {
+          padding: 24px 16px !important;
+        }
+        .btn {
+          font-size: 13px !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="logo-row">
+        <img
+          src="/assets/img/omda-icon.png"
+          alt=""
+          style="height: 60px; width: 60px; object-fit: contain"
+        />
+        <img
+          src="/assets/img/omda-logo.png"
+          alt="OMDA רכוש"
+          style="
+            height: 44px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+          "
+        />
+        <div class="tagline">מערכת ניהול תיקי שמאות מקצועית</div>
+      </div>
+      <div class="card">
+        <h2 id="fTitle">כניסה למערכת</h2>
+        <p id="fSub">הזן את פרטיך כדי להמשיך</p>
+        <div class="error-box" id="errBox"></div>
+
+        <div id="loginForm">
+          <div class="field">
+            <label>אימייל</label
+            ><input type="email" id="email" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label>סיסמה</label
+            ><input type="password" id="password" placeholder="••••••••" />
+          </div>
+          <div class="forgot"><a onclick="forgotPw()">שכחתי סיסמה</a></div>
+          <button
+            class="btn btn-primary"
+            id="loginBtn"
+            onclick="loginEmail()"
+            data-lbl="כניסה"
+          >
+            כניסה
+          </button>
+          <div class="divider">או</div>
+          <button class="btn btn-google" onclick="loginGoogle()">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            כניסה עם Google
+          </button>
+          <div class="toggle-link">
+            אין לך חשבון? <a href="/register.html">הרשמה</a>
+          </div>
+        </div>
+
+        <div id="regForm" style="display: none">
+          <div class="field">
+            <label>שם מלא</label
+            ><input type="text" id="regName" placeholder="ישראל ישראלי" />
+          </div>
+          <div class="field">
+            <label>אימייל</label
+            ><input type="email" id="regEmail" placeholder="you@example.com" />
+          </div>
+          <div class="field">
+            <label>סיסמה</label
+            ><input type="password" id="regPass" placeholder="לפחות 6 תווים" />
+          </div>
+          <button
+            class="btn btn-primary"
+            id="regBtn"
+            onclick="doRegister()"
+            data-lbl="הרשמה"
+          >
+            הרשמה
+          </button>
+          <div class="divider">או</div>
+          <button class="btn btn-google" onclick="loginGoogle()">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path
+                fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            הרשמה עם Google
+          </button>
+          <div class="toggle-link">
+            יש לך חשבון? <a onclick="toggle()">כניסה</a>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="
+          text-align: center;
+          margin-top: 20px;
+          font-size: 12px;
+          color: var(--subtle);
+        "
+      >
+        <a
+          href="/legal/terms-of-service/terms-he.html"
+          style="color: var(--subtle); text-decoration: none; margin: 0 6px"
+          >תנאי שימוש</a
+        >
+        ·
+        <a
+          href="/legal/privacy-policy/privacy-he.html"
+          style="color: var(--subtle); text-decoration: none; margin: 0 6px"
+          >פרטיות</a
+        >
+        ·
+        <a
+          href="/legal/refund-policy/refunds-he.html"
+          style="color: var(--subtle); text-decoration: none; margin: 0 6px"
+          >ביטולים</a
+        >
+      </div>
     </div>
 
-    <div id="regForm" style="display:none">
-      <div class="field"><label>שם מלא</label><input type="text" id="regName" placeholder="ישראל ישראלי" /></div>
-      <div class="field"><label>אימייל</label><input type="email" id="regEmail" placeholder="you@example.com" /></div>
-      <div class="field"><label>סיסמה</label><input type="password" id="regPass" placeholder="לפחות 6 תווים" /></div>
-      <button class="btn btn-primary" id="regBtn" onclick="doRegister()" data-lbl="הרשמה">הרשמה</button>
-      <div class="divider">או</div>
-      <button class="btn btn-google" onclick="loginGoogle()">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        הרשמה עם Google
-      </button>
-      <div class="toggle-link">יש לך חשבון? <a onclick="toggle()">כניסה</a></div>
-    </div>
-  </div>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+      firebase.initializeApp({
+        apiKey: "AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
+        authDomain: "omdan-property.firebaseapp.com",
+        projectId: "omdan-property",
+        storageBucket: "omdan-property.firebasestorage.app",
+        messagingSenderId: "1028931108038",
+        appId: "1:1028931108038:web:01731ca2a152b700ea6bc7",
+      });
+      const auth = firebase.auth(),
+        db = firebase.firestore();
+      auth.onAuthStateChanged((u) => {
+        if (u) window.location.href = "/app/dashboard.html";
+      });
 
-<div style="text-align:center;margin-top:20px;font-size:12px;color:var(--subtle);">
-  <a href="/legal/terms-of-service/terms-he.html" style="color:var(--subtle);text-decoration:none;margin:0 6px;">תנאי שימוש</a> ·
-  <a href="/legal/privacy-policy/privacy-he.html" style="color:var(--subtle);text-decoration:none;margin:0 6px;">פרטיות</a> ·
-  <a href="/legal/refund-policy/refunds-he.html" style="color:var(--subtle);text-decoration:none;margin:0 6px;">ביטולים</a>
-</div>
-</div>
+      let isReg = false;
+      function toggle() {
+        isReg = !isReg;
+        document.getElementById("loginForm").style.display = isReg
+          ? "none"
+          : "block";
+        document.getElementById("regForm").style.display = isReg
+          ? "block"
+          : "none";
+        document.getElementById("fTitle").textContent = isReg
+          ? "הרשמה"
+          : "כניסה למערכת";
+        document.getElementById("fSub").textContent = isReg
+          ? "צור חשבון חדש"
+          : "הזן את פרטיך כדי להמשיך";
+        clearErr();
+      }
+      function showErr(m) {
+        const e = document.getElementById("errBox");
+        e.textContent = m;
+        e.style.display = "block";
+      }
+      function clearErr() {
+        document.getElementById("errBox").style.display = "none";
+      }
+      function setLoad(id, on) {
+        const b = document.getElementById(id);
+        b.disabled = on;
+        b.innerHTML = on ? '<div class="spinner"></div>' : b.dataset.lbl;
+      }
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script>
-firebase.initializeApp({
-  apiKey:"AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
-  authDomain:"omdan-property.firebaseapp.com",
-  projectId:"omdan-property",
-  storageBucket:"omdan-property.firebasestorage.app",
-  messagingSenderId:"1028931108038",
-  appId:"1:1028931108038:web:01731ca2a152b700ea6bc7"
-});
-const auth=firebase.auth(), db=firebase.firestore();
-auth.onAuthStateChanged(u=>{ if(u) window.location.href="/app/dashboard.html"; });
+      async function loginEmail() {
+        const e = document.getElementById("email").value.trim(),
+          p = document.getElementById("password").value;
+        if (!e || !p) {
+          showErr("יש למלא אימייל וסיסמה");
+          return;
+        }
+        clearErr();
+        setLoad("loginBtn", true);
+        try {
+          await auth.signInWithEmailAndPassword(e, p);
+        } catch (err) {
+          showErr(hErr(err.code));
+          setLoad("loginBtn", false);
+        }
+      }
+      async function doRegister() {
+        const n = document.getElementById("regName").value.trim(),
+          e = document.getElementById("regEmail").value.trim(),
+          p = document.getElementById("regPass").value;
+        if (!n || !e || !p) {
+          showErr("יש למלא את כל השדות");
+          return;
+        }
+        if (p.length < 6) {
+          showErr("סיסמה חייבת להיות לפחות 6 תווים");
+          return;
+        }
+        clearErr();
+        setLoad("regBtn", true);
+        try {
+          const c = await auth.createUserWithEmailAndPassword(e, p);
+          await c.user.updateProfile({ displayName: n });
+          await db
+            .collection("users")
+            .doc(c.user.uid)
+            .set({
+              displayName: n,
+              email: e,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+        } catch (err) {
+          showErr(hErr(err.code));
+          setLoad("regBtn", false);
+        }
+      }
+      async function loginGoogle() {
+        clearErr();
+        try {
+          const c = await auth.signInWithPopup(
+            new firebase.auth.GoogleAuthProvider(),
+          );
+          await db
+            .collection("users")
+            .doc(c.user.uid)
+            .set(
+              {
+                displayName: c.user.displayName,
+                email: c.user.email,
+                photoURL: c.user.photoURL,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              },
+              { merge: true },
+            );
+        } catch (err) {
+          showErr(hErr(err.code));
+        }
+      }
+      async function forgotPw() {
+        const e = document.getElementById("email").value.trim();
+        if (!e) {
+          showErr("הזן אימייל תחילה");
+          return;
+        }
+        try {
+          await auth.sendPasswordResetEmail(e);
+          showErr("📧 קישור לאיפוס נשלח לאימייל");
+        } catch (err) {
+          showErr(hErr(err.code));
+        }
+      }
+      function hErr(code) {
+        return (
+          {
+            "auth/user-not-found": "משתמש לא נמצא",
+            "auth/wrong-password": "סיסמה שגויה",
+            "auth/invalid-credential": "פרטים שגויים",
+            "auth/email-already-in-use": "האימייל כבר רשום",
+            "auth/invalid-email": "אימייל לא תקין",
+            "auth/weak-password": "סיסמה חלשה מדי",
+            "auth/popup-closed-by-user": "החלון נסגר",
+            "auth/too-many-requests": "יותר מדי ניסיונות, נסה מאוחר יותר",
+          }[code] || "שגיאה: " + code
+        );
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        isReg ? doRegister() : loginEmail();
+      });
+    </script>
 
-let isReg=false;
-function toggle(){
-  isReg=!isReg;
-  document.getElementById("loginForm").style.display=isReg?"none":"block";
-  document.getElementById("regForm").style.display=isReg?"block":"none";
-  document.getElementById("fTitle").textContent=isReg?"הרשמה":"כניסה למערכת";
-  document.getElementById("fSub").textContent=isReg?"צור חשבון חדש":"הזן את פרטיך כדי להמשיך";
-  clearErr();
-}
-function showErr(m){const e=document.getElementById("errBox");e.textContent=m;e.style.display="block";}
-function clearErr(){document.getElementById("errBox").style.display="none";}
-function setLoad(id,on){const b=document.getElementById(id);b.disabled=on;b.innerHTML=on?'<div class="spinner"></div>':b.dataset.lbl;}
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
 
-async function loginEmail(){
-  const e=document.getElementById("email").value.trim(), p=document.getElementById("password").value;
-  if(!e||!p){showErr("יש למלא אימייל וסיסמה");return;}
-  clearErr(); setLoad("loginBtn",true);
-  try{ await auth.signInWithEmailAndPassword(e,p); }
-  catch(err){ showErr(hErr(err.code)); setLoad("loginBtn",false); }
-}
-async function doRegister(){
-  const n=document.getElementById("regName").value.trim(),
-        e=document.getElementById("regEmail").value.trim(),
-        p=document.getElementById("regPass").value;
-  if(!n||!e||!p){showErr("יש למלא את כל השדות");return;}
-  if(p.length<6){showErr("סיסמה חייבת להיות לפחות 6 תווים");return;}
-  clearErr(); setLoad("regBtn",true);
-  try{
-    const c=await auth.createUserWithEmailAndPassword(e,p);
-    await c.user.updateProfile({displayName:n});
-    await db.collection("users").doc(c.user.uid).set({displayName:n,email:e,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }catch(err){ showErr(hErr(err.code)); setLoad("regBtn",false); }
-}
-async function loginGoogle(){
-  clearErr();
-  try{
-    const c=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-    await db.collection("users").doc(c.user.uid).set({displayName:c.user.displayName,email:c.user.email,photoURL:c.user.photoURL,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-  }catch(err){ showErr(hErr(err.code)); }
-}
-async function forgotPw(){
-  const e=document.getElementById("email").value.trim();
-  if(!e){showErr("הזן אימייל תחילה");return;}
-  try{ await auth.sendPasswordResetEmail(e); showErr("📧 קישור לאיפוס נשלח לאימייל"); }
-  catch(err){ showErr(hErr(err.code)); }
-}
-function hErr(code){
-  return{"auth/user-not-found":"משתמש לא נמצא","auth/wrong-password":"סיסמה שגויה","auth/invalid-credential":"פרטים שגויים","auth/email-already-in-use":"האימייל כבר רשום","auth/invalid-email":"אימייל לא תקין","auth/weak-password":"סיסמה חלשה מדי","auth/popup-closed-by-user":"החלון נסגר","auth/too-many-requests":"יותר מדי ניסיונות, נסה מאוחר יותר"}[code]||"שגיאה: "+code;
-}
-document.addEventListener("keydown",e=>{ if(e.key!=="Enter")return; isReg?doRegister():loginEmail(); });
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('/sw.js').catch(()=>{});
-  });
-}
-</script>
-
-<style>
-.omdan-footer{background:#0d1117;border-top:1px solid rgba(255,255,255,.07);padding:20px 5%;text-align:center;font-size:12px;color:#6b7280;margin-top:40px;}
-.omdan-footer a{color:#9ca3af;text-decoration:none;margin:0 6px;transition:color .2s;}
-.omdan-footer a:hover{color:#f59e0b;}
-</style>
-<footer class="omdan-footer">
-  <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
-  <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
-  <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
-  <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
-  <a href="/legal/index.html">מסמכים משפטיים</a>
-  <br><span style="margin-top:6px;display:block;">© 2026 OMDA. כל הזכויות שמורות.</span>
-</footer>
-</body>
+    <style>
+      .omdan-footer {
+        background: #0d1117;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+        padding: 20px 5%;
+        text-align: center;
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 40px;
+      }
+      .omdan-footer a {
+        color: #9ca3af;
+        text-decoration: none;
+        margin: 0 6px;
+        transition: color 0.2s;
+      }
+      .omdan-footer a:hover {
+        color: #f59e0b;
+      }
+    </style>
+    <footer class="omdan-footer">
+      <a href="/legal/terms-of-service/terms-he.html">תנאי שימוש</a> |
+      <a href="/legal/privacy-policy/privacy-he.html">פרטיות</a> |
+      <a href="/legal/refund-policy/refunds-he.html">החזרים</a> |
+      <a href="/legal/subscription-terms/subscription-he.html">תנאי מנוי</a> |
+      <a href="/legal/index.html">מסמכים משפטיים</a>
+      <br /><span style="margin-top: 6px; display: block"
+        >© 2026 OMDA. כל הזכויות שמורות.</span
+      >
+    </footer>
+  </body>
 </html>

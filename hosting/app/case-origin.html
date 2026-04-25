@@ -37,7 +37,6 @@
         --muted: #9ca3af;
         --subtle: #6b7280;
         --border: #1f2937;
-        --border2: #4b5563;
         --card: #111827;
         --bg: #030712;
         --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
@@ -273,7 +272,7 @@
       /* ── property card inputs — exact match to base card style ── */
       .prop-input {
         background: var(--primary2) !important;
-        border: 1.5px solid var(--border2) !important;
+        border: 1.5px solid var(--primary3) !important;
         border-radius: 10px !important;
         padding: 10px 14px !important;
         color: var(--text) !important;
@@ -1887,14 +1886,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 20px;
+        gap: 16px;
       }
-      #formLoader.hidden { display: none !important; }
-      .loader-logo-wrap { position:relative;width:72px;height:72px;display:flex;align-items:center;justify-content:center; }
-      .loader-logo-wrap img { width:48px;height:48px;object-fit:contain;position:relative;z-index:1; }
-      .loader-logo-wrap svg { position:absolute;inset:0;width:72px;height:72px; }
-      .loader-text { font-size:13px;color:#4b5563;font-weight:600;letter-spacing:0.03em; }
-      @keyframes caseLoaderSpin { to { transform:rotate(360deg); } }
       #formLoader.hidden {
         display: none !important;
       }
@@ -2307,537 +2300,7 @@
           padding: 13px 12px;
         }
       }
-    
-      /* ── VOICE INPUT ── */
-      .voice-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;transition:all .15s;}
-      .voice-btn:hover{border-color:var(--accent);color:var(--accent);}
-      .voice-btn.recording{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.08);animation:pulse-rec 1s infinite;}
-      .mic-icon{font-size:13px;}
-      @keyframes pulse-rec{0%,100%{opacity:1;}50%{opacity:.6;}}
-      @media print{.no-print{display:none!important;}}
-
-      /* ══ TOAST ══ */
-      .toast {
-        position: fixed;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #1f2937;
-        border: 1px solid var(--border2);
-        color: var(--text);
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 700;
-        z-index: 9999;
-        display: none;
-        white-space: nowrap;
-      }
-      .toast.show {
-        display: block;
-      }
-
-      /* ══ PHOTO EDITOR HINTS ══ */
-      .photo-thumb.has-markup::after {
-        content: "✎";
-        position: absolute;
-        bottom: 3px;
-        right: 3px;
-        background: rgba(17, 24, 39, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        color: #fff;
-        z-index: 3;
-      }
-      .photo-open-hint {
-        position: absolute;
-        right: 3px;
-        top: 3px;
-        background: rgba(17, 24, 39, 0.75);
-        color: #fff;
-        font-size: 8px;
-        font-weight: 700;
-        padding: 1px 5px;
-        border-radius: 999px;
-        z-index: 2;
-        pointer-events: none;
-      }
-
-      /* ══ PDF PROGRESS OVERLAY ══ */
-      #pdfProgressOverlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 19000;
-        background: rgba(3, 7, 18, 0.82);
-        backdrop-filter: blur(6px);
-        align-items: center;
-        justify-content: center;
-      }
-      #pdfProgressOverlay.active {
-        display: flex;
-      }
-      #pdfProgressBox {
-        background: #111827;
-        border: 1px solid #1e2a3a;
-        border-radius: 20px;
-        padding: 36px 44px;
-        min-width: 320px;
-        max-width: 90vw;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 18px;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
-      }
-      #pdfProgressSpinner {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        border: 4px solid #1e2a3a;
-        border-top-color: #2196f3;
-        animation: pdfSpin 0.8s linear infinite;
-      }
-      #pdfReadyIcon {
-        display: none;
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        background: rgba(16, 185, 129, 0.15);
-        border: 2px solid #10b981;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-      }
-      @keyframes pdfSpin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      #pdfProgressTitle {
-        font-size: 16px;
-        font-weight: 800;
-        color: #f0f4f8;
-      }
-      #pdfProgressSteps {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        width: 100%;
-      }
-      .pdf-step {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 13px;
-        color: #6b7a8d;
-        font-weight: 600;
-        transition: color 0.3s;
-      }
-      .pdf-step.active {
-        color: #2196f3;
-      }
-      .pdf-step.done {
-        color: #10b981;
-      }
-      .pdf-step-dot {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        flex-shrink: 0;
-        border: 2px solid #263347;
-        background: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 9px;
-        transition: all 0.3s;
-      }
-      .pdf-step.active .pdf-step-dot {
-        border-color: #2196f3;
-        background: rgba(33, 150, 243, 0.15);
-        animation: pdfPulse 1s infinite;
-      }
-      .pdf-step.done .pdf-step-dot {
-        border-color: #10b981;
-        background: #10b981;
-        color: #fff;
-        font-size: 10px;
-      }
-      @keyframes pdfPulse {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4);
-        }
-        50% {
-          box-shadow: 0 0 0 5px rgba(33, 150, 243, 0);
-        }
-      }
-      #pdfProgressBar {
-        width: 100%;
-        height: 4px;
-        background: #1e2a3a;
-        border-radius: 2px;
-        overflow: hidden;
-      }
-      #pdfProgressBarFill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #2196f3, #10b981);
-        border-radius: 2px;
-        transition: width 0.6s ease;
-      }
-
-      /* ── Section 4 sticky action bar ── */
-      .s4-topbar {
-        position: sticky;
-        top: calc(var(--topbar-h) + var(--stepper-h));
-        z-index: 70;
-        background: var(--card);
-        border-bottom: 1px solid var(--border);
-        padding: 10px 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: 0 -24px 16px;
-      }
-      /* Desktop: hide the separate bar, inject button into stepper via CSS trick */
-      @media (min-width: 769px) {
-        .s4-topbar {
-          display: none;
-        }
-        /* stepper respects sidebar on right */
-        .stepper-strip {
-          right: var(--sidebar-w);
-          left: 0;
-          width: auto;
-        }
-      }
-      @media (max-width: 768px) {
-        .s4-topbar {
-          top: 108px;
-          margin: 0 -14px 14px;
-          padding: 10px 14px;
-        }
-        #s4StepperBtn {
-          display: none !important;
-        }
-        .c8-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-        }
-        .c8-grid > div:first-child {
-          position: static !important;
-        }
-      }
-      #pdfReadyActions {
-        display: none;
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
-      }
-      #pdfReadyActions .pdf-action-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: #10b981;
-        text-align: center;
-      }
-      #pdfReadyActions .pdf-action-subtitle {
-        font-size: 11px;
-        color: #6b7a8d;
-        text-align: center;
-        margin-top: -6px;
-      }
-      .pdf-action-btn {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 11px 16px;
-        border-radius: 10px;
-        border: none;
-        font-family: "Heebo", sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        width: 100%;
-        text-align: right;
-        transition: all 0.15s;
-      }
-      .pdf-action-btn-open {
-        background: #2196f3;
-        color: #fff;
-      }
-      .pdf-action-btn-open:hover {
-        background: #1565c0;
-      }
-      .pdf-action-btn-share {
-        background: rgba(37, 211, 102, 0.15);
-        border: 1px solid rgba(37, 211, 102, 0.3);
-        color: #25d366;
-      }
-      .pdf-action-btn-share:hover {
-        background: rgba(37, 211, 102, 0.25);
-      }
-      .pdf-action-btn-copy {
-        background: var(--card);
-        border: 1px solid var(--border2);
-        color: var(--muted);
-      }
-      .pdf-action-btn-copy:hover {
-        color: var(--text);
-        border-color: var(--subtle);
-      }
-      .pdf-action-btn-close {
-        background: transparent;
-        border: 1px solid var(--border);
-        color: var(--subtle);
-        font-size: 12px;
-      }
-      .pdf-action-btn-close:hover {
-        color: var(--muted);
-      }
-      .pdf-action-btn .btn-icon {
-        font-size: 18px;
-        flex-shrink: 0;
-      }
-      .pdf-action-btn .btn-label {
-        flex: 1;
-      }
-
-      /* no-print */
-      .no-print {
-      }
-
-      
-      /* ══════════════════════════════
-   IMAGE EDITOR MODAL
-══════════════════════════════ */
-      .img-editor-modal {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(3, 7, 18, 0.9);
-        z-index: 12000;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .img-editor-shell {
-        width: min(1180px, 96vw);
-        max-height: 92vh;
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 16px;
-      }
-      .img-editor-panel,
-      .img-editor-stage {
-        background: #111827;
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-      }
-      .img-editor-panel {
-        padding: 16px;
-        overflow: auto;
-      }
-      .img-editor-stage {
-        padding: 14px;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-      }
-      .img-editor-title {
-        font-size: 15px;
-        font-weight: 800;
-        margin-bottom: 4px;
-      }
-      .img-editor-sub {
-        font-size: 12px;
-        color: var(--muted);
-        margin-bottom: 14px;
-      }
-      .editor-group {
-        margin-bottom: 14px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid var(--border);
-      }
-      .editor-group:last-child {
-        margin-bottom: 0;
-        padding-bottom: 0;
-        border-bottom: none;
-      }
-      .editor-toolbar {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-      .editor-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--border2);
-        background: rgba(255, 255, 255, 0.04);
-        color: var(--text);
-        font:
-          700 12px "Heebo",
-          sans-serif;
-        cursor: pointer;
-        transition: all 0.18s;
-      }
-      .editor-btn:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-      }
-      .editor-btn.active {
-        border-color: var(--accent);
-        background: var(--accent-dim);
-        color: var(--accent);
-      }
-      .editor-swatches {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 8px;
-        margin-top: 10px;
-      }
-      .editor-swatch {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 12px;
-        border: 2px solid transparent;
-        cursor: pointer;
-      }
-      .editor-swatch.active {
-        border-color: #fff;
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
-      }
-      .editor-range {
-        width: 100%;
-      }
-      .editor-stage-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-      }
-      .editor-stage-actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .editor-canvas-wrap {
-        flex: 1;
-        min-height: 0;
-        height: 100%;
-        max-height: calc(92vh - 170px);
-        background: #030712;
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        cursor: default;
-        touch-action: none;
-      }
-      .editor-canvas-inner {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transform-origin: center center;
-        will-change: transform;
-      }
-      #editorCanvas {
-        display: block;
-        max-width: none;
-        background: #0b1220;
-        border-radius: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        cursor: crosshair;
-        touch-action: none;
-      }
-      .editor-zoom-badge {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        background: rgba(0, 0, 0, 0.55);
-        color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 3px 9px;
-        border-radius: 20px;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.4s;
-        z-index: 5;
-        font-family: "Heebo", sans-serif;
-      }
-      .editor-zoom-badge.show {
-        opacity: 1;
-      }
-      .editor-meta {
-        font-size: 11px;
-        color: var(--muted);
-      }
-      .editor-small-label {
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--muted);
-        display: block;
-        margin-bottom: 6px;
-      }
-      .editor-inline-actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 8px;
-      }
-      .editor-help {
-        font-size: 11px;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-      .editor-more-wrap {
-        position: relative;
-      }
-      .editor-more-menu {
-        display: none;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 8px;
-      }
-      .editor-more-wrap.open .editor-more-menu {
-        display: flex;
-      }
-      .editor-btn.is-mobile-primary {
-        display: none;
-      }
-      .editor-btn.is-mobile-more {
-        display: inline-flex;
-      }
-      .editor-more-toggle {
-        display: none;
-      }
-
-      
-      </style>
+    </style>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import {
@@ -2859,7 +2322,6 @@
         where,
         serverTimestamp,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-      import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 
       const _app = initializeApp({
         apiKey: "AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
@@ -2871,8 +2333,6 @@
       });
       const _auth = getAuth(_app);
       const _db = getFirestore(_app);
-      const _functions = getFunctions(_app, 'us-central1');
-      window._callFn = (name, data, opts) => httpsCallable(_functions, name, opts || {})(data);
 
       // ── Auth state ──
       onAuthStateChanged(_auth, async (user) => {
@@ -2886,30 +2346,23 @@
             const prof = await window._FB.getProfile(user.uid);
             if (prof) {
               window._profile = prof;
-              // Populate APPRAISER object for report header (via window to cross module boundary)
-              const _A = window.APPRAISER || {};
-              _A.nameHe = prof.nameHe || prof.fullName || "";
-              _A.nameEn = prof.nameEn || "";
-              _A.title = prof.title || "שמאי רכוש";
-              _A.phone = prof.phone || "";
-              _A.email = prof.profEmail || prof.email || "";
-              _A.city = prof.city || "";
-              _A.address = prof.address || "";
-              _A.license = prof.license || "";
-              _A.website = prof.website || "";
-              _A.logoInitials = prof.logoLetters || "YA";
-              _A.logoColor = prof.logoColor || "#f59e0b";
-              _A.logoImageUrl = prof.logoImageData || null;
-              _A.logoMode     = prof.logoType    || "initials";
-              _A.logoSizePx   = prof.logoSizePx   || 70;
-              _A.logoLayout   = prof.logoLayout    || 'A';
-              _A.signatureUrl = prof.signature     || null;
-              _A.declaration  = prof.declaration   || '';
-              _A.education    = prof.education     || '';
-              _A.closingText  = prof.closingText   || '';
-              if (window.APPRAISER) Object.assign(window.APPRAISER, _A);
+              // Populate APPRAISER object for report header
+              APPRAISER.nameHe = prof.nameHe || prof.fullName || "";
+              APPRAISER.nameEn = prof.nameEn || "";
+              APPRAISER.title = prof.title || "שמאי רכוש";
+              APPRAISER.phone = prof.phone || "";
+              APPRAISER.email = prof.profEmail || prof.email || "";
+              APPRAISER.city = prof.city || "";
+              APPRAISER.address = prof.address || "";
+              APPRAISER.license = prof.license || "";
+              APPRAISER.website = prof.website || "";
+              APPRAISER.logoInitials = prof.logoLetters || "YA";
+              APPRAISER.logoColor = prof.logoColor || "#f59e0b";
+              APPRAISER.logoImageUrl = prof.logoImageData || null;
+              APPRAISER.logoMode = prof.logoType || "initials";
+              APPRAISER.signatureUrl = prof.signature || null;
               // טעינת נושא צבע דוח
-              if (prof.reportTheme && window.STATE) window.STATE.reportTheme = prof.reportTheme;
+              if (prof.reportTheme) STATE.reportTheme = prof.reportTheme;
             }
           } catch (e) {
             console.warn("profile load error", e);
@@ -2996,101 +2449,7 @@
         }
       });
 
-
-      // ══════════════════════════════════════════════
-      // STORAGE — Firebase Storage helpers
-      // ══════════════════════════════════════════════
-      function storagePath(typeId, filename) {
-        return `rechushPhotos/${window._currentUser.uid}/${currentCaseId}/${typeId}/${filename}`;
-      }
-      async function uploadToStorage(typeId, blob, filename) {
-        const ref = storage.ref(storagePath(typeId, filename));
-        await ref.put(blob);
-        return await ref.getDownloadURL();
-      }
-      async function deleteFromStorage(url) {
-        try { await storage.refFromURL(url).delete(); } catch(e) {}
-      }
-      function dataUrlToBlob(dataUrl) {
-        const arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]); let n = bstr.length;
-        const u8 = new Uint8Array(n);
-        while(n--) u8[n] = bstr.charCodeAt(n);
-        return new Blob([u8], { type: mime });
-      }
-      function compressDataUrl(dataUrl, maxPx=1200, quality=0.78) {
-        return new Promise(resolve => {
-          const img = new Image();
-          img.onload = () => {
-            let w = img.width, h = img.height;
-            if(w > maxPx || h > maxPx) {
-              if(w > h) { h = Math.round(h*maxPx/w); w = maxPx; }
-              else { w = Math.round(w*maxPx/h); h = maxPx; }
-            }
-            const cv = document.createElement('canvas');
-            cv.width = w; cv.height = h;
-            cv.getContext('2d').drawImage(img, 0, 0, w, h);
-            resolve(cv.toDataURL('image/jpeg', quality));
-          };
-          img.onerror = () => resolve(dataUrl);
-          img.src = dataUrl;
-        });
-      }
-
-      // ══════════════════════════════════════════════
-      // VOICE INPUT — הקלטה קולית
-      // ══════════════════════════════════════════════
-      let _voiceRecognition = null, _voiceTarget = null, _voiceBtn = null;
-      function _voiceToast(msg){
-        const t = document.createElement('div');
-        t.textContent = msg;
-        t.style.cssText = 'position:fixed;bottom:80px;right:20px;background:#1f2937;color:#f9fafb;padding:10px 18px;border-radius:10px;font-family:Heebo,sans-serif;font-size:13px;font-weight:700;z-index:9999;border:1px solid #374151;';
-        document.body.appendChild(t); setTimeout(()=>t.remove(), 3000);
-      }
-      function toggleVoice(targetId, btn){
-        if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){
-          _voiceToast('הדפדפן לא תומך בהקלטה קולית — נסה Chrome'); return;
-        }
-        if(_voiceRecognition && _voiceTarget === targetId){ _voiceRecognition.stop(); return; }
-        if(_voiceRecognition) _voiceRecognition.stop();
-        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        _voiceRecognition = new SpeechRec();
-        _voiceRecognition.lang = 'he-IL';
-        _voiceRecognition.continuous = true;
-        _voiceRecognition.interimResults = true;
-        _voiceTarget = targetId; _voiceBtn = btn;
-        const textarea = document.getElementById(targetId);
-        const baseText = textarea ? textarea.value : '';
-        _voiceRecognition.onstart = () => {
-          btn.classList.add('recording'); btn.innerHTML = '<span class="mic-icon">⏹️</span> עצור';
-        };
-        _voiceRecognition.onresult = (e) => {
-          let final = '', interim = '';
-          for(let i = e.resultIndex; i < e.results.length; i++){
-            if(e.results[i].isFinal) final += e.results[i][0].transcript;
-            else interim += e.results[i][0].transcript;
-          }
-          if(!textarea) return;
-          if(final){ const sep = baseText && !baseText.endsWith('\n') ? ' ' : '';
-            textarea.value = baseText + sep + final + (interim ? '...' : '');
-          } else { textarea.value = baseText + (interim ? ' '+interim : ''); }
-          textarea.dispatchEvent(new Event('input'));
-        };
-        _voiceRecognition.onend = () => {
-          if(_voiceBtn){ _voiceBtn.classList.remove('recording'); _voiceBtn.innerHTML = '<span class="mic-icon">🎙️</span> הקלט'; }
-          _voiceRecognition = null; _voiceTarget = null; _voiceBtn = null;
-        };
-        _voiceRecognition.onerror = (e) => {
-          _voiceToast('שגיאת הקלטה: ' + e.error);
-          if(_voiceBtn){ _voiceBtn.classList.remove('recording'); _voiceBtn.innerHTML = '<span class="mic-icon">🎙️</span> הקלט'; }
-          _voiceRecognition = null;
-        };
-        _voiceRecognition.start();
-      }
-      window.toggleVoice = toggleVoice;
-
       // ── Exposed API ──
-
       window._FB = {
         login: (e, p) => signInWithEmailAndPassword(_auth, e, p),
         logout: () => signOut(_auth),
@@ -3201,37 +2560,25 @@
         }
       };
     </script>
-    <!-- Firebase compat SDK — Storage + Functions for PDF + photo upload -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
-  <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyCkhNhUHWLAf6G45nIH1wIZeE-rGQFrwgM",
-      authDomain: "omdan-property.firebaseapp.com",
-      projectId: "omdan-property",
-      storageBucket: "omdan-property.firebasestorage.app",
-      messagingSenderId: "1028931108038",
-      appId: "1:1028931108038:web:01731ca2a152b700ea6bc7"
-    });
-    const storage = firebase.storage();
-  </script>
-</head>
+  </head>
   <body>
     <!-- Loading overlay — shown during Firebase init -->
     <div id="formLoader">
-      <div class="loader-logo-wrap">
-        <img src="../assets/img/omda-icon.png" alt="" onerror="this.style.display='none'">
-        <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="36" cy="36" r="32" stroke="rgba(245,158,11,0.15)" stroke-width="3"/>
-          <circle cx="36" cy="36" r="32" stroke="#f59e0b" stroke-width="3"
-            stroke-linecap="round" stroke-dasharray="50 150"
-            style="transform-origin:center;animation:caseLoaderSpin 1.1s linear infinite;"/>
-        </svg>
-      </div>
-      <img src="../assets/img/omda-logo.png" alt="OMDA רכוש" style="height:20px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.7;" onerror="this.style.display='none'">
-      <div class="loader-text">טוען מערכת...</div>
-    </div>
+      <img
+        src="../assets/img/omda-icon.png"
+        alt=""
+        style="height: 32px; width: 32px; object-fit: contain"
+      />
+      <img
+        src="../assets/img/omda-logo.png"
+        alt="OMDA רכוש"
+        style="
+          height: 26px;
+          object-fit: contain;
+          filter: brightness(0) invert(1);
+        "
+      />
+      <div class="loader-spinner"></div>
       <div class="loader-text">טוען מערכת...</div>
     </div>
 
@@ -3754,13 +3101,6 @@
               <div class="ns">פינוי, אחסון, בדיקות</div>
             </div>
           </div>
-          <div class="nav-item" data-card="9" onclick="goCard(9)">
-            <span class="ni">📷</span>
-            <div>
-              <div class="nt">תמונות</div>
-              <div class="ns">תיעוד ביקור</div>
-            </div>
-          </div>
           <div
             class="nav-item"
             data-card="12"
@@ -3771,6 +3111,13 @@
             <div>
               <div class="nt">החלטת שמאי</div>
               <div class="ns">קשר סיבתי וסיכום</div>
+            </div>
+          </div>
+          <div class="nav-item" data-card="9" onclick="goCard(9)">
+            <span class="ni">📷</span>
+            <div>
+              <div class="nt">תמונות</div>
+              <div class="ns">תיעוד ביקור</div>
             </div>
           </div>
         </div>
@@ -6623,13 +5970,8 @@
         logoColor: "#f59e0b",
         logoTextColor: "#0f1117",
         logoMode: "initials",
-        logoSizePx: 70,
-        logoLayout: 'A',
         logoImageUrl: null,
         signatureUrl: null,
-        declaration: '',
-        education: '',
-        closingText: '',
         fieldDefaults: [],
         textSnippets: [],
       };
@@ -7885,9 +7227,19 @@
 
         let html = `<div style="margin-bottom:16px;">
     <label class="label" style="margin-bottom:8px;display:block;">סוג נכס</label>
-    <select onchange="STATE.property.type=this.value;renderCard(1)" class="prop-input" style="width:100%;">
-      ${typeOptions.map(o => `<option value="${o.v}" ${p.type === o.v ? 'selected' : ''}>${o.l}</option>`).join('')}
-    </select>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${typeOptions
+        .map(
+          (o) => `
+        <button onclick="STATE.property.type='${o.v}';renderCard(1)" style="
+          padding:8px 16px;border-radius:8px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;
+          background:${p.type === o.v ? "rgba(245,158,11,.15)" : "var(--primary2)"};
+          border:${p.type === o.v ? "1.5px solid var(--accent)" : "1.5px solid var(--border2)"};
+          color:${p.type === o.v ? "var(--accent)" : "var(--muted)"};
+        ">${o.l}</button>`,
+        )
+        .join("")}
+    </div>
   </div>
   <div class="grid2">`;
 
@@ -7958,70 +7310,6 @@
       // ══════════════════════════════════════════════════
       // CARD 3 – INSURANCE
       // ══════════════════════════════════════════════════
-      /* ── Insurance extensions toggle ── */
-      (function(){
-        var _EXT_MAP = {
-          extNaturalDisaster: {key:'extNaturalDisaster', emoji:'🌪️', label:'נזקי טבע'},
-          extAllRisks:        {key:'extAllRisks',        emoji:'🔐', label:'כל הסיכונים'},
-          extThirdParty:      {key:'thirdParty',         emoji:'🛡️', label:"צד ג'"},
-          extLossOfProfits:   {key:'lossOfProfits',      emoji:'📉', label:'אובדן רווחים'}
-        };
-
-        window._insExtRefreshTags = function() {
-          var tags = document.getElementById('ins-ext-tags'); if(!tags) return;
-          var html = '', anyOn = false;
-          Object.values(_EXT_MAP).forEach(function(m){
-            if(STATE.insurance[m.key]){
-              anyOn = true;
-              html += '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.35);color:var(--accent);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">'+m.emoji+' '+m.label+'</span>';
-            }
-          });
-          if(STATE.insurance.extOther && STATE.insurance.extOtherText){
-            anyOn = true;
-            html += '<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.35);color:var(--accent);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">✏️ '+STATE.insurance.extOtherText+'</span>';
-          }
-          tags.innerHTML = html;
-          tags.style.padding = anyOn ? '8px 10px' : '0 10px';
-          tags.style.borderTop = anyOn ? '1px solid var(--primary3)' : 'none';
-        };
-
-        window._insExtToggle = function(row, extId) {
-          if(extId === 'extOtherCheck'){
-            var on = !STATE.insurance.extOther;
-            STATE.insurance.extOther = on;
-            row.classList.toggle('_ins-ext-on', on);
-            var box = row.querySelector('._ins-ext-box');
-            if(box) box.innerHTML = on ? '<span style="color:var(--accent);font-weight:900">✓</span>' : '';
-            var inp = document.getElementById('ins-ext-other-input');
-            if(inp){ inp.style.opacity = on?'1':'0.35'; inp.style.pointerEvents = on?'auto':'none'; if(on) inp.focus(); }
-            _insExtRefreshTags(); return;
-          }
-          var map = _EXT_MAP[extId]; if(!map) return;
-          var on = !STATE.insurance[map.key];
-          STATE.insurance[map.key] = on;
-          row.classList.toggle('_ins-ext-on', on);
-          var box = row.querySelector('._ins-ext-box');
-          if(box) box.innerHTML = on ? '<span style="color:var(--accent);font-weight:900">✓</span>' : '';
-          _insExtRefreshTags();
-        };
-
-        window._insExtTogglePanel = function() {
-          var body = document.getElementById('ins-ext-body');
-          var chevron = document.getElementById('ins-ext-chevron');
-          if(!body) return;
-          var isOpen = body.style.display !== 'none';
-          body.style.display = isOpen ? 'none' : 'block';
-          if(chevron) chevron.textContent = isOpen ? '+' : '−';
-        };
-      })();
-
-      /* ── CSS for selected extension rows ── */
-      (function(){
-        var s = document.createElement('style');
-        s.textContent = '._ins-ext-row{color:var(--text);} ._ins-ext-row:hover{background:var(--primary3);} ._ins-ext-on{background:rgba(245,158,11,0.07)!important;} ._ins-ext-on ._ins-ext-box{border-color:var(--accent)!important;}';
-        document.head.appendChild(s);
-      })();
-
       function renderCard3() {
         if (mode === "tax")
           return `<div class="note note-blue">מסלול מס רכוש – אין פרטי ביטוח רלוונטיים לשלב זה.</div>`;
@@ -8095,90 +7383,35 @@
 
     <!-- צד שמאל — כיסוי, הרחבות ואפשרויות -->
     <div class="ins-header-col">
-      <!-- שורה: סוג כיסוי + הרחבות זה לצד זה -->
-      <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;align-items:start;">
-
-        <!-- סוג כיסוי -->
-        <div>
-          <div class="label" style="color:var(--accent);font-size:12px;font-weight:700;margin-bottom:8px;">📋 סוג כיסוי</div>
-          <div style="display:flex;flex-direction:column;gap:8px;padding:10px 12px;background:var(--primary2);border:1.5px solid var(--border2);border-radius:10px;min-width:130px;">
-            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;">
-              <input type="checkbox"
-                id="ins-cb-structure"
-                ${cvg==='structure'||cvg==='both'?'checked':''}
-                onchange="(function(c){var hasCont=STATE.insurance.coverageType==='contents'||STATE.insurance.coverageType==='both';STATE.insurance.coverageType=c.checked?(hasCont?'both':'structure'):(hasCont?'contents':'none');var badge=document.getElementById('cvg-badge');if(badge){var cv=STATE.insurance.coverageType;badge.textContent=cv==='both'?'✅ כיסוי מלא':cv==='structure'?'🏠 מבנה בלבד':cv==='contents'?'🛋️ תכולה בלבד':'⚠️ לא נבחר';badge.style.color=cv==='both'?'var(--green)':cv?'var(--accent)':'var(--subtle)';}})(this)"
-                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-              🏠 מבנה
-            </label>
-            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;">
-              <input type="checkbox"
-                id="ins-cb-contents"
-                ${cvg==='contents'||cvg==='both'?'checked':''}
-                onchange="(function(c){var hasStr=STATE.insurance.coverageType==='structure'||STATE.insurance.coverageType==='both';STATE.insurance.coverageType=c.checked?(hasStr?'both':'contents'):(hasStr?'structure':'none');var badge=document.getElementById('cvg-badge');if(badge){var cv=STATE.insurance.coverageType;badge.textContent=cv==='both'?'✅ כיסוי מלא':cv==='structure'?'🏠 מבנה בלבד':cv==='contents'?'🛋️ תכולה בלבד':'⚠️ לא נבחר';badge.style.color=cv==='both'?'var(--green)':cv?'var(--accent)':'var(--subtle)';}})(this)"
-                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-              🛋️ תכולה
-            </label>
-            <div id="cvg-badge" style="font-size:11px;font-weight:700;padding:3px 8px;background:var(--primary3);border-radius:6px;color:${cvg==='both'?'var(--green)':cvg?'var(--accent)':'var(--subtle)'};">
-              ${cvg==='both'?'✅ כיסוי מלא':cvg==='structure'?'🏠 מבנה בלבד':cvg==='contents'?'🛋️ תכולה בלבד':'⚠️ לא נבחר'}
-            </div>
-          </div>
-        </div>
-
-        <!-- הרחבות בפוליסה — מתקפל, דוחף תוכן למטה -->
-        <div>
-          <div class="label" style="font-size:12px;font-weight:700;margin-bottom:8px;opacity:0;">_</div>
-          <div style="background:var(--primary2);border:1.5px solid var(--border2);border-radius:10px;">
-            <!-- כותרת לחיצה -->
-            <div onclick="_insExtTogglePanel()" id="ins-ext-header" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;user-select:none;border-radius:10px;transition:background 0.12s;" onmouseover="this.style.background='var(--primary3)'" onmouseout="this.style.background='transparent'">
-              <span style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">📋 הרחבות בפוליסה</span>
-              <span id="ins-ext-chevron" style="font-size:15px;color:var(--subtle);line-height:1;">${(ins.extNaturalDisaster||ins.extAllRisks||ins.thirdParty||ins.lossOfProfits||ins.extOther)?'−':'+'}</span>
-            </div>
-            <!-- גוף מתקפל — גובה אוטומטי, לא מרחף -->
-            <div id="ins-ext-body" style="display:${(ins.extNaturalDisaster||ins.extAllRisks||ins.thirdParty||ins.lossOfProfits||ins.extOther)?'block':'none'};">
-              <div style="border-top:1px solid var(--primary3);">
-                <label onclick="_insExtToggle(this,'extNaturalDisaster')" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:600;padding:9px 12px;transition:background 0.12s;border-bottom:1px solid var(--primary3);" class="_ins-ext-row ${ins.extNaturalDisaster?'_ins-ext-on':''}">
-                  <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all 0.15s;" class="_ins-ext-box">${ins.extNaturalDisaster?'<span style=\'color:var(--accent);font-weight:900\'>✓</span>':''}</span>
-                  🌪️ נזקי טבע
-                </label>
-                <label onclick="_insExtToggle(this,'extAllRisks')" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:600;padding:9px 12px;transition:background 0.12s;border-bottom:1px solid var(--primary3);" class="_ins-ext-row ${ins.extAllRisks?'_ins-ext-on':''}">
-                  <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all 0.15s;" class="_ins-ext-box">${ins.extAllRisks?'<span style=\'color:var(--accent);font-weight:900\'>✓</span>':''}</span>
-                  🔐 כל הסיכונים
-                </label>
-                <label onclick="_insExtToggle(this,'extThirdParty')" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:600;padding:9px 12px;transition:background 0.12s;border-bottom:1px solid var(--primary3);" class="_ins-ext-row ${ins.thirdParty?'_ins-ext-on':''}">
-                  <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all 0.15s;" class="_ins-ext-box">${ins.thirdParty?'<span style=\'color:var(--accent);font-weight:900\'>✓</span>':''}</span>
-                  🛡️ צד ג'
-                </label>
-                <label onclick="_insExtToggle(this,'extLossOfProfits')" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:600;padding:9px 12px;transition:background 0.12s;border-bottom:1px solid var(--primary3);" class="_ins-ext-row ${ins.lossOfProfits?'_ins-ext-on':''}">
-                  <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all 0.15s;" class="_ins-ext-box">${ins.lossOfProfits?'<span style=\'color:var(--accent);font-weight:900\'>✓</span>':''}</span>
-                  📉 אובדן רווחים
-                </label>
-                <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;">
-                  <label onclick="_insExtToggle(this,'extOtherCheck')" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;white-space:nowrap;" class="_ins-ext-row ${ins.extOther?'_ins-ext-on':''}">
-                    <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all 0.15s;" class="_ins-ext-box">${ins.extOther?'<span style=\'color:var(--accent);font-weight:900\'>✓</span>':''}</span>
-                    ✏️ אחר
-                  </label>
-                  <input id="ins-ext-other-input" type="text" placeholder="פרט כאן..." value="${esc(ins.extOtherText||'')}" oninput="STATE.insurance.extOtherText=this.value;_insExtRefreshTags()" style="flex:1;background:var(--primary3);border:1px solid var(--border2);border-radius:7px;padding:5px 10px;color:var(--text);font-size:12px;font-family:'Heebo',sans-serif;outline:none;${ins.extOther?'':'opacity:0.35;pointer-events:none;'}">
-                </div>
-              </div>
-            </div>
-            <!-- תגיות נבחרים -->
-            <div id="ins-ext-tags" style="display:flex;flex-wrap:wrap;gap:5px;padding:${(ins.extNaturalDisaster||ins.extAllRisks||ins.thirdParty||ins.lossOfProfits||ins.extOther)?'8px 10px':'0 10px'};border-top:${(ins.extNaturalDisaster||ins.extAllRisks||ins.thirdParty||ins.lossOfProfits||ins.extOther)?'1px solid var(--primary3)':'none'};min-height:0;">
-              ${ins.extNaturalDisaster?'<span style="display:inline-flex;align-items:center;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.35);color:var(--accent);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">🌪️ נזקי טבע</span>':''}
-              ${ins.extAllRisks?'<span style="display:inline-flex;align-items:center;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.35);color:var(--accent);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">🔐 כל הסיכונים</span>':''}
-              ${ins.thirdParty?'<span style="display:inline-flex;align-items:center;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.35);color:var(--accent);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">🛡️ צד ג\'</span>':''}
-              ${ins.lossOfProfits?'<span style="display:inline-flex;align-items:center;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.35);color:var(--accent);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">📉 אובדן רווחים</span>':''}
-              ${ins.extOther&&ins.extOtherText?'<span style="display:inline-flex;align-items:center;background:rgba(245,158,11,0.13);border:1px solid rgba(245,158,11,0.35);color:var(--accent);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">✏️ '+esc(ins.extOtherText)+'</span>':''}
-            </div>
-          </div>
+      <div>
+        <div class="label" style="color:var(--accent);font-size:12px;font-weight:700;margin-bottom:10px;">📋 סוג כיסוי</div>
+        <div class="pill-group">
+          ${[
+            { v: "structure", l: "מבנה בלבד" },
+            { v: "contents", l: "תכולה בלבד" },
+            { v: "both", l: "מבנה + תכולה" },
+          ]
+            .map(
+              (o) =>
+                `<button class="pill ${cvg === o.v ? "active" : ""}" onclick="STATE.insurance.coverageType='${o.v}';renderCard(3)">${o.l}</button>`,
+            )
+            .join("")}
         </div>
       </div>
-
-      <!-- כפתורי chip + נוט שרברב -->
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div>
+        <div class="label" style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:10px;">הרחבות בפוליסה</div>
+        <div class="flex flex-wrap gap8">
+          <button class="chip ${ins.extNaturalDisaster ? "checked" : ""}" onclick="STATE.insurance.extNaturalDisaster=!STATE.insurance.extNaturalDisaster;this.classList.toggle('checked')">🌪️ נזקי טבע</button>
+          <button class="chip ${ins.extAllRisks ? "checked" : ""}" onclick="STATE.insurance.extAllRisks=!STATE.insurance.extAllRisks;this.classList.toggle('checked')">🔐 כל הסיכונים</button>
+          <button class="chip ${ins.thirdParty ? "checked" : ""}" onclick="STATE.insurance.thirdParty=!STATE.insurance.thirdParty;this.classList.toggle('checked')">צד ג'</button>
+          <button class="chip ${ins.lossOfProfits ? "checked" : ""}" onclick="STATE.insurance.lossOfProfits=!STATE.insurance.lossOfProfits;this.classList.toggle('checked')">אובדן רווחים</button>
+        </div>
+      </div>
+      <div style="margin-top:auto;padding-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
         <button class="chip ${ins.vatBiz ? "checked" : ""}" onclick="STATE.insurance.vatBiz=!STATE.insurance.vatBiz;this.classList.toggle('checked')">עסק מקזז מע"מ</button>
-        ${isIns ? `<button id="ins-plumber-btn" class="chip ${ins.arrangementPlumber ? "checked" : ""}" onclick="STATE.insurance.arrangementPlumber=!STATE.insurance.arrangementPlumber;this.classList.toggle('checked');var n=document.getElementById('ins-plumber-note');if(n){n.style.display=STATE.insurance.arrangementPlumber?'block':'none';}">שרברב הסדר</button>` : ""}
+        ${isIns ? `<button class="chip ${ins.arrangementPlumber ? "checked" : ""}" onclick="STATE.insurance.arrangementPlumber=!STATE.insurance.arrangementPlumber;renderCard(3)">שרברב הסדר</button>` : ""}
       </div>
-      <div id="ins-plumber-note" class="note" style="margin-top:2px;${ins.arrangementPlumber && isIns ? '' : 'display:none;'}">שרברב הסדר – סעיף התיקון הישיר יירשם ב-BOQ ללא תמחור (₪0).</div>
+      ${ins.arrangementPlumber && isIns ? `<div class="note" style="margin-top:6px;">שרברב הסדר – סעיף התיקון הישיר יירשם ב-BOQ ללא תמחור (₪0).</div>` : ""}
     </div>
   </div>
 
@@ -8244,11 +7477,11 @@
         <button class="pill ${STATE.taxSubMode === "business" ? "active-green" : ""}" onclick="STATE.taxSubMode='business';renderCard(4);updateTaxNavItems()">🏢 עסקי</button>
       </div>
     </div>`;
-          html += `<div class="field mb16"><label class="label">סיווג הפגיעה (SubType) *</label>
-            <select onchange="STATE.event.eventSubType=this.value">
-              <option value="">בחר סיווג...</option>
-              ${EVENT_SUBTYPES.tax.map(s => `<option value="${s}" ${ev.eventSubType === s ? 'selected' : ''}>${s}</option>`).join('')}
-            </select></div>`;
+          html += `<div class="field mb16"><label class="label">סיווג הפגיעה (SubType) *</label><div class="pill-group" id="taxSubPills">`;
+          EVENT_SUBTYPES.tax.forEach((s) => {
+            html += `<button class="pill ${ev.eventSubType === s ? "active-green" : ""}" onclick="STATE.event.eventSubType='${s}';refreshPills('taxSubPills','${s}','active-green')">${s}</button>`;
+          });
+          html += `</div></div>`;
           html += `<div class="field span2"><label class="label">תיאור קצר של סוג הפגיעה</label><input type="text" value="${esc(ev.eventSubTypeDesc || "")}" oninput="STATE.event.eventSubTypeDesc=this.value" placeholder="תיאור חופשי..."></div>`;
         } else {
           html += `<label class="label">סוג האירוע *</label><div class="event-grid mb16" id="eventGrid">`;
@@ -8259,29 +7492,26 @@
           if (ev.eventType) {
             const subs = EVENT_SUBTYPES[ev.eventType] || [];
             if (subs.length) {
-              if (subs.length <= 2) {
-                html += `<div class="field mb16"><label class="label">תת-סיווג</label><div class="pill-group" id="subPills">`;
-                subs.forEach((s) => {
-                  html += `<button class="pill ${ev.eventSubType === s ? "active" : ""}" onclick="STATE.event.eventSubType='${s}';refreshPills('subPills','${s}')">${s}</button>`;
-                });
-                html += `</div></div>`;
-              } else {
-                html += `<div class="field mb16"><label class="label">תת-סיווג</label>
-                  <select onchange="STATE.event.eventSubType=this.value;renderCard(4)">
-                    <option value="">בחר תת-סיווג...</option>
-                    ${subs.map(s => `<option value="${s}" ${ev.eventSubType === s ? 'selected' : ''}>${s}</option>`).join('')}
-                  </select></div>`;
-              }
+              html += `<div class="field mb16"><label class="label">תת-סיווג</label><div class="pill-group" id="subPills">`;
+              subs.forEach((s) => {
+                html += `<button class="pill ${ev.eventSubType === s ? "active" : ""}" onclick="STATE.event.eventSubType='${s}';refreshPills('subPills','${s}')">${s}</button>`;
+              });
+              html += `</div></div>`;
             }
           }
           if (ev.eventType === "water") {
-            html += `<div class="field mb16"><label class="label">שרברב טיפול</label>
-        <select onchange="STATE.event.plumberType=this.value">
-          <option value="">בחר...</option>
-          <option value="arrangement" ${ev.plumberType==='arrangement'?'selected':''}>שרברב הסדר (ביטוח)</option>
-          <option value="private" ${ev.plumberType==='private'?'selected':''}>שרברב פרטי</option>
-          <option value="unknown" ${ev.plumberType==='unknown'?'selected':''}>לא ידוע</option>
-        </select></div>`;
+            html += `<div class="field mb16"><label class="label">שרברב טיפול</label><div class="pill-group" id="plumberPills">
+        ${[
+          { v: "arrangement", l: "שרברב הסדר (ביטוח)" },
+          { v: "private", l: "שרברב פרטי" },
+          { v: "unknown", l: "לא ידוע" },
+        ]
+          .map(
+            (o) =>
+              `<button class="pill ${ev.plumberType === o.v ? "active" : ""}" onclick="STATE.event.plumberType='${o.v}';refreshPills('plumberPills','${o.v}')">${o.l}</button>`,
+          )
+          .join("")}
+      </div></div>`;
           }
         }
         html += `<div class="divider"></div>`;
@@ -8368,8 +7598,7 @@
         }
         html += `<div class="divider"></div>
   <div class="field"><label class="label">הצהרת שמאי – היקף הבדיקה (אוטומטי, ניתן לעריכה)</label>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:4px;"><button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-decl',this)"><span class="mic-icon">🎙️</span> הקלט</button></div>
-    <textarea id="ta-decl" oninput="STATE.event.appraiserDeclaration=this.value" rows="4">${esc(ev.appraiserDeclaration || genAppraiserDeclarationText())}</textarea>
+    <textarea oninput="STATE.event.appraiserDeclaration=this.value" rows="4">${esc(ev.appraiserDeclaration || genAppraiserDeclarationText())}</textarea>
   </div>`;
         return html;
       }
@@ -8434,13 +7663,17 @@
     <div class="grid2">
       <div class="field"><label class="label">מקור המים המשוער</label><input type="text" value="${esc(c.waterOrigin)}" oninput="STATE.circ.waterOrigin=this.value" placeholder="צנרת פנימית, גג, שכן עליון..."></div>
       <div class="field"><label class="label">משך זרימה משוערת</label><input type="text" value="${esc(c.waterDuration)}" oninput="STATE.circ.waterDuration=this.value" placeholder="שעות/ימים..."></div>
-      <div class="field"><label class="label">בוצעה פתיחה?</label>
-        <select onchange="STATE.circ.wallOpened=this.value">
-          <option value="">בחר...</option>
-          <option value="yes" ${c.wallOpened==='yes'?'selected':''}>כן</option>
-          <option value="no" ${c.wallOpened==='no'?'selected':''}>לא</option>
-          <option value="partial" ${c.wallOpened==='partial'?'selected':''}>חלקית</option>
-        </select></div>
+      <div class="field"><label class="label">בוצעה פתיחה?</label><div class="pill-group" id="wallPills">
+        ${makePills(
+          [
+            { v: "yes", l: "כן" },
+            { v: "no", l: "לא" },
+            { v: "partial", l: "חלקית" },
+          ],
+          c.wallOpened,
+          "STATE.circ.wallOpened=v;refreshPills('wallPills',v)",
+        )}
+      </div></div>
     </div>
     <div class="divider"></div>
     <div class="label" style="color:var(--accent);font-size:11px;">🔧 תיקון קודם / טיפול קודם</div>
@@ -8505,14 +7738,18 @@
           "STATE.circ.fireDept=v;refreshPills('fireDeptPills',v)",
         )}
       </div></div>
-      <div class="field"><label class="label">סוג נזק</label>
-        <select onchange="STATE.circ.fireType=this.value">
-          <option value="">בחר...</option>
-          <option value="flame" ${c.fireType==='flame'?'selected':''}>להבה גלויה</option>
-          <option value="smoke_only" ${c.fireType==='smoke_only'?'selected':''}>עשן בלבד</option>
-          <option value="water_ext" ${c.fireType==='water_ext'?'selected':''}>מי כיבוי</option>
-          <option value="unknown" ${c.fireType==='unknown'?'selected':''}>לא ידוע</option>
-        </select></div>
+      <div class="field"><label class="label">סוג נזק</label><div class="pill-group" id="fireTypePills">
+        ${makePills(
+          [
+            { v: "flame", l: "להבה גלויה" },
+            { v: "smoke_only", l: "עשן בלבד" },
+            { v: "water_ext", l: "מי כיבוי" },
+            { v: "unknown", l: "לא ידוע" },
+          ],
+          c.fireType,
+          "STATE.circ.fireType=v;refreshPills('fireTypePills',v)",
+        )}
+      </div></div>
     </div></div>`;
         }
 
@@ -8558,16 +7795,11 @@
     <button class="btn btn-primary" onclick="genAndSetCircumText()" style="gap:6px;">✨ צור טקסט נסיבות אוטומטי</button>
     ${STATE.circ.circumOverride ? `<button class="btn btn-ghost btn-sm" onclick="STATE.circ.circumOverride='';renderCard(4)">🗑️ נקה</button>` : ""}
   </div>`;
-        html += `<div class="field span2">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <label class="label" style="color:var(--accent);margin:0;">✏️ טקסט נסיבות (ניתן לעריכה)</label>
-        <button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-circ-override',this)"><span class="mic-icon">🎙️</span> הקלט</button>
-      </div>
-      <textarea id="ta-circ-override" oninput="STATE.circ.circumOverride=this.value" rows="5"
-        style="width:100%;border:1.5px solid var(--border2);border-radius:10px;background:var(--surface2);color:var(--text);padding:10px 12px;font-family:'Heebo',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:90px;box-sizing:border-box;"
-        placeholder="מלא נסיבות ידנית או לחץ 'צור טקסט אוטומטי' למעלה..."
-      >${esc(STATE.circ.circumOverride)}</textarea>
+        if (STATE.circ.circumOverride) {
+          html += `<div class="field"><label class="label" style="color:var(--accent);">✏️ טקסט נסיבות (ניתן לעריכה)</label>
+      <textarea oninput="STATE.circ.circumOverride=this.value" rows="5">${esc(STATE.circ.circumOverride)}</textarea>
     </div>`;
+        }
         return html;
       }
 
@@ -8930,8 +8162,7 @@
         }
         // ממצאים תואמים — הוסר
         html += `<div class="field mt12"><label class="label">הערות כלליות</label>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:4px;"><button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-general',this)"><span class="mic-icon">🎙️</span> הקלט</button></div>
-    <textarea id="ta-general" oninput="STATE.findings.generalNotes=this.value" placeholder="הערות מקצועיות נוספות...">${esc(f.generalNotes)}</textarea>
+    <textarea oninput="STATE.findings.generalNotes=this.value" placeholder="הערות מקצועיות נוספות...">${esc(f.generalNotes)}</textarea>
   </div>`;
 
         // ── עטוף בשתי עמודות: ימין=טופס, שמאל=תצוגה מקדימה ──
@@ -9043,7 +8274,6 @@
           "פרק ג׳ – שירותים ותוספות",
           "var(--purple)",
         );
-        html += renderBOQSummaryParagraph();
 
         html += `<div class="boq-total-box">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
@@ -9366,33 +8596,7 @@
       <button class="btn btn-ghost btn-xs" style="font-size:11px;" onclick="addBOQItem('${key}')">+ הוסף שורה ללא שיוך</button>
     </div>
   </div>`;
-
         return html;
-      }
-
-      // ── ביאורים וממצאים — מוצג בתחתית כרטיס כתב הכמויות ──
-      function renderBOQSummaryParagraph() {
-        const _boq = STATE.boq;
-        const lines = [];
-        const struct = calcSectionTotal(_boq.structItems);
-        const cont = calcSectionTotal(_boq.contentsItems);
-        const serv = calcSectionTotal(_boq.serviceItems);
-        const grand = struct + cont + serv;
-        const shiputBase = calcShiputBase(_boq.structItems) + calcShiputBase(_boq.contentsItems) + calcShiputBase(_boq.serviceItems);
-        const shiput = Math.round(shiputBase * 0.67);
-        const vat = _boq.vat ? grand * 0.18 : 0;
-        if (grand > 0) lines.push(`סה"כ עלות שיקום מוערכת: ₪${fmtNum(grand + vat)}${_boq.vat ? ' (כולל מע"מ)' : ''}.`);
-        if (shiput > 0) lines.push(`ערך הפחת הכלכלי (67%): ₪${fmtNum(shiput)}.`);
-        const deduct = parseCurrency(STATE.insurance?.deductStruct) || 0;
-        if (deduct > 0) lines.push(`השתתפות עצמית: ₪${fmtNum(deduct)}.`);
-        const net = Math.max(0, shiput - deduct);
-        if (shiput > 0) lines.push(`סכום להמלצה לתשלום: ₪${fmtNum(net)}.`);
-        const expl = lines.join(' ');
-        if (!expl) return '';
-        return `<div style="margin-top:16px;padding:14px 16px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:10px;">
-          <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px;letter-spacing:.5px;">📋 ביאורים וממצאים</div>
-          <p style="font-size:13px;line-height:1.7;color:var(--text);margin:0;">${expl}</p>
-        </div>`;
       }
 
       // ══/ ══════════════════════════════════════════════════
@@ -9795,7 +8999,7 @@
     </div>
     ${
       STATE.circ.circumOverride
-        ? `<div style="display:flex;justify-content:flex-end;margin-bottom:4px;"><button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-circ',this)"><span class="mic-icon">🎙️</span> הקלט</button></div><textarea id="ta-circ" class="c8-textarea" rows="4" oninput="STATE.circ.circumOverride=this.value;">${esc(STATE.circ.circumOverride)}</textarea>`
+        ? `<textarea class="c8-textarea" rows="4" oninput="STATE.circ.circumOverride=this.value;">${esc(STATE.circ.circumOverride)}</textarea>`
         : `<div class="c8-auto-text">${esc(genCircumText() || "(מלא נסיבות בכרטיס 5)")}</div>`
     }
   </div>`;
@@ -9812,7 +9016,7 @@
     </div>
     ${
       f.findingsOverride
-        ? `<div style="display:flex;justify-content:flex-end;margin-bottom:4px;"><button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-finds',this)"><span class="mic-icon">🎙️</span> הקלט</button></div><textarea id="ta-finds" class="c8-textarea" rows="5" oninput="STATE.findings.findingsOverride=this.value;const el=document.getElementById('preview_findingsOverride');if(el)el.textContent=this.value;">${esc(f.findingsOverride)}</textarea>`
+        ? `<textarea class="c8-textarea" rows="5" oninput="STATE.findings.findingsOverride=this.value;const el=document.getElementById('preview_findingsOverride');if(el)el.textContent=this.value;">${esc(f.findingsOverride)}</textarea>`
         : `<div class="c8-auto-text">${esc(genFindingsText() || "(הוסף אזורים בכרטיס 6)")}</div>`
     }
   </div>`;
@@ -9829,7 +9033,7 @@
     </div>
     ${
       s.appraisalNotes
-        ? `<div style="display:flex;justify-content:flex-end;margin-bottom:4px;"><button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-notes',this)"><span class="mic-icon">🎙️</span> הקלט</button></div><textarea id="ta-notes" class="c8-textarea" rows="5" oninput="STATE.summary.appraisalNotes=this.value;const el=document.getElementById('preview_appraisalNotes');if(el)el.textContent=this.value;">${esc(s.appraisalNotes)}</textarea>`
+        ? `<textarea class="c8-textarea" rows="5" oninput="STATE.summary.appraisalNotes=this.value;const el=document.getElementById('preview_appraisalNotes');if(el)el.textContent=this.value;">${esc(s.appraisalNotes)}</textarea>`
         : `<div class="c8-auto-text">${esc(genExplanationsText() || "(אוטומטי לפי נתונים)")}</div>`
     }
   </div>`;
@@ -10553,12 +9757,11 @@
         let html = `<div class="merged-label">⚖️ החלטת שמאי</div>
   <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
     <div class="label" style="margin-bottom:10px;">קשר סיבתי</div>
-    <select onchange="STATE.taxDecision.causalLink=this.value;renderCard(12)" style="width:100%;">
-      <option value="">בחר...</option>
-      <option value="yes" ${d.causalLink==='yes'?'selected':''}>קיים קשר סיבתי</option>
-      <option value="partial" ${d.causalLink==='partial'?'selected':''}>קשר חלקי</option>
-      <option value="no" ${d.causalLink==='no'?'selected':''}>אין קשר סיבתי</option>
-    </select>
+    <div class="pill-group">
+      <button class="pill ${d.causalLink === "yes" ? "active-green" : ""}" onclick="STATE.taxDecision.causalLink='yes';renderCard(12)">קיים קשר סיבתי</button>
+      <button class="pill ${d.causalLink === "partial" ? "active" : ""}" onclick="STATE.taxDecision.causalLink='partial';renderCard(12)">קשר חלקי</button>
+      <button class="pill ${d.causalLink === "no" ? "active-red" : ""}" onclick="STATE.taxDecision.causalLink='no';renderCard(12)">אין קשר סיבתי</button>
+    </div>
   </div>
   <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
     <div class="label" style="margin-bottom:8px;">סיכום סכומים מוכרים</div>
@@ -11452,12 +10655,11 @@
         let html = `<div class="merged-label">⚖️ החלטת שמאי</div>
   <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
     <div class="label" style="margin-bottom:10px;">קשר סיבתי</div>
-    <select onchange="STATE.taxDecision.causalLink=this.value;renderCard(12)" style="width:100%;">
-      <option value="">בחר...</option>
-      <option value="yes" ${d.causalLink==='yes'?'selected':''}>קיים קשר סיבתי</option>
-      <option value="partial" ${d.causalLink==='partial'?'selected':''}>קשר חלקי</option>
-      <option value="no" ${d.causalLink==='no'?'selected':''}>אין קשר סיבתי</option>
-    </select>
+    <div class="pill-group">
+      <button class="pill ${d.causalLink === "yes" ? "active-green" : ""}" onclick="STATE.taxDecision.causalLink='yes';renderCard(12)">קיים קשר סיבתי</button>
+      <button class="pill ${d.causalLink === "partial" ? "active" : ""}" onclick="STATE.taxDecision.causalLink='partial';renderCard(12)">קשר חלקי</button>
+      <button class="pill ${d.causalLink === "no" ? "active-red" : ""}" onclick="STATE.taxDecision.causalLink='no';renderCard(12)">אין קשר סיבתי</button>
+    </div>
   </div>
   <div style="background:var(--primary2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
     <div class="label" style="margin-bottom:8px;">סיכום סכומים מוכרים</div>
@@ -11810,9 +11012,8 @@
         // Dynamic logo from Firestore profile
         const _prof = window._profile || {};
         let logoSvg;
-        const _logoSize = APPRAISER.logoSizePx || _prof.logoSizePx || 56;
-        if (_prof.logoType === "image" && (_prof.logoImageData || _prof.logoImage)) {
-          logoSvg = `<img src="${_prof.logoImageData || _prof.logoImage}" style="width:${_logoSize}px;height:${_logoSize}px;border-radius:12px;object-fit:contain;">`;
+        if (_prof.logoType === "image" && _prof.logoImage) {
+          logoSvg = `<img src="${_prof.logoImage}" style="width:56px;height:56px;border-radius:12px;object-fit:cover;">`;
         } else {
           // ראשי תיבות אנגלית — מ-logoLetters, או מ-nameEn, או ברירת מחדל YA
           let letters = _prof.logoLetters || "";
@@ -11999,14 +11200,9 @@
         if (opening)
           rpt += `<div class="rpt-section"><h3>מהות הבקשה ומטרת הביקור</h3><p class="rpt-p">${esc(opening).replace(/\n/g, "<br>")}</p></div>`;
 
-        // ── הצהרת שמאי — מהגדרות השמאי (fallback לשדה בתיק)
-        const declFinal = APPRAISER.declaration || STATE.event.appraiserDeclaration || '';
-        if(declFinal)
-          rpt += `<div class="rpt-section"><h3>הצהרת שמאי</h3><p class="rpt-p" style="white-space:pre-line;">${esc(declFinal).replace(/\n/g,'<br>')}</p></div>`;
-        // ── השכלה וניסיון — מהגדרות השמאי
-        const educationText = APPRAISER.education || '';
-        if(educationText)
-          rpt += `<div class="rpt-section"><h3>השכלה וניסיון</h3><p class="rpt-p" style="white-space:pre-line;">${esc(educationText).replace(/\n/g,'<br>')}</p></div>`;
+        const decl = STATE.event.appraiserDeclaration;
+        if (decl)
+          rpt += `<div class="rpt-section"><h3>הצהרת שמאי</h3><p class="rpt-p">${esc(decl).replace(/\n/g, "<br>")}</p></div>`;
 
         // פרק תיאור המקום — שילוב propertyDesc + STATE.property
         const pd = STATE.propertyDesc || {};
@@ -12302,11 +11498,7 @@
     </div>`;
         }
 
-        // ── סיום הדוח — מהגדרות השמאי
-        const closingTextFinal = APPRAISER.closingText || '';
-        if(closingTextFinal)
-          rpt += `<div class="rpt-section" style="margin-top:24px;padding:14px 18px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;text-align:center;"><p class="rpt-p" style="font-size:13px;color:#374151;font-style:italic;white-space:pre-line;">${esc(closingTextFinal)}</p></div>`;
-        const sigLine = s.signature || APPRAISER.nameHe || 'שמאי רכוש מוסמך';
+        const sigLine = s.signature || "ירון אמיר, שמאי רכוש מוסמך";
         const declText = `הצהרת שמאי\nאני הח"מ מצהיר כי חוות דעת זו נערכה על ידי באופן מקצועי, עצמאי ובלתי תלוי, בהתאם לממצאים שנצפו בביקור בנכס ולנתונים שעמדו בפניי במועד עריכת הדו"ח.\nההערכה בוצעה בהתאם לכללים המקובלים בתחום שמאות הרכוש ועל בסיס ניסיון מקצועי ומקורות תמחור מקובלים.\nחוות דעת זו מיועדת להערכת הנזק נשוא האירוע בלבד.`;
         rpt += `<div class="rpt-section" style="border-top:2px solid #E5E7EB;margin-top:24px;padding-top:20px;">
     <h3>הצהרת שמאי</h3>
@@ -12383,1075 +11575,7 @@
         document.getElementById("appShell").classList.remove("hidden");
       }
 
-
-      // ══════════════════════════════════════════════
-      // PDF — Puppeteer via Cloud Function
-      // ══════════════════════════════════════════════
-      let _currentPdfUrl = null;
-      const _PDF_STEPS = ['pdfStep1','pdfStep2','pdfStep3','pdfStep4','pdfStep5'];
-      const _PDF_PROGRESS = [8, 25, 55, 82, 100];
-
-      function showPdfProgress() {
-        const ov = document.getElementById('pdfProgressOverlay');
-        if (ov) ov.classList.add('active');
-        document.getElementById('pdfProgressSpinner').style.display = '';
-        document.getElementById('pdfReadyIcon').style.display = 'none';
-        document.getElementById('pdfProgressTitle').textContent = 'מכין את הדוח…';
-        document.getElementById('pdfProgressBar').style.display = '';
-        document.getElementById('pdfProgressSteps').style.display = '';
-        document.getElementById('pdfReadyActions').style.display = 'none';
-        _PDF_STEPS.forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active','done'); });
-        setPdfProgressBar(0);
-        setPdfStep(0);
-        _currentPdfUrl = null;
-      }
-      function setPdfProgressBar(pct) {
-        const bar = document.getElementById('pdfProgressBarFill');
-        if (bar) bar.style.width = pct + '%';
-      }
-      function setPdfStep(idx) {
-        _PDF_STEPS.forEach((id, i) => {
-          const el = document.getElementById(id); if (!el) return;
-          el.classList.remove('active', 'done');
-          if (i < idx) { el.classList.add('done'); el.querySelector('.pdf-step-dot').textContent = '✓'; }
-          else if (i === idx) { el.classList.add('active'); el.querySelector('.pdf-step-dot').textContent = String(i + 1); }
-          else { el.querySelector('.pdf-step-dot').textContent = String(i + 1); }
-        });
-        setPdfProgressBar(_PDF_PROGRESS[idx] || 0);
-      }
-      function showPdfReady(url) {
-        _currentPdfUrl = url;
-        document.getElementById('pdfProgressSpinner').style.display = 'none';
-        document.getElementById('pdfProgressBar').style.display = 'none';
-        document.getElementById('pdfProgressSteps').style.display = 'none';
-        document.getElementById('pdfProgressTitle').textContent = '';
-        document.getElementById('pdfReadyIcon').style.display = 'flex';
-        document.getElementById('pdfReadyActions').style.display = 'flex';
-        const lbl = document.getElementById('pdfCopyLabel'); if (lbl) lbl.textContent = 'העתק קישור';
-      }
-      function hidePdfProgress() {
-        const ov = document.getElementById('pdfProgressOverlay');
-        if (ov) ov.classList.remove('active');
-        _currentPdfUrl = null;
-      }
-      function _pdfActionOpen() {
-        if (!_currentPdfUrl) return;
-        const _b = STATE.base || {};
-        const _name = (_b.fullName || '').trim();
-        const _addr = [_b.street, _b.city].filter(Boolean).join(' ');
-        const _fname = ['דוח שמאות', _name, _addr].filter(Boolean).join(' ') + '.pdf';
-        const a = document.createElement('a');
-        a.href = _currentPdfUrl;
-        a.download = _fname;
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-      async function _pdfActionShare() {
-        if (!_currentPdfUrl) return;
-        const _base = STATE.base || {};
-        const fileName = ['דוח שמאות רכוש', (_base.fullName||'').trim(), [_base.street,_base.city].filter(Boolean).join(' ')].filter(Boolean).join(' ') + '.pdf';
-        if (navigator.share) {
-          try { await navigator.share({ title: fileName, url: _currentPdfUrl }); return; } catch (e) { if (e.name === 'AbortError') return; }
-        }
-        window.open(_currentPdfUrl, '_blank');
-      }
-      async function _pdfActionCopy() {
-        if (!_currentPdfUrl) return;
-        try { await navigator.clipboard.writeText(_currentPdfUrl); const lbl = document.getElementById('pdfCopyLabel'); if (lbl) { lbl.textContent = '✓ הועתק!'; setTimeout(() => { lbl.textContent = 'העתק קישור'; }, 2000); } }
-        catch (e) { if (typeof showToast === 'function') showToast('לא ניתן להעתיק'); }
-      }
-
-      async function _generatePdf() {
-        showPdfProgress();
-        try {
-          setPdfStep(0);
-          if (!document.getElementById('rptContent')?.innerHTML?.trim()) {
-            _doGenerateReport();
-            await new Promise(r => setTimeout(r, 400));
-          }
-          const reportHtml = document.getElementById('rptContent')?.innerHTML || '';
-          if (!reportHtml.trim()) { hidePdfProgress(); showToast('שגיאה: הדוח ריק'); return null; }
-          setPdfStep(1);
-          await new Promise(r => setTimeout(r, 300));
-          const _prof = window._profile || {};
-          const logoUrl = APPRAISER.logoImageUrl || _prof.logoImageData || null;
-          const sigUrl  = APPRAISER.signatureUrl || _prof.signature || null;
-          const logoHtml = logoUrl ? `<img src="${logoUrl}" style="max-height:${APPRAISER.logoSizePx||70}px;object-fit:contain;display:block;">` : `<div style="font-size:20px;font-weight:900;color:#f59e0b;">OMDA<br>רכוש</div>`;
-          const sigHtml  = sigUrl  ? `<img src="${sigUrl}" style="max-height:50px;max-width:160px;display:block;margin:4px 0;">` : `<div style="height:50px;border-bottom:1px dashed #9ca3af;margin-bottom:6px;width:160px;"></div>`;
-          let payload = reportHtml
-            .replace(/data-logo-placeholder[^>]*>.*?<[/][^>]+>/gs, logoHtml)
-            .replace(/data-sig-placeholder[^>]*>.*?<[/][^>]+>/gs, sigHtml);
-          setPdfStep(2);
-          const resultPromise = window._callFn('generatePDF', { caseId: currentCaseId||null, htmlPayload: payload }, { timeout: 120000 });
-          await new Promise(r => setTimeout(r, 800));
-          setPdfStep(3);
-          const result = await resultPromise;
-          if (!result.data?.url) throw new Error('לא התקבל קישור PDF');
-          setPdfStep(4);
-          await new Promise(r => setTimeout(r, 500));
-          showPdfReady(result.data.url);
-          try {
-            const hasClient = !!(STATE.base?.fullName || STATE.insurance?.insuredName);
-            const hasFindings = !!(STATE.findings?.findingsOverride || STATE.findings?.generalNotes || STATE.findings?.areas?.length);
-            if (hasClient && hasFindings && STATE.meta?.status !== 'completed') {
-              if (!STATE.meta) STATE.meta = {};
-              STATE.meta.status = 'completed';
-              saveCurrentCase();
-            }
-          } catch(e) {}
-          return result.data.url;
-        } catch(err) {
-          hidePdfProgress();
-          console.error('_generatePdf error:', err);
-          showToast('שגיאה ביצירת PDF: ' + (err.message||err));
-          return null;
-        }
-      }
-
-      function showToast(msg) {
-        const t = document.getElementById('toast');
-        if (!t) return;
-        t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2400);
-      }
-
-      // ══════════════════════════════════════════════════
-      // IMAGE EDITOR — pan/zoom via transform (no scroll)
-      // ══════════════════════════════════════════════════
-      const EDITOR_COLORS = [
-        "#EF4444",
-        "#F59E0B",
-        "#FDE047",
-        "#22C55E",
-        "#38BDF8",
-      ];
-      let editorCanvas = null,
-        editorCtx = null,
-        editorBaseImage = null;
-      let editorCurrentTypeId = null,
-        editorCurrentPhotoIndex = null;
-      let editorCurrentTool = "pan",
-        editorCurrentColor = EDITOR_COLORS[0],
-        editorCurrentLineWidth = 14;
-      let editorAnnotations = [],
-        editorRedoStack = [],
-        editorSelectedIndex = -1;
-      let editorIsDrawing = false,
-        editorDragStart = null,
-        editorPreviewAnnotation = null;
-      let editorDragMode = null,
-        editorPointerStart = null,
-        editorMoved = false;
-
-      // ── viewport transform state ──
-      let _vZoom = 1,
-        _vPanX = 0,
-        _vPanY = 0; // current transform
-      let _vFitZoom = 1; // zoom level for "fit" view
-      let _vPanning = false,
-        _vPanStart = { x: 0, y: 0 },
-        _vPanOrigin = { x: 0, y: 0 };
-      let _pinchDist0 = 0,
-        _pinchZoom0 = 1,
-        _pinchMid = { x: 0, y: 0 };
-      let _zoomBadgeTimer = null;
-
-      function _applyTransform() {
-        const inner = document.getElementById("editorCanvasInner");
-        if (inner)
-          inner.style.transform = `translate(${_vPanX}px,${_vPanY}px) scale(${_vZoom})`;
-      }
-      function _clampPan() {
-        if (!editorCanvas || !editorCanvas.width) return;
-        const wrap = document.getElementById("editorCanvasWrap");
-        if (!wrap) return;
-        const cw = editorCanvas.width * _vZoom,
-          ch = editorCanvas.height * _vZoom;
-        const ww = wrap.clientWidth,
-          wh = wrap.clientHeight;
-        const maxX = Math.max(0, (cw - ww) / 2 + 40),
-          maxY = Math.max(0, (ch - wh) / 2 + 40);
-        _vPanX = Math.max(-maxX, Math.min(maxX, _vPanX));
-        _vPanY = Math.max(-maxY, Math.min(maxY, _vPanY));
-      }
-      function _showZoomBadge() {
-        const badge = document.getElementById("editorZoomBadge");
-        if (!badge) return;
-        badge.textContent = Math.round(_vZoom * 100) + "%";
-        badge.classList.add("show");
-        clearTimeout(_zoomBadgeTimer);
-        _zoomBadgeTimer = setTimeout(
-          () => badge.classList.remove("show"),
-          1200,
-        );
-      }
-      function _zoomAround(newZoom, cx, cy) {
-        // cx,cy = point in wrap coords to keep fixed
-        const wrap = document.getElementById("editorCanvasWrap");
-        if (!wrap) return;
-        const rect = wrap.getBoundingClientRect();
-        const px = cx - rect.left - rect.width / 2,
-          py = cy - rect.top - rect.height / 2;
-        const ratio = newZoom / _vZoom;
-        _vPanX = px + (_vPanX - px) * ratio;
-        _vPanY = py + (_vPanY - py) * ratio;
-        _vZoom = newZoom;
-        _clampPan();
-        _applyTransform();
-        _showZoomBadge();
-      }
-      function _resetView() {
-        if (!editorCanvas || !editorCanvas.width || !editorCanvas.height)
-          return;
-        const wrap = document.getElementById("editorCanvasWrap");
-        if (!wrap) return;
-        const ww = wrap.clientWidth - 24,
-          wh = wrap.clientHeight - 24;
-        _vFitZoom = Math.min(
-          ww / editorCanvas.width,
-          wh / editorCanvas.height,
-          1,
-        );
-        _vZoom = _vFitZoom;
-        _vPanX = 0;
-        _vPanY = 0;
-        _applyTransform();
-      }
-
-      // ── pointer → canvas coords (accounting for transform) ──
-      function getCanvasCoords(evt) {
-        if (!editorCanvas) return { x: 0, y: 0 };
-        const touch = evt.touches?.[0] || evt.changedTouches?.[0];
-        const clientX = touch ? touch.clientX : evt.clientX;
-        const clientY = touch ? touch.clientY : evt.clientY;
-        const rect = editorCanvas.getBoundingClientRect();
-        return {
-          x: (clientX - rect.left) * (editorCanvas.width / rect.width),
-          y: (clientY - rect.top) * (editorCanvas.height / rect.height),
-        };
-      }
-
-      // ── wheel zoom (desktop) ──
-      function _onWheelZoom(evt) {
-        evt.preventDefault();
-        const delta = evt.deltaY < 0 ? 1.1 : 0.9;
-        const newZoom = Math.max(0.2, Math.min(8, _vZoom * delta));
-        _zoomAround(newZoom, evt.clientX, evt.clientY);
-      }
-
-      // ── touch helpers ──
-      function _pinchDist(t) {
-        return Math.hypot(
-          t[0].clientX - t[1].clientX,
-          t[0].clientY - t[1].clientY,
-        );
-      }
-      function _pinchMidpoint(t) {
-        return {
-          x: (t[0].clientX + t[1].clientX) / 2,
-          y: (t[0].clientY + t[1].clientY) / 2,
-        };
-      }
-
-      // ── touch events on wrap — single source of truth for ALL mobile interaction ──
-      function _onWrapTouchStart(evt) {
-        if (evt.touches.length === 2) {
-          // pinch-zoom — cancel any drawing in progress
-          evt.preventDefault();
-          editorIsDrawing = false;
-          editorDragMode = null;
-          editorDragStart = null;
-          editorPreviewAnnotation = null;
-          _vPanning = false;
-          _pinchDist0 = _pinchDist(evt.touches);
-          _pinchZoom0 = _vZoom;
-          _pinchMid = _pinchMidpoint(evt.touches);
-          redrawEditorCanvas();
-          return;
-        }
-        if (evt.touches.length === 1) {
-          evt.preventDefault();
-          if (editorCurrentTool === "pan") {
-            // pan mode — move viewport
-            _vPanning = true;
-            _vPanStart = {
-              x: evt.touches[0].clientX,
-              y: evt.touches[0].clientY,
-            };
-            _vPanOrigin = { x: _vPanX, y: _vPanY };
-          } else {
-            // drawing mode — treat as pointer down on canvas
-            if (!editorCanvas || !editorBaseImage) return;
-            const fakeEvt = {
-              touches: evt.touches,
-              changedTouches: evt.changedTouches,
-            };
-            const pt = getCanvasCoords(fakeEvt);
-            const hit = findAnnotationHit(pt.x, pt.y);
-            editorPointerStart = pt;
-            editorMoved = false;
-            if (hit !== -1) {
-              editorSelectedIndex = hit;
-              editorDragMode = "move";
-              editorDragStart = { x: pt.x, y: pt.y };
-              redrawEditorCanvas();
-              return;
-            }
-            editorSelectedIndex = -1;
-            editorIsDrawing = true;
-            editorDragMode = "create";
-            editorDragStart = pt;
-            editorPreviewAnnotation = createAnnotationFromDrag(pt, pt);
-            redrawEditorCanvas();
-          }
-        }
-      }
-      function _onWrapTouchMove(evt) {
-        if (evt.touches.length === 2) {
-          evt.preventDefault();
-          if (!_pinchDist0) return;
-          const d = _pinchDist(evt.touches);
-          const mid = _pinchMidpoint(evt.touches);
-          const newZoom = Math.max(
-            0.2,
-            Math.min(8, _pinchZoom0 * (d / _pinchDist0)),
-          );
-          _zoomAround(newZoom, mid.x, mid.y);
-          return;
-        }
-        if (evt.touches.length === 1) {
-          evt.preventDefault();
-          if (_vPanning) {
-            const dx = evt.touches[0].clientX - _vPanStart.x;
-            const dy = evt.touches[0].clientY - _vPanStart.y;
-            _vPanX = _vPanOrigin.x + dx;
-            _vPanY = _vPanOrigin.y + dy;
-            _clampPan();
-            _applyTransform();
-          } else if (editorDragMode && editorDragStart && editorCanvas) {
-            const fakeEvt = {
-              touches: evt.touches,
-              changedTouches: evt.changedTouches,
-            };
-            const pt = getCanvasCoords(fakeEvt);
-            if (
-              Math.hypot(pt.x - editorDragStart.x, pt.y - editorDragStart.y) > 3
-            )
-              editorMoved = true;
-            if (editorDragMode === "move" && editorSelectedIndex > -1) {
-              const dx = pt.x - editorDragStart.x;
-              const dy = pt.y - editorDragStart.y;
-              moveAnnotation(editorAnnotations[editorSelectedIndex], dx, dy);
-              editorDragStart = pt;
-              redrawEditorCanvas();
-            } else if (editorDragMode === "create" && editorIsDrawing) {
-              editorPreviewAnnotation = createAnnotationFromDrag(
-                editorPointerStart,
-                pt,
-              );
-              redrawEditorCanvas();
-            }
-          }
-        }
-      }
-      function _onWrapTouchEnd(evt) {
-        if (evt.touches.length < 2) _pinchDist0 = 0;
-        if (evt.touches.length === 0) {
-          if (_vPanning) {
-            _vPanning = false;
-            return;
-          }
-          if (editorDragMode && editorCanvas) {
-            const fakeEvt = { touches: [], changedTouches: evt.changedTouches };
-            const pt = getCanvasCoords(fakeEvt);
-            if (editorDragMode === "move") {
-              editorDragMode = null;
-              editorDragStart = null;
-              redrawEditorCanvas();
-            } else if (
-              editorDragMode === "create" &&
-              editorIsDrawing &&
-              editorPointerStart
-            ) {
-              const ann = createAnnotationFromDrag(editorPointerStart, pt);
-              editorIsDrawing = false;
-              editorDragMode = null;
-              editorDragStart = null;
-              editorPreviewAnnotation = null;
-              if (isAnnotationMeaningful(ann)) {
-                maybeAttachLabelToAnnotation(ann);
-                editorAnnotations.push(ann);
-                editorRedoStack = [];
-                editorSelectedIndex = editorAnnotations.length - 1;
-              }
-              redrawEditorCanvas();
-            }
-          }
-          _vPanning = false;
-        }
-      }
-
-      // ── mouse pan (middle-button or pan tool) ──
-      function _onWrapMouseDown(evt) {
-        if (
-          evt.button === 1 ||
-          (evt.button === 0 && editorCurrentTool === "pan")
-        ) {
-          _vPanning = true;
-          _vPanStart = { x: evt.clientX, y: evt.clientY };
-          _vPanOrigin = { x: _vPanX, y: _vPanY };
-          evt.preventDefault();
-        }
-      }
-      function _onWrapMouseMove(evt) {
-        if (!_vPanning) return;
-        _vPanX = _vPanOrigin.x + (evt.clientX - _vPanStart.x);
-        _vPanY = _vPanOrigin.y + (evt.clientY - _vPanStart.y);
-        _clampPan();
-        _applyTransform();
-      }
-      function _onWrapMouseUp() {
-        _vPanning = false;
-      }
-
-      function initEditorUi() {
-        const swatches = document.getElementById("editorSwatches");
-        if (swatches && !swatches.dataset.ready) {
-          swatches.dataset.ready = "1";
-          swatches.innerHTML = EDITOR_COLORS.map(
-            (color) =>
-              `<button type="button" class="editor-swatch" style="background:${color};" onclick="setEditorColor('${color}')"></button>`,
-          ).join("");
-        }
-        setEditorColor(editorCurrentColor);
-        setEditorTool(editorCurrentTool);
-        setEditorLineWidth(editorCurrentLineWidth);
-        editorCanvas = document.getElementById("editorCanvas");
-        if (editorCanvas && !editorCanvas.dataset.bound) {
-          editorCanvas.dataset.bound = "1";
-          editorCtx = editorCanvas.getContext("2d");
-          // Mouse only on canvas — touch is handled entirely by wrap
-          editorCanvas.addEventListener("mousedown", onEditorPointerDown);
-          editorCanvas.addEventListener("mousemove", onEditorPointerMove);
-          window.addEventListener("mouseup", onEditorPointerUp);
-        }
-        const wrap = document.getElementById("editorCanvasWrap");
-        if (wrap && !wrap.dataset.bound) {
-          wrap.dataset.bound = "1";
-          wrap.addEventListener("wheel", _onWheelZoom, { passive: false });
-          // Mouse pan on wrap
-          wrap.addEventListener("mousedown", _onWrapMouseDown);
-          window.addEventListener("mousemove", _onWrapMouseMove);
-          window.addEventListener("mouseup", _onWrapMouseUp);
-          // ALL touch on wrap — single source of truth for mobile
-          wrap.addEventListener("touchstart", _onWrapTouchStart, {
-            passive: false,
-          });
-          wrap.addEventListener("touchmove", _onWrapTouchMove, {
-            passive: false,
-          });
-          wrap.addEventListener("touchend", _onWrapTouchEnd, {
-            passive: false,
-          });
-          wrap.addEventListener("touchcancel", _onWrapTouchEnd, {
-            passive: false,
-          });
-        }
-      }
-      function openEditor(photoIndex) {
-        initEditorUi();
-        editorCurrentTypeId = 'rechush';
-        editorCurrentPhotoIndex = photoIndex;
-        editorRedoStack = [];
-        editorSelectedIndex = -1;
-        editorPreviewAnnotation = null;
-        editorDragMode = null;
-        editorPointerStart = null;
-        editorMoved = false;
-        const moreWrap = document.getElementById("editorMoreWrap");
-        if (moreWrap) moreWrap.classList.remove("open");
-        const ph = (STATE.photos && STATE.photos.items && STATE.photos.items[photoIndex]) || { src: '', annotations: [] };
-        editorAnnotations = (Array.isArray(ph.annotations) ? ph.annotations : []).map(a => JSON.parse(JSON.stringify(a)));
-        const img = new Image();
-        img.onload = () => {
-          editorBaseImage = img;
-          editorCanvas.width = img.naturalWidth || img.width;
-          editorCanvas.height = img.naturalHeight || img.height;
-          redrawEditorCanvas();
-          document.getElementById("imgEditorModal").style.display = "flex";
-          document.getElementById("editorMeta").textContent = "תמונה " + (photoIndex + 1);
-          requestAnimationFrame(() => { _resetView(); requestAnimationFrame(_resetView); });
-        };
-        img.crossOrigin = "anonymous";
-        img.src = ph.src || ph.url || '';
-      }
-      function toggleEditorMore() {
-        const wrap = document.getElementById("editorMoreWrap");
-        if (wrap) wrap.classList.toggle("open");
-      }
-      function closeEditor() {
-        const modal = document.getElementById("imgEditorModal");
-        if (modal) modal.style.display = "none";
-        const moreWrap = document.getElementById("editorMoreWrap");
-        if (moreWrap) moreWrap.classList.remove("open");
-        editorCurrentTypeId = null;
-        editorCurrentPhotoIndex = null;
-        editorAnnotations = [];
-        editorRedoStack = [];
-        editorSelectedIndex = -1;
-        editorPreviewAnnotation = null;
-        editorIsDrawing = false;
-        editorDragMode = null;
-        editorPointerStart = null;
-        editorMoved = false;
-        _vPanning = false;
-      }
-      function setEditorTool(tool) {
-        editorCurrentTool = tool;
-        ["pan", "arrow", "circle"].forEach((t) => {
-          const el = document.getElementById(`tool-${t}`);
-          if (el) el.classList.toggle("active", t === tool);
-        });
-        if (editorCanvas)
-          editorCanvas.style.cursor = tool === "pan" ? "grab" : "crosshair";
-      }
-      function setEditorColor(color) {
-        editorCurrentColor = color;
-        document.querySelectorAll(".editor-swatch").forEach((el) => {
-          el.classList.toggle(
-            "active",
-            normalizeColor(el.style.backgroundColor) === normalizeColor(color),
-          );
-        });
-        if (
-          editorSelectedIndex > -1 &&
-          editorAnnotations[editorSelectedIndex]
-        ) {
-          editorAnnotations[editorSelectedIndex].color = color;
-          if (editorAnnotations[editorSelectedIndex].label)
-            editorAnnotations[editorSelectedIndex].label.color = color;
-          redrawEditorCanvas();
-        }
-      }
-      function setEditorLineWidth(val) {
-        editorCurrentLineWidth = Number(val) || 10;
-        const label = document.getElementById("editorLineWidthValue");
-        if (label) label.textContent = editorCurrentLineWidth;
-        if (
-          editorSelectedIndex > -1 &&
-          editorAnnotations[editorSelectedIndex]
-        ) {
-          editorAnnotations[editorSelectedIndex].lineWidth =
-            editorCurrentLineWidth;
-          redrawEditorCanvas();
-        }
-      }
-      // kept for any legacy calls but no longer needed:
-      function setEditorZoom(val) {
-        const newZ = Math.max(0.2, Math.min(8, Number(val) / 100));
-        const wrap = document.getElementById("editorCanvasWrap");
-        const rect = wrap
-          ? wrap.getBoundingClientRect()
-          : { left: 0, top: 0, width: 800, height: 600 };
-        _zoomAround(
-          newZ,
-          rect.left + rect.width / 2,
-          rect.top + rect.height / 2,
-        );
-      }
-      function fitEditorToViewport() {
-        _resetView();
-      }
-      function nudgeEditorZoom(delta) {
-        const newZ = Math.max(0.2, Math.min(8, _vZoom + delta / 100));
-        const wrap = document.getElementById("editorCanvasWrap");
-        const rect = wrap
-          ? wrap.getBoundingClientRect()
-          : { left: 0, top: 0, width: 800, height: 600 };
-        _zoomAround(
-          newZ,
-          rect.left + rect.width / 2,
-          rect.top + rect.height / 2,
-        );
-      }
-      function resetEditorZoom() {
-        _resetView();
-      }
-      function applyEditorZoom() {
-        _applyTransform();
-      }
-
-      // ── mouse events for drawing (on canvas) — touch is handled by wrap ──
-      function onEditorPointerDown(evt) {
-        if (!editorCanvas || !editorBaseImage) return;
-        if (editorCurrentTool === "pan") return; // pan handled by wrap mousedown
-        evt.preventDefault();
-        const pt = getCanvasCoords(evt);
-        const hit = findAnnotationHit(pt.x, pt.y);
-        editorPointerStart = pt;
-        editorMoved = false;
-        if (hit !== -1) {
-          editorSelectedIndex = hit;
-          editorDragMode = "move";
-          editorDragStart = { x: pt.x, y: pt.y };
-          redrawEditorCanvas();
-          return;
-        }
-        editorSelectedIndex = -1;
-        editorIsDrawing = true;
-        editorDragMode = "create";
-        editorDragStart = pt;
-        editorPreviewAnnotation = createAnnotationFromDrag(pt, pt);
-        redrawEditorCanvas();
-      }
-      function onEditorPointerMove(evt) {
-        if (!editorDragMode || !editorDragStart) return;
-        evt.preventDefault();
-        const pt = getCanvasCoords(evt);
-        if (Math.hypot(pt.x - editorDragStart.x, pt.y - editorDragStart.y) > 3)
-          editorMoved = true;
-        if (editorDragMode === "move" && editorSelectedIndex > -1) {
-          const dx = pt.x - editorDragStart.x;
-          const dy = pt.y - editorDragStart.y;
-          moveAnnotation(editorAnnotations[editorSelectedIndex], dx, dy);
-          editorDragStart = pt;
-          redrawEditorCanvas();
-          return;
-        }
-        if (editorDragMode === "create" && editorIsDrawing) {
-          editorPreviewAnnotation = createAnnotationFromDrag(
-            editorPointerStart,
-            pt,
-          );
-          redrawEditorCanvas();
-        }
-      }
-      function onEditorPointerUp(evt) {
-        if (!editorDragMode) return;
-        evt.preventDefault();
-        const pt = getCanvasCoords(evt);
-        if (editorDragMode === "move") {
-          editorDragMode = null;
-          editorDragStart = null;
-          redrawEditorCanvas();
-          return;
-        }
-        if (
-          editorDragMode === "create" &&
-          editorIsDrawing &&
-          editorPointerStart
-        ) {
-          const ann = createAnnotationFromDrag(editorPointerStart, pt);
-          editorIsDrawing = false;
-          editorDragMode = null;
-          editorDragStart = null;
-          editorPreviewAnnotation = null;
-          if (isAnnotationMeaningful(ann)) {
-            maybeAttachLabelToAnnotation(ann);
-            editorAnnotations.push(ann);
-            editorRedoStack = [];
-            editorSelectedIndex = editorAnnotations.length - 1;
-          }
-          redrawEditorCanvas();
-        }
-      }
-      function moveAnnotation(ann, dx, dy) {
-        if (!ann) return;
-        if (ann.tool === "circle") {
-          ann.cx += dx;
-          ann.cy += dy;
-          if (ann.label) {
-            ann.label.x += dx;
-            ann.label.y += dy;
-          }
-          return;
-        }
-        ann.x1 += dx;
-        ann.y1 += dy;
-        ann.x2 += dx;
-        ann.y2 += dy;
-        if (ann.label) {
-          ann.label.x += dx;
-          ann.label.y += dy;
-        }
-      }
-      function maybeAttachLabelToAnnotation(ann) {
-        const text = window.prompt("הוסף טקסט ליד הסימון (אופציונלי):", "");
-        if (!text || !text.trim()) return;
-        ann.label = { text: text.trim(), x: 0, y: 0, color: "#ffffff" };
-      }
-      function createAnnotationFromDrag(start, end) {
-        if (editorCurrentTool === "circle") {
-          const cx = (start.x + end.x) / 2;
-          const cy = (start.y + end.y) / 2;
-          const rx = Math.abs(end.x - start.x) / 2;
-          const ry = Math.abs(end.y - start.y) / 2;
-          return {
-            tool: "circle",
-            cx,
-            cy,
-            rx,
-            ry,
-            color: editorCurrentColor,
-            lineWidth: editorCurrentLineWidth,
-          };
-        }
-        return {
-          tool: "arrow",
-          x1: start.x,
-          y1: start.y,
-          x2: end.x,
-          y2: end.y,
-          color: editorCurrentColor,
-          lineWidth: editorCurrentLineWidth,
-        };
-      }
-      function isAnnotationMeaningful(ann) {
-        if (!ann) return false;
-        if (ann.tool === "circle") return ann.rx > 8 && ann.ry > 8;
-        return Math.hypot(ann.x2 - ann.x1, ann.y2 - ann.y1) > 12;
-      }
-      function findAnnotationHit(x, y) {
-        for (let i = editorAnnotations.length - 1; i >= 0; i--) {
-          const ann = editorAnnotations[i];
-          if (ann.label?.text) {
-            const labelW = Math.max(80, ann.label.text.length * 22) + 20;
-            const labelH = 52;
-            const lx = ann.label.x - labelW / 2;
-            const ly = ann.label.y - labelH / 2;
-            if (x >= lx && x <= lx + labelW && y >= ly && y <= ly + labelH)
-              return i;
-          }
-          if (ann.tool === "circle") {
-            const dx = (x - ann.cx) / (ann.rx || 1);
-            const dy = (y - ann.cy) / (ann.ry || 1);
-            const dist = Math.abs(dx * dx + dy * dy - 1);
-            if (dist < 0.22 || dx * dx + dy * dy <= 1) return i;
-          } else {
-            const d = distanceToSegment(x, y, ann.x1, ann.y1, ann.x2, ann.y2);
-            if (d <= Math.max(12, ann.lineWidth + 8)) return i;
-          }
-        }
-        return -1;
-      }
-      function distanceToSegment(px, py, x1, y1, x2, y2) {
-        const dx = x2 - x1,
-          dy = y2 - y1;
-        if (dx === 0 && dy === 0) return Math.hypot(px - x1, py - y1);
-        const t = Math.max(
-          0,
-          Math.min(1, ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy)),
-        );
-        const sx = x1 + t * dx,
-          sy = y1 + t * dy;
-        return Math.hypot(px - sx, py - sy);
-      }
-      function redrawEditorCanvas() {
-        if (!editorCtx || !editorCanvas || !editorBaseImage) return;
-        editorCtx.clearRect(0, 0, editorCanvas.width, editorCanvas.height);
-        editorCtx.drawImage(
-          editorBaseImage,
-          0,
-          0,
-          editorCanvas.width,
-          editorCanvas.height,
-        );
-        editorAnnotations.forEach((ann, index) =>
-          drawAnnotation(ann, index === editorSelectedIndex, false, index),
-        );
-        if (editorPreviewAnnotation)
-          drawAnnotation(editorPreviewAnnotation, false, true, -1);
-        drawTopLabelStrip();
-      }
-      function drawAnnotation(
-        ann,
-        isSelected = false,
-        isPreview = false,
-        annIndex = -1,
-      ) {
-        if (!editorCtx || !ann) return;
-        editorCtx.save();
-        editorCtx.strokeStyle = ann.color;
-        editorCtx.fillStyle = ann.color;
-        editorCtx.lineWidth = ann.lineWidth;
-        editorCtx.globalAlpha = isPreview ? 0.6 : 1;
-        if (ann.tool === "circle") {
-          editorCtx.beginPath();
-          editorCtx.ellipse(
-            ann.cx,
-            ann.cy,
-            Math.max(ann.rx, 1),
-            Math.max(ann.ry, 1),
-            0,
-            0,
-            Math.PI * 2,
-          );
-          editorCtx.stroke();
-        } else {
-          drawArrowShape(ann);
-        }
-        if (isSelected) drawSelectionBox(ann);
-        editorCtx.restore();
-        if (!isPreview && annIndex >= 0) drawAnnotationBadge(ann, annIndex);
-      }
-      function drawArrowShape(ann) {
-        const ctx = editorCtx;
-        const headLen = Math.max(18, ann.lineWidth * 6);
-        const angle = Math.atan2(ann.y2 - ann.y1, ann.x2 - ann.x1);
-        // shorten tip so arrowhead sits cleanly
-        const tipX = ann.x2,
-          tipY = ann.y2;
-        const p1x = tipX - headLen * Math.cos(angle - Math.PI / 7);
-        const p1y = tipY - headLen * Math.sin(angle - Math.PI / 7);
-        const p2x = tipX - headLen * Math.cos(angle + Math.PI / 7);
-        const p2y = tipY - headLen * Math.sin(angle + Math.PI / 7);
-        // shadow pass
-        ctx.save();
-        ctx.strokeStyle = "rgba(0,0,0,0.5)";
-        ctx.lineWidth = ann.lineWidth + 5;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(ann.x1, ann.y1);
-        ctx.lineTo(tipX, tipY);
-        ctx.stroke();
-        ctx.restore();
-        // line
-        ctx.lineCap = "round";
-        ctx.lineWidth = ann.lineWidth;
-        ctx.beginPath();
-        ctx.moveTo(ann.x1, ann.y1);
-        ctx.lineTo(tipX, tipY);
-        ctx.stroke();
-        // filled arrowhead
-        ctx.beginPath();
-        ctx.moveTo(tipX, tipY);
-        ctx.lineTo(p1x, p1y);
-        ctx.lineTo(p2x, p2y);
-        ctx.closePath();
-        ctx.fill();
-      }
-      function drawAnnotationBadge(ann, annIndex) {
-        if (!editorCtx || !editorCanvas) return;
-        const W = editorCanvas.width;
-        const r = Math.max(14, Math.round(W * 0.022));
-        let bx, by;
-        if (ann.tool === "circle") {
-          bx = ann.cx + ann.rx * 0.7;
-          by = ann.cy - ann.ry * 0.7;
-        } else {
-          const _hl = Math.max(18, ann.lineWidth * 6);
-          const _ang = Math.atan2(ann.y2 - ann.y1, ann.x2 - ann.x1);
-          bx = ann.x2 - _hl * (2 / 3) * Math.cos(_ang);
-          by = ann.y2 - _hl * (2 / 3) * Math.sin(_ang);
-        }
-        const num = String(annIndex + 1);
-        const ctx = editorCtx;
-        ctx.save();
-        // outer white ring
-        ctx.beginPath();
-        ctx.arc(bx, by, r + 2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255,0.9)";
-        ctx.fill();
-        // black filled circle
-        ctx.beginPath();
-        ctx.arc(bx, by, r, 0, Math.PI * 2);
-        ctx.fillStyle = "#111111";
-        ctx.fill();
-        // number
-        ctx.font = `800 ${Math.round(r * 1.1)}px Heebo,Arial,sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "#ffffff";
-        ctx.shadowBlur = 0;
-        ctx.fillText(num, bx, by + 1);
-        ctx.restore();
-      }
-      function drawAnnotationLabel(ann, isSelected = false) {
-        /* labels drawn in top strip via drawTopLabelStrip */
-      }
-      function drawTopLabelStrip() {
-        if (!editorCtx || !editorCanvas || !editorAnnotations.length) return;
-        const labeled = editorAnnotations.filter((a) => a.label?.text);
-        if (!labeled.length) return;
-        const W = editorCanvas.width;
-        const fontSize = Math.max(21, Math.min(36, Math.round(W * 0.036)));
-        const pad = 9;
-        const lineH = fontSize + pad * 2;
-        editorCtx.save();
-        editorCtx.fillStyle = "rgba(0,0,0,0.88)";
-        editorCtx.fillRect(0, 0, W, lineH);
-        editorCtx.font = `600 ${fontSize}px Heebo, Arial, sans-serif`;
-        editorCtx.textBaseline = "middle";
-        editorCtx.textAlign = "right";
-        editorCtx.fillStyle = "#ffffff";
-        editorCtx.shadowBlur = 0;
-        const parts = labeled.map((a, i) => {
-          const globalIdx = editorAnnotations.indexOf(a);
-          return `${globalIdx + 1}. ${a.label.text}`;
-        });
-        const fullText = parts.join("    |    ");
-        editorCtx.fillText(fullText, W - 14, lineH / 2);
-        editorCtx.restore();
-      }
-      function drawSelectionBox(ann) {
-        editorCtx.save();
-        editorCtx.setLineDash([8, 6]);
-        editorCtx.strokeStyle = "#FFFFFF";
-        editorCtx.lineWidth = 1.5;
-        const b = getAnnotationBounds(ann);
-        editorCtx.strokeRect(b.x - 6, b.y - 6, b.w + 12, b.h + 12);
-        editorCtx.restore();
-      }
-      function getAnnotationBounds(ann) {
-        let base;
-        if (ann.tool === "circle") {
-          base = {
-            x: ann.cx - ann.rx,
-            y: ann.cy - ann.ry,
-            w: ann.rx * 2,
-            h: ann.ry * 2,
-          };
-        } else {
-          base = {
-            x: Math.min(ann.x1, ann.x2),
-            y: Math.min(ann.y1, ann.y2),
-            w: Math.abs(ann.x2 - ann.x1),
-            h: Math.abs(ann.y2 - ann.y1),
-          };
-        }
-        if (ann.label?.text) {
-          const labelW = Math.max(80, ann.label.text.length * 22) + 20;
-          const labelH = 52;
-          const lx = ann.label.x - labelW / 2;
-          const ly = ann.label.y - labelH / 2;
-          const minX = Math.min(base.x, lx),
-            minY = Math.min(base.y, ly);
-          const maxX = Math.max(base.x + base.w, lx + labelW),
-            maxY = Math.max(base.y + base.h, ly + labelH);
-          return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
-        }
-        return base;
-      }
-      function rotateSelectedArrow(delta) {
-        if (editorSelectedIndex < 0) return;
-        const ann = editorAnnotations[editorSelectedIndex];
-        if (ann.tool !== "arrow") return;
-        const cx = (ann.x1 + ann.x2) / 2,
-          cy = (ann.y1 + ann.y2) / 2;
-        const angle = (delta * Math.PI) / 180;
-        const cos = Math.cos(angle),
-          sin = Math.sin(angle);
-        const rotate = (px, py) => ({
-          x: cos * (px - cx) - sin * (py - cy) + cx,
-          y: sin * (px - cx) + cos * (py - cy) + cy,
-        });
-        const p1 = rotate(ann.x1, ann.y1),
-          p2 = rotate(ann.x2, ann.y2);
-        ann.x1 = p1.x;
-        ann.y1 = p1.y;
-        ann.x2 = p2.x;
-        ann.y2 = p2.y;
-        redrawEditorCanvas();
-      }
-      function undoEditor() {
-        if (!editorAnnotations.length) return;
-        const ann = editorAnnotations.pop();
-        editorRedoStack.push(JSON.parse(JSON.stringify(ann)));
-        editorSelectedIndex = Math.min(
-          editorSelectedIndex,
-          editorAnnotations.length - 1,
-        );
-        redrawEditorCanvas();
-      }
-      function redoEditor() {
-        if (!editorRedoStack.length) return;
-        const ann = editorRedoStack.pop();
-        editorAnnotations.push(JSON.parse(JSON.stringify(ann)));
-        editorSelectedIndex = editorAnnotations.length - 1;
-        redrawEditorCanvas();
-      }
-      function clearEditorAnnotations() {
-        if (!editorAnnotations.length) return;
-        editorRedoStack.push(
-          ...editorAnnotations.map((a) => JSON.parse(JSON.stringify(a))),
-        );
-        editorAnnotations = [];
-        editorSelectedIndex = -1;
-        redrawEditorCanvas();
-      }
-      function deleteSelectedAnnotation() {
-        if (editorSelectedIndex < 0) return;
-        editorRedoStack.push(
-          JSON.parse(JSON.stringify(editorAnnotations[editorSelectedIndex])),
-        );
-        editorAnnotations.splice(editorSelectedIndex, 1);
-        editorSelectedIndex = Math.min(
-          editorSelectedIndex,
-          editorAnnotations.length - 1,
-        );
-        redrawEditorCanvas();
-      }
-      function editSelectedAnnotationText() {
-        if (editorSelectedIndex < 0) return;
-        const ann = editorAnnotations[editorSelectedIndex];
-        const current = ann.label?.text || "";
-        const next = window.prompt(
-          "ערוך טקסט ליד הסימון. להשאיר ריק כדי למחוק.",
-          current,
-        );
-        if (next === null) return;
-        if (!next.trim()) {
-          delete ann.label;
-        } else {
-          ann.label = { text: next.trim(), x: 0, y: 0, color: "#ffffff" };
-        }
-        redrawEditorCanvas();
-      }
-      async function saveEditedImage() {
-        if (editorCurrentPhotoIndex == null || !editorCanvas) return;
-        const idx = editorCurrentPhotoIndex;
-        if (!STATE.photos || !STATE.photos.items || !STATE.photos.items[idx]) return;
-        const currentPhoto = STATE.photos.items[idx];
-        const hasAnnotations = editorAnnotations.length > 0;
-        const updatedPhoto = { ...currentPhoto, annotations: editorAnnotations.map(a => JSON.parse(JSON.stringify(a))), annotated: hasAnnotations };
-        if (hasAnnotations) updatedPhoto.src = editorCanvas.toDataURL('image/jpeg', 0.85);
-        STATE.photos.items[idx] = updatedPhoto;
-        renderCard(9);
-        showToast(hasAnnotations ? '✓ הסימונים נשמרו' : '✓ הסימונים הוסרו');
-        closeEditor();
-      }
-      function normalizeColor(c) {
-        return String(c || "")
-          .replace(/\s+/g, "")
-          .toLowerCase();
-      }
-
- 
-
-      window.openEditor = openEditor;
-      window.closeEditor = closeEditor;
-      window.setEditorTool = setEditorTool;
-      window.setEditorColor = setEditorColor;
-      window.setEditorLineWidth = setEditorLineWidth;
-      window.rotateSelectedArrow = rotateSelectedArrow;
-      window.undoEditor = undoEditor;
-      window.redoEditor = redoEditor;
-      window.clearEditorAnnotations = clearEditorAnnotations;
-      window.deleteSelectedAnnotation = deleteSelectedAnnotation;
-      window.editSelectedAnnotationText = editSelectedAnnotationText;
-      window.saveEditedImage = saveEditedImage;
-      window.toggleEditorMore = toggleEditorMore;
-      window._pdfActionOpen = _pdfActionOpen;
-      window._pdfActionShare = _pdfActionShare;
-      window._pdfActionCopy = _pdfActionCopy;
-
-            window.shareReport = async function(){ await _generatePdf(); };
-      window.savePdf    = async function(){ await _generatePdf(); };
-
-      function shareReport_orig() {
+      function shareReport() {
         // Try Web Share API (mobile/modern browsers)
         const title =
           document.getElementById("rptModeLabel")?.textContent || "דוח שמאות";
@@ -13557,10 +11681,8 @@
         html += `<div class="photo-grid">`;
         (ph.items || []).forEach((img, i) => {
           html += `<div>
-      <div class="photo-thumb ${img.annotated ? 'has-markup' : ''}">
-        <span class="photo-open-hint">ערוך</span>
-        <img src="${img.src}" alt="תמונה ${i + 1}" onclick="openEditor(${i})" style="cursor:pointer;">
-        <button class="photo-del" onclick="event.stopPropagation();removePhoto(${i})">✕</button>
+      <div class="photo-thumb"><img src="${img.src}" alt="תמונה ${i + 1}">
+        <button class="photo-del" onclick="removePhoto(${i})">✕</button>
       </div>
       <div class="photo-caption"><input type="text" value="${esc(img.caption || "")}" oninput="STATE.photos.items[${i}].caption=this.value" placeholder="כיתוב..."></div>
     </div>`;
@@ -14632,23 +12754,9 @@
         const modeParam = params.get("mode");
 
         if (!caseId) {
-          // המתן לפרופיל ובדוק defaultReportMode
-          const waitForProfile = () => new Promise(resolve => {
-            if(window._profile !== undefined){ resolve(); return; }
-            let tries = 0;
-            const t = setInterval(() => {
-              tries++;
-              if(window._profile !== undefined || tries > 40){ clearInterval(t); resolve(); }
-            }, 50);
-          });
-          await waitForProfile();
-          if(loader) loader.classList.add("hidden");
-          const _defaultMode = window._profile?.defaultReportMode || '';
-          if(_defaultMode && ['private','insurance'].includes(_defaultMode)){
-            selectMode(_defaultMode);
-          } else {
-            document.getElementById("landing").classList.remove("hidden");
-          }
+          // No case in URL — show landing page
+          if (loader) loader.classList.add("hidden");
+          document.getElementById("landing").classList.remove("hidden");
           return;
         }
 
@@ -16116,234 +14224,5 @@
         </div>
       </div>
     </div>
-  
-    <div id="toast"></div>
-    <!-- ══ IMAGE EDITOR MODAL ══ -->
-    <div id="imgEditorModal" class="img-editor-modal no-print">
-      <div class="img-editor-shell">
-        <div class="img-editor-panel">
-          <div class="img-editor-title">עורך סימונים לתמונה</div>
-          <div class="img-editor-sub">
-            זום: גלגלת עכבר / פינץ׳. גרירה: שתי אצבעות / מצב ראייה
-          </div>
-          <div class="editor-group">
-            <span class="editor-small-label">כלי סימון</span>
-            <div class="editor-toolbar">
-              <button
-                type="button"
-                class="editor-btn active"
-                id="tool-pan"
-                onclick="setEditorTool('pan')"
-              >
-                🖐️ ראייה
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                id="tool-arrow"
-                onclick="setEditorTool('arrow')"
-              >
-                ↗️ חץ
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                id="tool-circle"
-                onclick="setEditorTool('circle')"
-              >
-                ⭕ עיגול
-              </button>
-            </div>
-            <div class="editor-help" style="margin-top: 10px">
-              גרור על התמונה להוסיף סימון. במצב ראייה אין ציור.
-            </div>
-          </div>
-          <div class="editor-group">
-            <span class="editor-small-label">צבע סימון</span>
-            <div class="editor-swatches" id="editorSwatches"></div>
-          </div>
-          <div class="editor-group">
-            <label class="editor-small-label" for="editorLineWidth"
-              >עובי קו</label
-            >
-            <input
-              id="editorLineWidth"
-              class="editor-range"
-              type="range"
-              min="2"
-              max="18"
-              step="1"
-              value="14"
-              oninput="setEditorLineWidth(this.value)"
-            />
-            <div class="editor-meta">
-              <span id="editorLineWidthValue">14</span> פיקסלים
-            </div>
-          </div>
-          <div class="editor-group">
-            <span class="editor-small-label">פעולות</span>
-            <div class="editor-inline-actions">
-              <button
-                type="button"
-                class="editor-btn is-mobile-primary"
-                onclick="undoEditor()"
-              >
-                ↶ Undo
-              </button>
-              <button
-                type="button"
-                class="editor-btn is-mobile-more"
-                onclick="undoEditor()"
-              >
-                ↶ Undo
-              </button>
-              <button
-                type="button"
-                class="editor-btn is-mobile-more"
-                onclick="redoEditor()"
-              >
-                ↷ Redo
-              </button>
-              <button
-                type="button"
-                class="editor-btn is-mobile-more"
-                onclick="deleteSelectedAnnotation()"
-              >
-                🗑️ מחק
-              </button>
-              <button
-                type="button"
-                class="editor-btn is-mobile-more"
-                onclick="editSelectedAnnotationText()"
-              >
-                ✏️ טקסט
-              </button>
-              <button
-                type="button"
-                class="editor-btn is-mobile-more"
-                onclick="clearEditorAnnotations()"
-              >
-                🧹 נקה
-              </button>
-              <button
-                type="button"
-                class="editor-more-toggle editor-btn"
-                id="editorMoreToggle"
-                onclick="toggleEditorMore()"
-              >
-                ⋯ עוד
-              </button>
-            </div>
-            <div class="editor-more-wrap" id="editorMoreWrap">
-              <div class="editor-more-menu">
-                <button type="button" class="editor-btn" onclick="redoEditor()">
-                  ↷ Redo
-                </button>
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="rotateSelectedArrow(15)"
-                >
-                  ↻ +15°
-                </button>
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="rotateSelectedArrow(-15)"
-                >
-                  ↺ -15°
-                </button>
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="deleteSelectedAnnotation()"
-                >
-                  🗑️ מחק
-                </button>
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="editSelectedAnnotationText()"
-                >
-                  ✏️ טקסט
-                </button>
-                <button
-                  type="button"
-                  class="editor-btn"
-                  onclick="clearEditorAnnotations()"
-                >
-                  🧹 נקה
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="img-editor-stage">
-          <div class="editor-stage-top">
-            <div>
-              <div
-                class="img-editor-title"
-                style="font-size: 13px"
-                id="editorMeta"
-              ></div>
-            </div>
-            <div class="editor-stage-actions">
-              <button
-                type="button"
-                class="editor-btn btn-ghost"
-                onclick="closeEditor()"
-              >
-                ✕ סגור
-              </button>
-              <button
-                type="button"
-                class="editor-btn"
-                style="
-                  background: var(--accent);
-                  color: #fff;
-                  border-color: var(--accent);
-                "
-                onclick="saveEditedImage()"
-              >
-                ✓ שמור סימונים
-              </button>
-            </div>
-          </div>
-          <div class="editor-canvas-wrap" id="editorCanvasWrap">
-            <div class="editor-canvas-inner" id="editorCanvasInner">
-              <canvas id="editorCanvas"></canvas>
-            </div>
-            <div class="editor-zoom-badge" id="editorZoomBadge">100%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    
-    <!-- ══ PDF PROGRESS OVERLAY ══ -->
-    <div id="pdfProgressOverlay">
-      <div id="pdfProgressBox">
-        <div id="pdfProgressSpinner"></div>
-        <div id="pdfReadyIcon">✅</div>
-        <div id="pdfProgressTitle">מכין את הדוח…</div>
-        <div id="pdfProgressBar"><div id="pdfProgressBarFill"></div></div>
-        <div id="pdfProgressSteps">
-          <div class="pdf-step" id="pdfStep1"><div class="pdf-step-dot">1</div><span>מעבד נתוני תיק</span></div>
-          <div class="pdf-step" id="pdfStep2"><div class="pdf-step-dot">2</div><span>שולח לשרת</span></div>
-          <div class="pdf-step" id="pdfStep3"><div class="pdf-step-dot">3</div><span>מייצר PDF</span></div>
-          <div class="pdf-step" id="pdfStep4"><div class="pdf-step-dot">4</div><span>מעלה קובץ</span></div>
-          <div class="pdf-step" id="pdfStep5"><div class="pdf-step-dot">✓</div><span>מוכן לשיתוף</span></div>
-        </div>
-        <div id="pdfReadyActions">
-          <div class="pdf-action-title">✓ הדוח מוכן!</div>
-          <div class="pdf-action-subtitle">בחר פעולה:</div>
-          <button class="pdf-action-btn pdf-action-btn-open" onclick="_pdfActionOpen()"><span class="btn-icon">📄</span><span class="btn-label">פתח PDF</span></button>
-          <button class="pdf-action-btn pdf-action-btn-share" id="pdfBtnShare" onclick="_pdfActionShare()"><span class="btn-icon">📤</span><span class="btn-label">שלח / שתף</span></button>
-          <button class="pdf-action-btn pdf-action-btn-copy" onclick="_pdfActionCopy()"><span class="btn-icon">🔗</span><span class="btn-label" id="pdfCopyLabel">העתק קישור</span></button>
-          <button class="pdf-action-btn pdf-action-btn-close" onclick="hidePdfProgress()">🏠 סגור</button>
-        </div>
-      </div>
-    </div>
-
-    </body>
+  </body>
 </html>
