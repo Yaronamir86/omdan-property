@@ -241,95 +241,87 @@
         background: #10b98110;
       }
 
-      /* ── FORM INPUTS ── */
-      input[type="text"],
-      input[type="number"],
-      input[type="tel"],
-      input[type="email"],
-      input[type="date"],
-      input[type="time"],
-      select,
-      textarea {
+      /* ── FORM CONTROLS — intentional variants, no local reset overrides ── */
+      :where(
+        input[type="text"], input[type="number"], input[type="tel"],
+        input[type="email"], input[type="date"], input[type="time"],
+        select, textarea
+      ):not(.prop-input):not(.boq-input) {
         background: var(--primary2);
         border: 1.5px solid var(--primary3);
-        border-radius: var(--r);
+        border-radius: 10px;
         padding: 10px 14px;
         color: var(--text);
         font-size: 13px;
         font-family: "Heebo", sans-serif;
         outline: none;
         width: 100%;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s;
-        border-radius: 10px;
+        transition: border-color 0.2s, box-shadow 0.2s;
       }
-      input:focus,
-      select:focus,
-      textarea:focus {
+      :where(
+        input[type="text"], input[type="number"], input[type="tel"],
+        input[type="email"], input[type="date"], input[type="time"],
+        select, textarea
+      ):not(.prop-input):not(.boq-input):focus {
         border-color: var(--accent);
         box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
       }
-      /* ── property card inputs — exact match to base card style ── */
       .prop-input {
-        background: var(--primary2) !important;
-        border: 1.5px solid var(--border2) !important;
-        border-radius: 10px !important;
-        padding: 10px 14px !important;
-        color: var(--text) !important;
-        font-size: 13px !important;
-        font-family: "Heebo", sans-serif !important;
-        width: 100% !important;
-        outline: none !important;
-        transition:
-          border-color 0.2s,
-          box-shadow 0.2s !important;
+        background: var(--primary2);
+        border: 1.5px solid var(--border2);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: var(--text);
+        font-size: 13px;
+        font-family: "Heebo", sans-serif;
+        width: 100%;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
         display: block;
         box-sizing: border-box;
         min-height: 42px;
       }
       .prop-input:focus {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12) !important;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
       }
-      select {
-        cursor: pointer;
-      }
-      select option {
+      .boq-input {
         background: var(--primary2);
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 7px;
+        color: var(--text);
+        font-size: 12px;
+        font-family: "Heebo", sans-serif;
+        width: 100%;
+        min-height: unset;
+        height: auto;
+        outline: none;
+        line-height: 1.5;
+        box-shadow: none;
       }
-      textarea {
+      .boq-input:focus {
+        border-color: var(--accent);
+        box-shadow: none;
+      }
+      .boq-input.num,
+      .boq-table input.boq-input[type="number"] {
+        width: 80px;
+        text-align: left;
+      }
+      .boq-input.desc-input,
+      .boq-table textarea.boq-input {
+        resize: none;
+        overflow: hidden;
+        min-height: 28px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      select { cursor: pointer; }
+      select option { background: var(--primary2); }
+      textarea:not(.boq-input) {
         resize: vertical;
         min-height: 80px;
-      }
-      /* ── BOQ table override — מבטל את כל כללי ה-input הגלובליים ── */
-      .boq-table td input,
-      .boq-table td textarea,
-      .boq-table td select {
-        padding: 4px 6px !important;
-        border-radius: 4px !important;
-        min-height: unset !important;
-        height: auto !important;
-        font-size: 12px !important;
-        border: 1px solid transparent !important;
-        box-shadow: none !important;
-        resize: none !important;
-        background: var(--primary2) !important;
-        line-height: 1.5 !important;
-      }
-      .boq-table td input:focus,
-      .boq-table td textarea:focus {
-        border-color: var(--accent) !important;
-        box-shadow: none !important;
-      }
-      .boq-table td input[type="number"] {
-        width: 80px !important;
-        text-align: left !important;
-      }
-      .boq-table td textarea {
-        width: 100% !important;
-        min-height: 24px !important;
-        overflow: hidden !important;
       }
       .field {
         display: flex;
@@ -493,6 +485,337 @@
       .event-card.active .el {
         color: var(--accent);
       }
+      .event-sub-panel {
+        margin-top: -2px;
+        margin-bottom: 16px;
+        padding: 14px;
+        border: 1px solid rgba(245, 158, 11, 0.22);
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.62);
+      }
+      .event-sub-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .event-sub-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .event-sub-hint {
+        font-size: 11px;
+        color: var(--subtle);
+      }
+      .event-sub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+      }
+      .event-sub-card {
+        min-height: 74px;
+        border: 1.5px solid var(--primary3);
+        border-radius: 12px;
+        background: rgba(31, 41, 55, 0.76);
+        color: var(--muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 12px;
+        font-family: 'Heebo', sans-serif;
+        font-size: 12px;
+        font-weight: 800;
+        transition: all 0.15s ease;
+      }
+      .event-sub-card:hover {
+        border-color: var(--muted);
+        color: var(--text);
+      }
+      .event-sub-card.active {
+        border-color: var(--accent);
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.12);
+      }
+      .event-sub-card .sub-ico {
+        font-size: 20px;
+        line-height: 1;
+      }
+      .event-sub-other {
+        margin-top: 10px;
+      }
+      .event-choice-summary {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 14px;
+        border: 1px solid var(--primary3);
+        border-radius: 12px;
+        background: rgba(3, 7, 18, 0.35);
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+      .event-choice-summary strong {
+        color: var(--accent);
+      }
+      .event-selected-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1.5px solid rgba(245, 158, 11, 0.42);
+        border-radius: 13px;
+        background: rgba(245, 158, 11, 0.06);
+        margin-bottom: 14px;
+      }
+      .event-selected-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .event-selected-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: rgba(245, 158, 11, 0.1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        flex-shrink: 0;
+      }
+      .event-selected-kicker {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--subtle);
+        letter-spacing: 0.06em;
+        margin-bottom: 1px;
+      }
+      .event-selected-label {
+        font-size: 13px;
+        font-weight: 900;
+        color: var(--accent);
+        line-height: 1.25;
+      }
+      .event-change-btn {
+        border: 1px solid var(--primary3);
+        background: rgba(17, 24, 39, 0.7);
+        color: var(--muted);
+        border-radius: 10px;
+        padding: 6px 11px;
+        font-family: 'Heebo', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+      }
+      .event-change-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      @media (max-width: 768px) {
+        .event-sub-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .event-sub-card {
+          min-height: 66px;
+          padding: 9px 8px;
+        }
+      }
+
+      .event-sub-selected-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 11px 14px;
+        border: 1.5px solid rgba(245, 158, 11, 0.36);
+        border-radius: 13px;
+        background: rgba(245, 158, 11, 0.055);
+        margin-bottom: 14px;
+      }
+      .event-sub-selected-main {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+      }
+      .event-sub-selected-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        background: rgba(245, 158, 11, 0.1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+      }
+      .event-sub-selected-kicker {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--subtle);
+        letter-spacing: 0.06em;
+        margin-bottom: 1px;
+      }
+      .event-sub-selected-label {
+        font-size: 12px;
+        font-weight: 900;
+        color: var(--accent);
+        line-height: 1.25;
+      }
+      .circ-smart-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .circ-live-panel {
+        border: 1.5px solid rgba(59, 130, 246, 0.35);
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(59,130,246,.09), rgba(15,23,42,.42));
+        padding: 14px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      }
+      .circ-live-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .circ-live-title {
+        font-size: 12px;
+        font-weight: 900;
+        color: #93c5fd;
+      }
+      .circ-live-badge {
+        font-size: 10px;
+        font-weight: 800;
+        color: #93c5fd;
+        border: 1px solid rgba(59,130,246,.35);
+        background: rgba(59,130,246,.1);
+        border-radius: 999px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
+      .circ-live-text {
+        min-height: 70px;
+        color: #dbeafe;
+        font-size: 12px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+      }
+      .circ-live-text.empty {
+        color: var(--subtle);
+      }
+      .circ-accordion {
+        border: 1.5px solid rgba(75, 85, 99, 0.72);
+        border-radius: 13px;
+        background: rgba(15, 23, 42, 0.35);
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+      }
+      .circ-accordion + .circ-accordion {
+        margin-top: 10px;
+      }
+      .circ-basic-accordion {
+        margin-top: 14px;
+        margin-bottom: 12px;
+      }
+      .circ-accordion > summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 11px 13px;
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 900;
+        user-select: none;
+        background: rgba(31, 41, 55, 0.62);
+      }
+      .circ-accordion > summary::-webkit-details-marker { display: none; }
+      .circ-accordion > summary::before {
+        content: none;
+      }
+      .circ-accordion > summary::after {
+        content: '+';
+        color: var(--subtle);
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 1;
+        margin-inline-start: 10px;
+        flex: 0 0 auto;
+      }
+      .circ-accordion[open] > summary::after {
+        content: '−';
+        color: var(--accent);
+      }
+      .circ-accordion-body {
+        padding: 14px;
+      }
+      .circ-section-mini {
+        color: var(--subtle);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      @media (max-width: 768px) {
+        .event-selected-summary, .event-sub-selected-summary {
+          align-items: stretch;
+          flex-direction: column;
+        }
+        .event-change-btn {
+          width: 100%;
+          justify-content: center;
+        }
+        .circ-live-panel {
+          padding: 12px;
+        }
+      }
+
+      .smart-text-panel { border: 1.5px solid rgba(245, 158, 11, 0.30); border-radius: 14px; background: linear-gradient(180deg, rgba(245,158,11,.075), rgba(15,23,42,.38)); padding: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,.03); }
+      .smart-text-panel + .smart-text-panel { margin-top: 12px; }
+      .smart-text-head { display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px; }
+      .smart-text-title { font-size:12px;font-weight:900;color:var(--accent); }
+      .smart-text-status { font-size:10px;font-weight:800;color:var(--muted);border:1px solid rgba(75,85,99,.7);background:rgba(17,24,39,.65);border-radius:999px;padding:3px 9px;white-space:nowrap;cursor:default; }
+      .smart-text-toolbar { display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 10px;padding:7px;border:1px solid rgba(75,85,99,.45);border-radius:12px;background:rgba(3,7,18,.22); }
+      .smart-action-btn { display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:30px;padding:6px 11px;border-radius:9px;border:1px solid rgba(75,85,99,.70);background:rgba(17,24,39,.78);color:var(--muted);font-family:'Heebo',sans-serif;font-size:11px;font-weight:800;cursor:pointer;transition:all .15s;box-shadow:none; }
+      .smart-action-btn:hover { color:var(--text);border-color:var(--muted);background:rgba(31,41,55,.92); }
+      .smart-action-primary { color:#111827;border-color:rgba(245,158,11,.75);background:linear-gradient(135deg,var(--accent),var(--accent3)); }
+      .smart-action-primary:hover { color:#111827;border-color:var(--accent2);filter:brightness(1.04); }
+      .smart-action-secondary { color:#dbeafe;border-color:rgba(59,130,246,.55);background:rgba(59,130,246,.12); }
+      .smart-action-secondary:hover { color:#eff6ff;border-color:#93c5fd;background:rgba(59,130,246,.18); }
+      .smart-text-panel textarea { min-height:110px;resize:vertical;line-height:1.75; }
+      .smart-text-panel.declaration { border-color:rgba(59,130,246,.32);background:linear-gradient(180deg, rgba(59,130,246,.07), rgba(15,23,42,.36)); }
+      .smart-text-panel.declaration .smart-text-title { color:#93c5fd; }
+      @media (max-width:768px){ .smart-text-head{align-items:stretch;flex-direction:column;} .smart-text-toolbar{align-items:stretch;} .smart-action-btn{flex:1;} }
+
+
+      .circ-summary-meta { display:inline-flex;align-items:center;gap:7px;margin-right:auto;color:var(--subtle);font-size:11px;font-weight:800;white-space:nowrap; }
+      .circ-status-dot { width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--subtle);animation:circDotPulse 1.6s ease-in-out infinite; }
+      .circ-status-dot.empty { background:var(--subtle); color:var(--subtle); }
+      .circ-status-dot.partial { background:var(--accent); color:var(--accent); }
+      .circ-status-dot.done { background:var(--green); color:var(--green); }
+      @keyframes circDotPulse { 0%{box-shadow:0 0 0 0 currentColor;opacity:.95;} 70%{box-shadow:0 0 0 7px transparent;opacity:.72;} 100%{box-shadow:0 0 0 0 transparent;opacity:.95;} }
+      .circ-specific-accordion { margin-top: 10px; }
+      .voice-btn[data-tip] { position: relative; }
+      .voice-btn[data-tip]::after { content: attr(data-tip); position:absolute; z-index:40; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(4px); opacity:0; pointer-events:none; white-space:nowrap; background:rgba(3,7,18,.96); color:var(--text); border:1px solid var(--border2); border-radius:8px; padding:5px 9px; font-size:10px; font-weight:800; box-shadow:var(--shadow); transition:opacity .22s ease .5s, transform .22s ease .5s; }
+      .voice-btn[data-tip]:hover::after { opacity:1; transform:translateX(-50%) translateY(0); }
+      .autosave-status { position:fixed; left:50%; bottom:18px; z-index:9000; min-width:88px; text-align:center; padding:7px 11px; border-radius:999px; border:1px solid rgba(75,85,99,.65); background:rgba(17,24,39,.92); color:var(--muted); font-size:11px; font-weight:800; box-shadow:var(--shadow); opacity:0; transform:translateX(-50%) translateY(6px); pointer-events:none; transition:opacity .18s ease, transform .18s ease; }
+      .autosave-status.show { opacity:1; transform:translateX(-50%) translateY(0); }
+      .autosave-status.saving { color:var(--accent); border-color:rgba(245,158,11,.5); }
+      .autosave-status.saved { color:var(--green); border-color:rgba(16,185,129,.45); }
+      .autosave-status.error { color:var(--red); border-color:rgba(239,68,68,.55); }
 
       /* ── SECTION CARD ── */
       .sc {
@@ -994,6 +1317,7 @@
       }
       .card-nav {
         display: flex;
+        direction: ltr;
         justify-content: space-between;
         align-items: center;
         gap: 10px;
@@ -1005,6 +1329,12 @@
       .card-nav .btn {
         min-width: 110px;
         justify-content: center;
+      }
+      .card-nav .btn-primary {
+        order: 2;
+      }
+      .card-nav .btn-secondary {
+        order: 1;
       }
 
       /* ── AREA CARDS (FINDINGS) ── */
@@ -1292,53 +1622,7 @@
       .boq-table .row-zero td {
         color: var(--subtle) !important;
       }
-      .boq-input {
-        background: var(--primary2);
-        border: 1px solid transparent;
-        border-radius: 4px;
-        padding: 4px 7px;
-        color: var(--text);
-        font-size: 12px;
-        font-family: "Heebo", sans-serif;
-        width: 100%;
-        outline: none;
-        line-height: 1.5;
-      }
-      .boq-input:focus {
-        border-color: var(--accent);
-      }
-      /* override global input[type=number] specificity */
-      .boq-table input.boq-input,
-      .boq-table textarea.boq-input {
-        padding: 4px 7px !important;
-        border-radius: 4px !important;
-        border: 1px solid transparent;
-        font-size: 12px;
-        line-height: 1.5;
-        min-height: unset !important;
-        box-shadow: none !important;
-      }
-      .boq-table input.boq-input:focus,
-      .boq-table textarea.boq-input:focus {
-        border-color: var(--accent);
-        box-shadow: none !important;
-      }
-      .boq-input.num {
-        text-align: left;
-        width: 80px;
-      }
-      .boq-table input.boq-input.num {
-        width: 80px;
-        padding: 4px 6px !important;
-      }
-      /* Description textarea — wraps naturally */
-      .boq-input.desc-input {
-        resize: none;
-        overflow: hidden;
-        min-height: 28px;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
+      /* BOQ inputs use the intentional .boq-input compact variant defined above. */
       .boq-total-box {
         background: rgba(15, 23, 42, 0.9);
         border: 2px solid rgba(245, 158, 11, 0.25);
@@ -1455,6 +1739,17 @@
         border-bottom: 1px solid #f3f4f6;
         border-left: 1px solid #f3f4f6;
         vertical-align: middle;
+      }
+      .rpt-table th:nth-child(2),
+      .rpt-table td:nth-child(2) {
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: break-word;
+        line-height: 1.55;
+      }
+      .rpt-table th:not(:nth-child(2)),
+      .rpt-table td:not(:nth-child(2)) {
+        white-space: nowrap;
       }
       .rpt-table tbody tr:nth-child(even) td {
         background: #fafafa;
@@ -2837,7 +3132,50 @@
       }
 
       
-      </style>
+      
+.prof-report-pills{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.prof-report-pill{
+  min-width:52px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--primary3);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  font-family:'Heebo',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+}
+.prof-report-pill:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.prof-report-pill.active{
+  border-color:var(--green);
+  background:rgba(16,185,129,.12);
+  color:var(--green);
+}
+.prof-report-pill.no.active{
+  border-color:var(--red);
+  background:rgba(239,68,68,.10);
+  color:var(--red);
+}
+.prof-summary{
+  font-size:11px;
+  color:var(--muted);
+  white-space:normal;
+  line-height:1.4;
+}
+
+</style>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import {
@@ -2886,6 +3224,7 @@
             const prof = await window._FB.getProfile(user.uid);
             if (prof) {
               window._profile = prof;
+              if (window.applyAppraiserProfile) window.applyAppraiserProfile(prof);
               // Populate APPRAISER object for report header (via window to cross module boundary)
               const _A = window.APPRAISER || {};
               _A.nameHe = prof.nameHe || prof.fullName || "";
@@ -2897,16 +3236,25 @@
               _A.address = prof.address || "";
               _A.license = prof.license || "";
               _A.website = prof.website || "";
-              _A.logoInitials = prof.logoLetters || "YA";
+              _A.logoInitials = prof.logoInitials || prof.logoLetters || "YA";
               _A.logoColor = prof.logoColor || "#f59e0b";
               _A.logoImageUrl = prof.logoImageData || null;
-              _A.logoMode     = prof.logoType    || "initials";
+              _A.logoMode     = prof.logoMode || prof.logoType || "initials";
               _A.logoSizePx   = prof.logoSizePx   || 70;
               _A.logoLayout   = prof.logoLayout    || 'A';
               _A.signatureUrl = prof.signature     || null;
               _A.declaration  = prof.declaration   || '';
               _A.education    = prof.education     || '';
               _A.closingText  = prof.closingText   || '';
+              _A.custom1      = prof.custom1 || null;
+              _A.custom2      = prof.custom2 || null;
+              _A.defaultReportMode = prof.defaultReportMode || '';
+              _A.reportTheme  = prof.reportTheme || _A.reportTheme || '';
+              _A.logoTextColor = prof.logoTextColor || _A.logoTextColor || '#0f1117';
+              _A.fax = prof.fax || '';
+              _A.vat = prof.vat || '';
+              _A.linkedin = prof.linkedin || '';
+              _A.social = prof.social || '';
               if (window.APPRAISER) Object.assign(window.APPRAISER, _A);
               // טעינת נושא צבע דוח
               if (prof.reportTheme && window.STATE) window.STATE.reportTheme = prof.reportTheme;
@@ -3230,8 +3578,6 @@
         </svg>
       </div>
       <img src="../assets/img/omda-logo.png" alt="OMDA רכוש" style="height:20px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.7;" onerror="this.style.display='none'">
-      <div class="loader-text">טוען מערכת...</div>
-    </div>
       <div class="loader-text">טוען מערכת...</div>
     </div>
 
@@ -3783,109 +4129,49 @@
       <div
         class="rpt-topbar"
         style="
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
           align-items: center;
-          justify-content: space-between;
-          padding: 10px 24px;
+          padding: 12px 24px;
           background: #fff;
           border-bottom: 2px solid #e5e7eb;
           gap: 12px;
-          flex-wrap: wrap;
         "
       >
-        <div
-          style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap"
-        >
+        <div style="display:flex;gap:10px;align-items:center;justify-content:flex-start;flex-wrap:wrap;direction:rtl;">
           <button
             class="btn btn-secondary btn-sm"
             onclick="closeReport()"
-            style="display: flex; align-items: center; gap: 5px"
+            style="display:flex;align-items:center;gap:6px;background:#059669;color:#fff;border:none;border-radius:10px;padding:10px 18px;font-weight:800;"
           >
             ← חזרה לעריכה
           </button>
-          <span style="color: #d1d5db">|</span>
-          <span
-            style="
-              font-size: 12px;
-              color: #6b7280;
-              display: flex;
-              align-items: center;
-              gap: 4px;
-            "
-            >🔒 הדוח נעול לעריכה</span
+          <button
+            class="btn btn-primary btn-sm"
+            onclick="shareReport()"
+            style="display:flex;align-items:center;gap:6px;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:10px 18px;font-weight:800;box-shadow:none;"
           >
+            💾 שמור ושתף
+          </button>
         </div>
         <span
           id="rptModeLabel"
           style="
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             color: #374151;
             background: #f3f4f6;
-            padding: 4px 12px;
-            border-radius: 20px;
+            padding: 5px 14px;
+            border-radius: 999px;
+            max-width: 420px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            justify-self: center;
           "
         ></span>
-        <div
-          style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap"
-        >
-          <button
-            onclick="window.print()"
-            style="
-              display: flex;
-              align-items: center;
-              gap: 6px;
-              padding: 8px 16px;
-              background: #111827;
-              border: none;
-              border-radius: 10px;
-              color: #fff;
-              font-size: 13px;
-              font-weight: 700;
-              cursor: pointer;
-              font-family: &quot;Heebo&quot;, sans-serif;
-            "
-          >
-            💾 שמור כ-PDF
-          </button>
-          <button
-            onclick="shareReport()"
-            style="
-              display: flex;
-              align-items: center;
-              gap: 6px;
-              padding: 8px 16px;
-              background: #2563eb;
-              border: none;
-              border-radius: 10px;
-              color: #fff;
-              font-size: 13px;
-              font-weight: 700;
-              cursor: pointer;
-              font-family: &quot;Heebo&quot;, sans-serif;
-            "
-          >
-            📤 שלח / שתף
-          </button>
-          <button
-            onclick="closeReport()"
-            style="
-              display: flex;
-              align-items: center;
-              gap: 6px;
-              padding: 8px 16px;
-              background: #059669;
-              border: none;
-              border-radius: 10px;
-              color: #fff;
-              font-size: 13px;
-              font-weight: 700;
-              cursor: pointer;
-              font-family: &quot;Heebo&quot;, sans-serif;
-            "
-          >
-            ✏️ ערוך דוח
-          </button>
+        <div style="font-size:12px;color:#6b7280;font-weight:700;display:flex;align-items:center;gap:6px;justify-content:flex-end;">
+          🔒 הדוח נעול לעריכה
         </div>
       </div>
       <div
@@ -6630,9 +6916,62 @@
         declaration: '',
         education: '',
         closingText: '',
+        custom1: null,
+        custom2: null,
+        defaultReportMode: '',
+        reportTheme: '',
+        fax: '',
+        vat: '',
+        linkedin: '',
+        social: '',
         fieldDefaults: [],
         textSnippets: [],
       };
+      window.APPRAISER = APPRAISER;
+
+      function applyAppraiserProfile(prof) {
+        if (!prof) return;
+        window._profile = prof;
+        const mapped = {
+          nameHe: prof.nameHe || prof.fullName || '',
+          nameEn: prof.nameEn || '',
+          title: prof.title || 'שמאי רכוש',
+          phone: prof.phone || '',
+          email: prof.profEmail || prof.email || '',
+          city: prof.city || '',
+          address: prof.address || '',
+          license: prof.license || '',
+          website: prof.website || '',
+          fax: prof.fax || '',
+          vat: prof.vat || '',
+          linkedin: prof.linkedin || '',
+          social: prof.social || '',
+          logoInitials: prof.logoInitials || prof.logoLetters || 'YA',
+          logoColor: prof.logoColor || '#f59e0b',
+          logoTextColor: prof.logoTextColor || '#0f1117',
+          logoImageUrl: prof.logoImageData || prof.logoImageUrl || prof.logoImage || null,
+          logoMode: prof.logoMode || prof.logoType || (prof.logoImageData ? 'upload' : 'initials'),
+          logoSizePx: prof.logoSizePx || 70,
+          logoLayout: prof.logoLayout || 'A',
+          signatureUrl: prof.signature || prof.signatureUrl || null,
+          declaration: prof.declaration || '',
+          education: prof.education || '',
+          closingText: prof.closingText || '',
+          custom1: prof.custom1 || null,
+          custom2: prof.custom2 || null,
+          defaultReportMode: prof.defaultReportMode || '',
+          reportTheme: prof.reportTheme || '',
+          fieldDefaults: prof.fieldDefaults || [],
+          textSnippets: prof.textSnippets || [],
+        };
+        Object.assign(APPRAISER, mapped);
+        window.APPRAISER = APPRAISER;
+        if (prof.reportTheme && typeof STATE !== 'undefined' && STATE && !STATE.reportTheme) {
+          STATE.reportTheme = prof.reportTheme;
+        }
+        if (typeof applyFieldDefaults === 'function') applyFieldDefaults();
+      }
+      window.applyAppraiserProfile = applyAppraiserProfile;
 
       async function loadAppraiserProfile() {
         if (!window._currentUser || !window._FB) return;
@@ -6641,8 +6980,7 @@
           // Use raw firebase already initialized in module
           const snap = await window._FB.getProfile(window._currentUser.uid);
           if (snap) {
-            Object.assign(APPRAISER, snap);
-            applyFieldDefaults();
+            applyAppraiserProfile(snap);
           }
         } catch (e) {
           console.warn("profile load error", e);
@@ -6715,6 +7053,7 @@
         event: {
           eventType: "",
           eventSubType: "",
+          eventSubTypeOtherText: "",
           plumberType: "",
           requestedBy: "",
           requesterName: "",
@@ -6817,20 +7156,21 @@
           "כשל באיטום",
           "חדירת מי גשם",
           "הצפה ממקור חיצוני",
-          "אחר / לא ידוע",
+          "אחר",
         ],
         fire: [
           "שריפה גלויה",
           "נזקי עשן/פיח",
           "מי כיבוי",
           "קצר/חשמל",
-          "אחר / לא ידוע",
+          "אחר",
         ],
         burglary: [
           "פריצה (נזקי פתיחה)",
           "גניבה ללא נזק מבני",
           "ונדליזם",
           "ניסיון פריצה",
+          "אחר",
         ],
         electrical: ["קפיצת מתח", "קצר בלוח", "מכשיר ספציפי", "אחר"],
         storm: ["חדירת מים מגשם", "שבר/תלישה", "הצפה עקב ניקוז", "אחר"],
@@ -7478,6 +7818,7 @@
           event: {
             eventType: "",
             eventSubType: "",
+            eventSubTypeOtherText: "",
             plumberType: "",
             requestedBy: "",
             requesterName: "",
@@ -7742,9 +8083,9 @@
           let html = `<div><h2 class="page-title">⚡ פרטי האירוע ונסיבות המקרה</h2><p class="page-sub">סוג האירוע, גורמים, נסיבות ושאלות חקירה</p></div>`;
           html += `<div class="card-container" style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;">`;
           html += `<div class="merged-grid">`;
-          html += `<div><div class="merged-label">⚡ פרטי האירוע</div>${renderCard4()}</div>`;
+          html += `<div><div class="merged-label">⚡ פרטי האירוע</div>${renderCard4()}${renderCircQuestions()}</div>`;
           html += `<div class="merged-sep"></div>`;
-          html += `<div><div class="merged-label">💬 נסיבות המקרה</div>${renderCard5()}</div>`;
+          html += `<div><div class="merged-label">💬 נוסחים שיופיעו בדוח הסופי <span style="font-weight:700;color:var(--subtle);font-size:10px;letter-spacing:0;">(ניתן לערוך ידנית בכל שלב)</span></div>${renderSmartTextPanels()}</div>`;
           html += `</div>`;
           html += `</div>`;
           const cards = getVisibleCards(),
@@ -8060,7 +8401,50 @@
     .ins-bottom{display:flex;flex-direction:column;gap:14px;}
     .ins-amounts{display:grid;grid-template-columns:1fr;gap:8px;}
   }
-  </style>
+  
+.prof-report-pills{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.prof-report-pill{
+  min-width:52px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--primary3);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  font-family:'Heebo',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+}
+.prof-report-pill:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.prof-report-pill.active{
+  border-color:var(--green);
+  background:rgba(16,185,129,.12);
+  color:var(--green);
+}
+.prof-report-pill.no.active{
+  border-color:var(--red);
+  background:rgba(239,68,68,.10);
+  color:var(--red);
+}
+.prof-summary{
+  font-size:11px;
+  color:var(--muted);
+  white-space:normal;
+  line-height:1.4;
+}
+
+</style>
 
   <div class="ins-header">
     <!-- צד ימין — פרטי פוליסה ותאריכים -->
@@ -8127,14 +8511,14 @@
         <!-- הרחבות בפוליסה — מתקפל, דוחף תוכן למטה -->
         <div>
           <div class="label" style="font-size:12px;font-weight:700;margin-bottom:8px;opacity:0;">_</div>
-          <div style="background:var(--primary2);border:1.5px solid var(--border2);border-radius:10px;">
+          <div style="background:var(--primary2);border:1.5px solid var(--border2);border-radius:10px;position:relative;">
             <!-- כותרת לחיצה -->
             <div onclick="_insExtTogglePanel()" id="ins-ext-header" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;user-select:none;border-radius:10px;transition:background 0.12s;" onmouseover="this.style.background='var(--primary3)'" onmouseout="this.style.background='transparent'">
               <span style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">📋 הרחבות בפוליסה</span>
-              <span id="ins-ext-chevron" style="font-size:15px;color:var(--subtle);line-height:1;">${(ins.extNaturalDisaster||ins.extAllRisks||ins.thirdParty||ins.lossOfProfits||ins.extOther)?'−':'+'}</span>
+              <span id="ins-ext-chevron" style="font-size:15px;color:var(--subtle);line-height:1;">+</span>
             </div>
             <!-- גוף מתקפל — גובה אוטומטי, לא מרחף -->
-            <div id="ins-ext-body" style="display:${(ins.extNaturalDisaster||ins.extAllRisks||ins.thirdParty||ins.lossOfProfits||ins.extOther)?'block':'none'};">
+            <div id="ins-ext-body" style="display:none;position:absolute;top:100%;right:0;left:0;z-index:80;background:var(--primary2);border:1.5px solid var(--border2);border-top:none;border-radius:0 0 10px 10px;box-shadow:0 12px 28px rgba(0,0,0,0.35);">
               <div style="border-top:1px solid var(--primary3);">
                 <label onclick="_insExtToggle(this,'extNaturalDisaster')" style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;font-weight:600;padding:9px 12px;transition:background 0.12s;border-bottom:1px solid var(--primary3);" class="_ins-ext-row ${ins.extNaturalDisaster?'_ins-ext-on':''}">
                   <span style="width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all 0.15s;" class="_ins-ext-box">${ins.extNaturalDisaster?'<span style=\'color:var(--accent);font-weight:900\'>✓</span>':''}</span>
@@ -8251,26 +8635,68 @@
             </select></div>`;
           html += `<div class="field span2"><label class="label">תיאור קצר של סוג הפגיעה</label><input type="text" value="${esc(ev.eventSubTypeDesc || "")}" oninput="STATE.event.eventSubTypeDesc=this.value" placeholder="תיאור חופשי..."></div>`;
         } else {
-          html += `<label class="label">סוג האירוע *</label><div class="event-grid mb16" id="eventGrid">`;
-          EVENT_TYPES.forEach((et) => {
-            html += `<div class="event-card ${ev.eventType === et.id ? "active" : ""}" onclick="setEventType('${et.id}')"><div class="ei">${et.icon}</div><div class="el">${et.label}</div></div>`;
-          });
-          html += `</div>`;
+          const selectedEvent = EVENT_TYPES.find((x) => x.id === ev.eventType) || null;
+          const showEventPicker = !ev.eventType || STATE._eventTypeEdit === true;
+          if (showEventPicker) {
+            html += `<label class="label">סוג האירוע *</label><div class="event-grid mb16" id="eventGrid">`;
+            EVENT_TYPES.forEach((et) => {
+              html += `<div class="event-card ${ev.eventType === et.id ? "active" : ""}" onclick="setEventType('${et.id}')"><div class="ei">${et.icon}</div><div class="el">${et.label}</div></div>`;
+            });
+            html += `</div>`;
+          } else if (selectedEvent) {
+            html += `<div class="event-selected-summary">
+              <div class="event-selected-main">
+                <span class="event-selected-icon">${selectedEvent.icon}</span>
+                <span>
+                  <div class="event-selected-kicker">סוג האירוע</div>
+                  <div class="event-selected-label">${esc(selectedEvent.label)}</div>
+                </span>
+              </div>
+              <button type="button" class="event-change-btn" onclick="editEventType()">✎ שנה בחירה</button>
+            </div>`;
+          }
           if (ev.eventType) {
             const subs = EVENT_SUBTYPES[ev.eventType] || [];
             if (subs.length) {
-              if (subs.length <= 2) {
-                html += `<div class="field mb16"><label class="label">תת-סיווג</label><div class="pill-group" id="subPills">`;
-                subs.forEach((s) => {
-                  html += `<button class="pill ${ev.eventSubType === s ? "active" : ""}" onclick="STATE.event.eventSubType='${s}';refreshPills('subPills','${s}')">${s}</button>`;
+              const eventLabel = (selectedEvent || {}).label || "";
+              const cleanSub = getDisplayedEventSubType();
+              const showSubPicker = !ev.eventSubType || STATE._eventSubTypeEdit === true;
+              if (showSubPicker) {
+                html += `<div class="event-sub-panel">
+                  <div class="event-sub-head">
+                    <div class="event-sub-title">תת-סיווג</div>
+                    <div class="event-sub-hint">בחר סיווג מדויק יותר לפי ${esc(eventLabel)}</div>
+                  </div>
+                  <div class="event-sub-grid">`;
+                subs.forEach((sub, idx) => {
+                  html += `<button type="button" class="event-sub-card ${ev.eventSubType === sub ? "active" : ""}" onclick="setEventSubTypeByIndex('${ev.eventType}', ${idx})">
+                    <span class="sub-ico">${getSubTypeIcon(sub)}</span>
+                    <span>${esc(sub)}</span>
+                  </button>`;
                 });
-                html += `</div></div>`;
+                html += `</div>`;
+                if (ev.eventSubType === "אחר") {
+                  html += `<div class="event-sub-other field">
+                    <label class="label">פירוט אחר</label>
+                    <input type="text" value="${esc(ev.eventSubTypeOtherText || "")}" oninput="STATE.event.eventSubTypeOtherText=this.value;updateCircLivePreview()" placeholder="כתוב תת-סיווג חופשי...">
+                  </div>`;
+                }
+                html += `<div class="event-choice-summary">
+                  <span>✓</span>
+                  <span>נבחר: <strong>${esc(eventLabel)}</strong>${cleanSub ? ` · <strong>${esc(cleanSub)}</strong>` : " · טרם נבחר תת-סיווג"}</span>
+                </div>`;
+                html += `</div>`;
               } else {
-                html += `<div class="field mb16"><label class="label">תת-סיווג</label>
-                  <select onchange="STATE.event.eventSubType=this.value;renderCard(4)">
-                    <option value="">בחר תת-סיווג...</option>
-                    ${subs.map(s => `<option value="${s}" ${ev.eventSubType === s ? 'selected' : ''}>${s}</option>`).join('')}
-                  </select></div>`;
+                html += `<div class="event-sub-selected-summary">
+                  <div class="event-sub-selected-main">
+                    <span class="event-sub-selected-icon">${getSubTypeIcon(cleanSub)}</span>
+                    <span>
+                      <div class="event-sub-selected-kicker">תת-סיווג</div>
+                      <div class="event-sub-selected-label">${esc(cleanSub)}</div>
+                    </span>
+                  </div>
+                  <button type="button" class="event-change-btn" onclick="editEventSubType()">✎ שנה תת-סיווג</button>
+                </div>`;
               }
             }
           }
@@ -8304,83 +8730,125 @@
         html += `<div class="field"><label class="label" style="${insAutoReq ? "color:var(--subtle);" : ""}">${insAutoReq ? "שם הפונה (לא רלוונטי)" : "שם הפונה"}</label>
     <input type="text" value="${esc(ev.requesterName)}" oninput="STATE.event.requesterName=this.value" ${insAutoReq ? "disabled placeholder=\"חברת הביטוח\" style='opacity:0.4;'" : 'placeholder="שם מלא..."'}></div>`;
         html += `</div>`;
-        html += `<div class="field mt16"><label class="label">מטרת הביקור (ניתן לסמן מספר)</label><div class="flex flex-wrap gap8" id="purposeChips">`;
-        [
+        const visitPurposeItems = [
           "הערכת נזק לצורך תביעה",
           "בדיקת היקף שיקום",
           "חקירה ראשונית",
           "בדיקת תכולה/מלאי",
           "ביקור חוזר/עדכון אומדן",
           "אחר",
-        ].forEach((p) => {
+        ];
+        html += `<div class="field mt16">
+          <div style="background:var(--primary2);border:1.5px solid var(--border2);border-radius:10px;position:relative;">
+            <div onclick="_visitPurposeTogglePanel()" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;user-select:none;border-radius:10px;">
+              <span style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">מטרת הביקור</span>
+              <span id="visit-purpose-chevron" style="font-size:15px;color:var(--subtle);line-height:1;">+</span>
+            </div>
+            <div id="visit-purpose-body" style="display:none;position:absolute;top:100%;right:0;left:0;z-index:80;background:var(--primary2);border:1.5px solid var(--border2);border-top:none;border-radius:0 0 10px 10px;box-shadow:0 12px 28px rgba(0,0,0,0.35);padding:10px 12px;">
+              <div class="flex flex-wrap gap8" id="purposeChips">`;
+        visitPurposeItems.forEach((p) => {
           const checked = (ev.visitPurpose || []).includes(p);
           html += `<button class="chip ${checked ? "checked" : ""}" onclick="togglePurpose('${p}',this)">${p}</button>`;
         });
-        html += `</div></div>`;
-        if (!isTax) {
-          html += `<div class="divider"></div>`;
-          html += `<div class="grid2">`;
-          html += `<div class="field"><label class="label">תלונה / אסמכתא רשמית</label><div class="pill-group" id="policeP">
-      <button class="pill ${ev.policeReport === "yes" ? "active" : ""}" onclick="STATE.event.policeReport='yes';refreshPills('policeP','yes')">כן</button>
-      <button class="pill ${ev.policeReport === "no" ? "active" : ""}" onclick="STATE.event.policeReport='no';refreshPills('policeP','no')">לא</button>
-    </div></div>`;
-          if (ev.policeReport === "yes") {
-            html += `<div class="field"><label class="label">מספר תלונה / אסמכתא</label><input type="text" value="${esc(ev.policeNum)}" oninput="STATE.event.policeNum=this.value"></div>`;
-          }
-          html += `</div>`;
-        }
-        html += `<div class="field mt16"><label class="label">גורמים מקצועיים שנכחו / הוזמנו</label><div class="flex flex-col gap8">`;
+        html += `</div></div>
+            <div id="visit-purpose-tags" style="display:flex;flex-wrap:wrap;gap:5px;padding:${(ev.visitPurpose||[]).length?'8px 10px':'0 10px'};border-top:${(ev.visitPurpose||[]).length?'1px solid var(--primary3)':'none'};min-height:0;">
+              ${(ev.visitPurpose||[]).map(p=>`<span style="display:inline-flex;align-items:center;background:rgba(16,185,129,0.13);border:1px solid rgba(16,185,129,0.35);color:var(--green);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">${esc(p)}</span>`).join("")}
+            </div>
+          </div>
+        </div>`;
+        const selectedProfLabels = (ev.professionals || []).map(id => {
+          const p = PROFESSIONALS.find(x => x.id === id);
+          const d = (ev.profDetails || {})[id] || {};
+          return p ? (d.name ? `${p.label} — ${d.name}${d.role ? " / " + d.role : ""}` : p.label) : "";
+        }).filter(Boolean);
+        html += `<div class="field mt16">
+          <div style="background:var(--primary2);border:1.5px solid var(--border2);border-radius:10px;position:relative;">
+            <div onclick="_professionalsTogglePanel()" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;user-select:none;border-radius:10px;">
+              <span style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;">גורמים מקצועיים שנכחו / הוזמנו</span>
+              <span id="professionals-chevron" style="font-size:15px;color:var(--subtle);line-height:1;">${STATE._professionalsOpen ? "−" : "+"}</span>
+            </div>
+            <div id="professionals-body" style="display:${STATE._professionalsOpen ? "block" : "none"};position:absolute;top:100%;right:0;left:0;z-index:85;background:var(--primary2);border:1.5px solid var(--border2);border-top:none;border-radius:0 0 10px 10px;box-shadow:0 12px 28px rgba(0,0,0,0.35);padding:10px 12px;max-height:420px;overflow:auto;">
+              <div class="flex flex-col gap8">`;
         PROFESSIONALS.filter(
           (p) => !p.fireOnly || ev.eventType === "fire",
         ).forEach((prof) => {
           const isChk = (ev.professionals || []).includes(prof.id);
           const det = ev.profDetails[prof.id] || {};
           const isCustom = prof.id === "custom";
-          html += `<div style="border-radius:10px;overflow:hidden;margin-bottom:2px;">
-      <div style="display:flex;align-items:center;gap:8px;padding:2px 0;">
+          html += `<div style="border:1px solid var(--primary3);border-radius:12px;overflow:hidden;margin-bottom:8px;background:rgba(255,255,255,0.02);">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid transparent;">
         <button class="chip ${isChk ? "checked" : ""}" onclick="toggleProfessional('${prof.id}',this)">${prof.label}</button>
-        ${isChk && det.name ? `<span style="font-size:11px;color:var(--muted);">${esc(det.name)}${det.role ? " — " + esc(det.role) : ""}</span>` : ""}
+        ${isChk ? `<span class="prof-summary" id="prof_summary_${prof.id}">${[det.name ? esc(det.name) : "", det.role ? esc(det.role) : "", det.report === "yes" ? "נמסר דוח: כן" : det.report === "no" ? "נמסר דוח: לא" : ""].filter(Boolean).join(" — ")}</span>` : ""}
         ${isChk ? `<button onclick="const b=document.getElementById('prof_body_${prof.id}');b.style.display=b.style.display==='none'?'':'none';this.textContent=b.style.display===''?'▲':'▼';" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;margin-right:auto;">${det.name ? "▼" : "▲"}</button>` : ""}
       </div>
       ${
         isChk
-          ? `<div id="prof_body_${prof.id}" style="display:${det.name ? "none" : ""};background:var(--primary2);border:1px solid var(--primary3);border-radius:8px;padding:12px;margin-top:6px;">
+          ? `<div id="prof_body_${prof.id}" style="display:${det.name ? "none" : ""};background:rgba(3,7,18,0.28);border-top:1px solid var(--primary3);padding:14px 12px;">
         <div style="display:grid;grid-template-columns:${isCustom ? "1fr 1fr 1fr" : "1fr 1fr"};gap:10px;margin-bottom:10px;">
-          <div class="field"><label class="label">שם גורם</label><input type="text" value="${esc(det.name || "")}" oninput="setProfDetail('${prof.id}','name',this.value)"></div>
-          ${isCustom ? `<div class="field"><label class="label">תפקיד</label><input type="text" value="${esc(det.role || "")}" oninput="setProfDetail('${prof.id}','role',this.value)" placeholder="חוקר שריפות, מהנדס..."></div>` : ""}
-          <div class="field"><label class="label">נמסר דוח?</label><div class="pill-group">
-            <button class="pill ${det.report === "yes" ? "active" : ""}" onclick="setProfDetail('${prof.id}','report','yes');refreshPillsInParent(this,'yes')">כן</button>
-            <button class="pill ${det.report === "no" ? "active" : ""}" onclick="setProfDetail('${prof.id}','report','no');refreshPillsInParent(this,'no')">לא</button>
+          <div class="field"><label class="label">שם גורם</label><input type="text" value="${esc(det.name || "")}" oninput="setProfDetail('${prof.id}','name',this.value);updateProfSummary('${prof.id}')"></div>
+          ${isCustom ? `<div class="field"><label class="label">תפקיד</label><input type="text" value="${esc(det.role || "")}" oninput="setProfDetail('${prof.id}','role',this.value);updateProfSummary('${prof.id}')" placeholder="חוקר שריפות, מהנדס..."></div>` : ""}
+          <div class="field"><label class="label">נמסר דוח?</label><div class="prof-report-pills">
+            <button type="button" class="prof-report-pill ${det.report === "yes" ? "active" : ""}" onclick="setProfDetail('${prof.id}','report','yes');this.parentElement.querySelectorAll('.prof-report-pill').forEach(b=>b.classList.remove('active'));this.classList.add('active');updateProfSummary('${prof.id}')">כן</button>
+            <button type="button" class="prof-report-pill no ${det.report === "no" ? "active" : ""}" onclick="setProfDetail('${prof.id}','report','no');this.parentElement.querySelectorAll('.prof-report-pill').forEach(b=>b.classList.remove('active'));this.classList.add('active');updateProfSummary('${prof.id}')">לא</button>
           </div></div>
         </div>
-        <button onclick="document.getElementById('prof_body_${prof.id}').style.display='none';this.closest('[style]').previousElementSibling.querySelector('button:last-child').textContent='▼';" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">✓ סיים</button>
+        <button onclick="STATE._professionalsOpen=true;updateProfSummary('${prof.id}');document.getElementById('prof_body_${prof.id}').style.display='none';this.closest('[style]').previousElementSibling.querySelector('button:last-child').textContent='▼';renderCard(4);" style="background:var(--green);color:#000;border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">✓ סיים</button>
       </div>`
           : ""
       }
     </div>`;
         });
-        html += `</div></div>`;
+        html += `</div></div>
+            <div id="professionals-tags" style="display:flex;flex-wrap:wrap;gap:5px;padding:${selectedProfLabels.length?'8px 10px':'0 10px'};border-top:${selectedProfLabels.length?'1px solid var(--primary3)':'none'};min-height:0;">
+              ${selectedProfLabels.map(p=>`<span style="display:inline-flex;align-items:center;background:rgba(16,185,129,0.13);border:1px solid rgba(16,185,129,0.35);color:var(--green);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">${esc(p)}</span>`).join("")}
+            </div>
+          </div>
+        </div>`;
         if (
           ev.eventType === "fire" &&
           !(ev.professionals || []).includes("fire_dept")
         ) {
           html += `<div class="note mt8">⚠️ במקרי שריפה נדרש לרוב דו"ח כבאות/אישור אירוע, במידה וקיים.</div>`;
         }
-        html += `<div class="divider"></div>
-  <div class="field"><label class="label">הצהרת שמאי – היקף הבדיקה (אוטומטי, ניתן לעריכה)</label>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:4px;"><button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-decl',this)"><span class="mic-icon">🎙️</span> הקלט</button></div>
-    <textarea id="ta-decl" oninput="STATE.event.appraiserDeclaration=this.value" rows="4">${esc(ev.appraiserDeclaration || genAppraiserDeclarationText())}</textarea>
-  </div>`;
         return html;
       }
 
       // ══════════════════════════════════════════════════
       // CARD 5 – CIRCUMSTANCES
       // ══════════════════════════════════════════════════
-      function renderCard5() {
+      function _circHasVal(v) {
+        return v !== undefined && v !== null && String(v).trim() !== "";
+      }
+      function _circCompletion(items) {
+        const total = items.length || 0;
+        const done = items.filter(_circHasVal).length;
+        const cls = done === 0 ? "empty" : done >= total ? "done" : "partial";
+        return { done, total, cls };
+      }
+      function _circSummary(title, items, note) {
+        const s = _circCompletion(items);
+        return `<span>${title}</span><span class="circ-summary-meta"><i class="circ-status-dot ${s.cls}"></i>${s.done}/${s.total} הושלם${note ? ` · ${note}` : ""}</span>`;
+      }
+      function _circBasicItems(c) {
+        return [c.infoSource, c.infoName, c.discDate, c.discTime, c.wasOccupied, c.ongoingDmg, c.immediateAction, c.pastEvent];
+      }
+      function _circWaterItems(c) {
+        const items = [c.waterOrigin, c.waterDuration, c.wallOpened, c.prevRepair, c.recentPlumber];
+        if (c.prevRepair === "yes") items.push(c.prevRepairDate, c.prevRepairBy, c.prevRepairReason);
+        if (c.recentPlumber === "yes") items.push(c.recentPlumberDate, c.recentPlumberReason);
+        return items;
+      }
+      function _circFireItems(c) { return [c.fireLocation, c.fireDept, c.fireType]; }
+      function _circBurglaryItems(c) { return [c.burglaryMethod, c.stolenItems, c.alarmExists, c.camerasExist]; }
+      function _circTaxItems(c) { return [c.authorities]; }
+
+      function renderCircQuestions() {
         const c = STATE.circ;
         const et = STATE.event.eventType;
-        let html = `<div class="grid2">
+        let html = `<div class="circ-smart-stack">
+          <details class="circ-accordion circ-basic-accordion">
+            <summary>${_circSummary("גילוי ודיווח", _circBasicItems(c), "שאלות בסיס")}</summary>
+            <div class="circ-accordion-body"><div class="grid2">
     <div class="field"><label class="label">מי מסר את המידע</label>
       <select onchange="STATE.circ.infoSource=this.value">
         <option value="">בחר...</option>
@@ -8395,181 +8863,59 @@
     <div class="field"><label class="label">תאריך גילוי הנזק</label><input type="date" value="${esc(c.discDate)}" min="${STATE.base.eventDate || ""}" oninput="STATE.circ.discDate=this.value"></div>
     <div class="field"><label class="label">שעת גילוי (אם ידוע)</label><input type="time" value="${esc(c.discTime)}" oninput="STATE.circ.discTime=this.value"></div>
     <div class="field"><label class="label">הנכס היה מאוכלס?</label><div class="pill-group" id="occPills">
-      ${makePills(
-        [
-          { v: "yes", l: "כן" },
-          { v: "no", l: "לא" },
-        ],
-        c.wasOccupied,
-        "STATE.circ.wasOccupied=v;refreshPills('occPills',v)",
-      )}
+      ${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.wasOccupied, "STATE.circ.wasOccupied=v;refreshPills('occPills',v)")}
     </div></div>
     <div class="field"><label class="label">הנזק המשיך להתפתח?</label><div class="pill-group" id="ongPills">
-      ${makePills(
-        [
-          { v: "yes", l: "כן" },
-          { v: "no", l: "לא" },
-        ],
-        c.ongoingDmg,
-        "STATE.circ.ongoingDmg=v;refreshPills('ongPills',v)",
-      )}
+      ${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.ongoingDmg, "STATE.circ.ongoingDmg=v;refreshPills('ongPills',v)")}
     </div></div>
     <div class="field span2"><label class="label">פעולה מיידית שבוצעה</label><input type="text" value="${esc(c.immediateAction)}" oninput="STATE.circ.immediateAction=this.value" placeholder="ניתוק מים/חשמל, פינוי ציוד..."></div>
-    <div class="field"><label class="label">אירוע דומה בעבר?</label><div class="pill-group" id="pastPills">
-      ${makePills(
-        [
-          { v: "yes", l: "כן" },
-          { v: "no", l: "לא" },
-        ],
-        c.pastEvent,
-        "STATE.circ.pastEvent=v;refreshPills('pastPills',v)",
-      )}
+    <div class="field"><label class="label">האם נמסר על אירוע דומה בעבר?</label><div class="pill-group" id="pastPills">
+      ${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.pastEvent, "STATE.circ.pastEvent=v;refreshPills('pastPills',v)")}
     </div></div>
     <div class="divider span2"></div>
-  </div>`;
+  </div></div></details>`;
 
         if (et === "water") {
-          html += `<div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:16px;margin-bottom:16px;">
-    <div class="label" style="color:var(--blue);font-size:12px;margin-bottom:12px;">💧 שאלות ספציפיות – נזקי מים</div>
+          html += `<details class="circ-accordion circ-specific-accordion"><summary>${_circSummary("💧 שאלות ספציפיות – נזקי מים", _circWaterItems(c))}</summary><div class="circ-accordion-body" style="background:rgba(59,130,246,.04);">
     <div class="grid2">
       <div class="field"><label class="label">מקור המים המשוער</label><input type="text" value="${esc(c.waterOrigin)}" oninput="STATE.circ.waterOrigin=this.value" placeholder="צנרת פנימית, גג, שכן עליון..."></div>
       <div class="field"><label class="label">משך זרימה משוערת</label><input type="text" value="${esc(c.waterDuration)}" oninput="STATE.circ.waterDuration=this.value" placeholder="שעות/ימים..."></div>
-      <div class="field"><label class="label">בוצעה פתיחה?</label>
-        <select onchange="STATE.circ.wallOpened=this.value">
-          <option value="">בחר...</option>
-          <option value="yes" ${c.wallOpened==='yes'?'selected':''}>כן</option>
-          <option value="no" ${c.wallOpened==='no'?'selected':''}>לא</option>
-          <option value="partial" ${c.wallOpened==='partial'?'selected':''}>חלקית</option>
-        </select></div>
+      <div class="field"><label class="label">בוצעה פתיחה?</label><select onchange="STATE.circ.wallOpened=this.value"><option value="">בחר...</option><option value="yes" ${c.wallOpened==='yes'?'selected':''}>כן</option><option value="no" ${c.wallOpened==='no'?'selected':''}>לא</option><option value="partial" ${c.wallOpened==='partial'?'selected':''}>חלקית</option></select></div>
     </div>
-    <div class="divider"></div>
-    <div class="label" style="color:var(--accent);font-size:11px;">🔧 תיקון קודם / טיפול קודם</div>
-    <div class="field mb12"><label class="label">בוצע תיקון קודם באזור הנזק?</label><div class="pill-group" id="prevRepPills">
-      ${makePills(
-        [
-          { v: "yes", l: "כן" },
-          { v: "no", l: "לא" },
-        ],
-        c.prevRepair,
-        "STATE.circ.prevRepair=v;refreshPills('prevRepPills',v);renderCard(4)",
-      )}
-    </div></div>
-    ${
-      c.prevRepair === "yes"
-        ? `<div class="grid2 mb12 p12 rounded8" style="background:var(--primary2);">
-      <div class="field"><label class="label">תאריך תיקון קודם</label><input type="date" value="${esc(c.prevRepairDate)}" oninput="STATE.circ.prevRepairDate=this.value"></div>
-      <div class="field"><label class="label">מי ביצע</label><select onchange="STATE.circ.prevRepairBy=this.value">
-        <option value="">בחר...</option>
-        <option value="private" ${c.prevRepairBy === "private" ? "selected" : ""}>פרטי</option>
-        <option value="ins_plumber" ${c.prevRepairBy === "ins_plumber" ? "selected" : ""}>שרברב מטעם ביטוח</option>
-        <option value="contractor" ${c.prevRepairBy === "contractor" ? "selected" : ""}>קבלן</option>
-        <option value="other" ${c.prevRepairBy === "other" ? "selected" : ""}>אחר</option>
-      </select></div>
-      <div class="field span2"><label class="label">סיבת התיקון</label><input type="text" value="${esc(c.prevRepairReason)}" oninput="STATE.circ.prevRepairReason=this.value"></div>
-    </div>`
-        : ""
-    }
-    <div class="field"><label class="label">הוזמן שרברב בחודשים האחרונים?</label><div class="pill-group" id="recPlPills">
-      ${makePills(
-        [
-          { v: "yes", l: "כן" },
-          { v: "no", l: "לא" },
-        ],
-        c.recentPlumber,
-        "STATE.circ.recentPlumber=v;refreshPills('recPlPills',v);renderCard(4)",
-      )}
-    </div></div>
-    ${
-      c.recentPlumber === "yes"
-        ? `<div class="grid2 mt8 p12 rounded8" style="background:var(--primary2);">
-      <div class="field"><label class="label">תאריך משוער</label><input type="date" value="${esc(c.recentPlumberDate)}" oninput="STATE.circ.recentPlumberDate=this.value"></div>
-      <div class="field"><label class="label">מהות הפנייה</label><input type="text" value="${esc(c.recentPlumberReason)}" oninput="STATE.circ.recentPlumberReason=this.value"></div>
-    </div>`
-        : ""
-    }
-    </div>`;
+    <div class="divider"></div><div class="label" style="color:var(--accent);font-size:11px;">🔧 תיקון קודם / טיפול קודם</div>
+    <div class="field mb12"><label class="label">בוצע תיקון קודם באזור הנזק?</label><div class="pill-group" id="prevRepPills">${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.prevRepair, "STATE.circ.prevRepair=v;refreshPills('prevRepPills',v);renderCard(4)")}</div></div>
+    ${c.prevRepair === "yes" ? `<div class="grid2 mb12 p12 rounded8" style="background:var(--primary2);"><div class="field"><label class="label">תאריך תיקון קודם</label><input type="date" value="${esc(c.prevRepairDate)}" oninput="STATE.circ.prevRepairDate=this.value"></div><div class="field"><label class="label">מי ביצע</label><select onchange="STATE.circ.prevRepairBy=this.value"><option value="">בחר...</option><option value="private" ${c.prevRepairBy === "private" ? "selected" : ""}>פרטי</option><option value="ins_plumber" ${c.prevRepairBy === "ins_plumber" ? "selected" : ""}>שרברב מטעם ביטוח</option><option value="contractor" ${c.prevRepairBy === "contractor" ? "selected" : ""}>קבלן</option><option value="other" ${c.prevRepairBy === "other" ? "selected" : ""}>אחר</option></select></div><div class="field span2"><label class="label">סיבת התיקון</label><input type="text" value="${esc(c.prevRepairReason)}" oninput="STATE.circ.prevRepairReason=this.value"></div></div>` : ""}
+    <div class="field"><label class="label">הוזמן שרברב בחודשים האחרונים?</label><div class="pill-group" id="recPlPills">${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.recentPlumber, "STATE.circ.recentPlumber=v;refreshPills('recPlPills',v);renderCard(4)")}</div></div>
+    ${c.recentPlumber === "yes" ? `<div class="grid2 mt8 p12 rounded8" style="background:var(--primary2);"><div class="field"><label class="label">תאריך משוער</label><input type="date" value="${esc(c.recentPlumberDate)}" oninput="STATE.circ.recentPlumberDate=this.value"></div><div class="field"><label class="label">מהות הפנייה</label><input type="text" value="${esc(c.recentPlumberReason)}" oninput="STATE.circ.recentPlumberReason=this.value"></div></div>` : ""}
+    </div></details>`;
         }
 
         if (et === "fire") {
-          html += `<div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:16px;margin-bottom:16px;">
-    <div class="label" style="color:var(--red);font-size:12px;margin-bottom:12px;">🔥 שאלות ספציפיות – שריפה</div>
-    <div class="grid2">
-      <div class="field"><label class="label">היכן פרצה השריפה</label><input type="text" value="${esc(c.fireLocation)}" oninput="STATE.circ.fireLocation=this.value"></div>
-      <div class="field"><label class="label">כוחות כיבוי הגיעו?</label><div class="pill-group" id="fireDeptPills">
-        ${makePills(
-          [
-            { v: "yes", l: "כן" },
-            { v: "no", l: "לא" },
-          ],
-          c.fireDept,
-          "STATE.circ.fireDept=v;refreshPills('fireDeptPills',v)",
-        )}
-      </div></div>
-      <div class="field"><label class="label">סוג נזק</label>
-        <select onchange="STATE.circ.fireType=this.value">
-          <option value="">בחר...</option>
-          <option value="flame" ${c.fireType==='flame'?'selected':''}>להבה גלויה</option>
-          <option value="smoke_only" ${c.fireType==='smoke_only'?'selected':''}>עשן בלבד</option>
-          <option value="water_ext" ${c.fireType==='water_ext'?'selected':''}>מי כיבוי</option>
-          <option value="unknown" ${c.fireType==='unknown'?'selected':''}>לא ידוע</option>
-        </select></div>
-    </div></div>`;
+          html += `<details class="circ-accordion circ-specific-accordion"><summary>${_circSummary("🔥 שאלות ספציפיות – שריפה", _circFireItems(c))}</summary><div class="circ-accordion-body" style="background:rgba(239,68,68,.04);"><div class="grid2"><div class="field"><label class="label">היכן פרצה השריפה</label><input type="text" value="${esc(c.fireLocation)}" oninput="STATE.circ.fireLocation=this.value"></div><div class="field"><label class="label">כוחות כיבוי הגיעו?</label><div class="pill-group" id="fireDeptPills">${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.fireDept, "STATE.circ.fireDept=v;refreshPills('fireDeptPills',v)")}</div></div><div class="field"><label class="label">סוג נזק</label><select onchange="STATE.circ.fireType=this.value"><option value="">בחר...</option><option value="flame" ${c.fireType==='flame'?'selected':''}>להבה גלויה</option><option value="smoke_only" ${c.fireType==='smoke_only'?'selected':''}>עשן בלבד</option><option value="water_ext" ${c.fireType==='water_ext'?'selected':''}>מי כיבוי</option><option value="unknown" ${c.fireType==='unknown'?'selected':''}>לא ידוע</option></select></div></div></div></details>`;
         }
 
         if (et === "burglary") {
-          html += `<div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:16px;margin-bottom:16px;">
-    <div class="label" style="color:var(--purple);font-size:12px;margin-bottom:12px;">🚪 שאלות ספציפיות – פריצה</div>
-    <div class="grid2">
-      <div class="field"><label class="label">כיצד בוצעה הפריצה</label><input type="text" value="${esc(c.burglaryMethod)}" oninput="STATE.circ.burglaryMethod=this.value"></div>
-      <div class="field"><label class="label">פריטים שנגנבו</label><input type="text" value="${esc(c.stolenItems)}" oninput="STATE.circ.stolenItems=this.value"></div>
-      <div class="field"><label class="label">אזעקה קיימת?</label><div class="pill-group" id="alarmPills">
-        ${makePills(
-          [
-            { v: "yes", l: "כן" },
-            { v: "no", l: "לא" },
-          ],
-          c.alarmExists,
-          "STATE.circ.alarmExists=v;refreshPills('alarmPills',v)",
-        )}
-      </div></div>
-      <div class="field"><label class="label">מצלמות קיימות?</label><div class="pill-group" id="camPills">
-        ${makePills(
-          [
-            { v: "yes", l: "כן" },
-            { v: "no", l: "לא" },
-          ],
-          c.camerasExist,
-          "STATE.circ.camerasExist=v;refreshPills('camPills',v)",
-        )}
-      </div></div>
-    </div></div>`;
+          html += `<details class="circ-accordion circ-specific-accordion"><summary>${_circSummary("🚪 שאלות ספציפיות – פריצה", _circBurglaryItems(c))}</summary><div class="circ-accordion-body" style="background:rgba(139,92,246,.04);"><div class="grid2"><div class="field"><label class="label">כיצד בוצעה הפריצה</label><input type="text" value="${esc(c.burglaryMethod)}" oninput="STATE.circ.burglaryMethod=this.value"></div><div class="field"><label class="label">פריטים שנגנבו</label><input type="text" value="${esc(c.stolenItems)}" oninput="STATE.circ.stolenItems=this.value"></div><div class="field"><label class="label">אזעקה קיימת?</label><div class="pill-group" id="alarmPills">${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.alarmExists, "STATE.circ.alarmExists=v;refreshPills('alarmPills',v)")}</div></div><div class="field"><label class="label">מצלמות קיימות?</label><div class="pill-group" id="camPills">${makePills([{ v: "yes", l: "כן" },{ v: "no", l: "לא" }], c.camerasExist, "STATE.circ.camerasExist=v;refreshPills('camPills',v)")}</div></div></div></div></details>`;
         }
 
         if (et === "tax") {
-          html += `<div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px;margin-bottom:16px;">
-    <div class="label" style="color:var(--green);font-size:12px;margin-bottom:12px;">🏛️ שאלות ספציפיות – מס רכוש</div>
-    <div class="field"><label class="label">הוזמנו רשויות / גורמי ביטחון?</label><input type="text" value="${esc(c.authorities || "")}" oninput="STATE.circ.authorities=this.value"></div>
-    </div>`;
+          html += `<details class="circ-accordion circ-specific-accordion"><summary>${_circSummary("🏛️ שאלות ספציפיות – מס רכוש", _circTaxItems(c))}</summary><div class="circ-accordion-body" style="background:rgba(16,185,129,.04);"><div class="field"><label class="label">הוזמנו רשויות / גורמי ביטחון?</label><input type="text" value="${esc(c.authorities || "")}" oninput="STATE.circ.authorities=this.value"></div></div></details>`;
         }
 
-        // הערות נוספות הוסרו
-
-        html += `<div class="flex items-center gap12 mt12 mb8">
-    <button class="btn btn-primary" onclick="genAndSetCircumText()" style="gap:6px;">✨ צור טקסט נסיבות אוטומטי</button>
-    ${STATE.circ.circumOverride ? `<button class="btn btn-ghost btn-sm" onclick="STATE.circ.circumOverride='';renderCard(4)">🗑️ נקה</button>` : ""}
-  </div>`;
-        html += `<div class="field span2">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <label class="label" style="color:var(--accent);margin:0;">✏️ טקסט נסיבות (ניתן לעריכה)</label>
-        <button type="button" class="voice-btn no-print" onclick="toggleVoice('ta-circ-override',this)"><span class="mic-icon">🎙️</span> הקלט</button>
-      </div>
-      <textarea id="ta-circ-override" oninput="STATE.circ.circumOverride=this.value" rows="5"
-        style="width:100%;border:1.5px solid var(--border2);border-radius:10px;background:var(--surface2);color:var(--text);padding:10px 12px;font-family:'Heebo',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:90px;box-sizing:border-box;"
-        placeholder="מלא נסיבות ידנית או לחץ 'צור טקסט אוטומטי' למעלה..."
-      >${esc(STATE.circ.circumOverride)}</textarea>
-    </div>`;
+        html += `</div>`;
         return html;
       }
+
+      function renderSmartTextPanels() {
+        let html = `<div class="smart-text-panel"><div class="smart-text-head"><div><div class="smart-text-title">✏️ נסיבות המקרה — כפי שיופיע בדוח</div><div class="circ-section-mini">נוסח זה יופיע בפרק נסיבות המקרה בדוח הסופי וניתן לעריכה ידנית בכל שלב</div></div><span class="smart-text-status">${STATE.circ.circumOverride ? "עריכה ידנית" : "אוטומטי"}</span></div><div class="smart-text-toolbar" aria-label="פעולות נסיבות המקרה"><button class="smart-action-btn smart-action-primary" onclick="genAndSetCircumText()">✨ צור אוטומטי</button>${STATE.circ.circumOverride ? `<button class="smart-action-btn" onclick="STATE.circ.circumOverride='';renderCard(4)">🗑️ נקה</button>` : ""}<button type="button" class="voice-btn smart-action-btn no-print" data-tip="מקליט וממיר לטקסט" onclick="toggleVoice('ta-circ-override',this)"><span class="mic-icon">🎙️</span> הקלט</button></div><textarea id="ta-circ-override" oninput="STATE.circ.circumOverride=this.value;updateCircLivePreview()" rows="5" placeholder="מלא נסיבות ידנית או לחץ 'צור אוטומטי'...">${esc(STATE.circ.circumOverride || genCircumText())}</textarea></div>`;
+        html += `<div class="smart-text-panel declaration"><div class="smart-text-head"><div><div class="smart-text-title">🖊️ פתיח הדוח / מטרת הבדיקה — כפי שיופיע בדוח</div><div class="circ-section-mini">נוסח פתיח הדוח ומטרת הבדיקה, נוצר לפי נתוני התיק וניתן לעריכה ידנית בכל שלב</div></div><span class="smart-text-status">${STATE.event.appraiserDeclaration ? "עריכה ידנית" : "אוטומטי"}</span></div><div class="smart-text-toolbar" aria-label="פעולות פתיח הדוח"><button class="smart-action-btn smart-action-secondary" onclick="STATE.event.appraiserDeclaration=genAppraiserDeclarationText();renderCard(4)">✨ צור אוטומטי</button>${STATE.event.appraiserDeclaration ? `<button class="smart-action-btn" onclick="STATE.event.appraiserDeclaration='';renderCard(4)">🗑️ נקה</button>` : ""}<button type="button" class="voice-btn smart-action-btn no-print" data-tip="מקליט וממיר לטקסט" onclick="toggleVoice('ta-decl',this)"><span class="mic-icon">🎙️</span> הקלט</button></div><textarea id="ta-decl" oninput="STATE.event.appraiserDeclaration=this.value" rows="4">${esc(STATE.event.appraiserDeclaration || genAppraiserDeclarationText())}</textarea></div>`;
+        return html;
+      }
+
+      function renderCard5() {
+        return renderCircQuestions() + renderSmartTextPanels();
+      }
+
 
       // ══════════════════════════════════════════════════
       // CARD 6 – FINDINGS
@@ -8964,7 +9310,50 @@
     @media(max-width:768px){
       .findings-grid{display:flex;flex-direction:column;gap:16px;}
     }
-  </style>
+  
+.prof-report-pills{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.prof-report-pill{
+  min-width:52px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--primary3);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  font-family:'Heebo',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+}
+.prof-report-pill:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.prof-report-pill.active{
+  border-color:var(--green);
+  background:rgba(16,185,129,.12);
+  color:var(--green);
+}
+.prof-report-pill.no.active{
+  border-color:var(--red);
+  background:rgba(239,68,68,.10);
+  color:var(--red);
+}
+.prof-summary{
+  font-size:11px;
+  color:var(--muted);
+  white-space:normal;
+  line-height:1.4;
+}
+
+</style>
   <div class="findings-grid">
     <div>${html}</div>
     <div>${previewHtml}</div>
@@ -9482,9 +9871,17 @@
     <div style="font-size:12px;color:#6B7280;">${esc(APPRAISER.title || "שמאי רכוש")} · ${esc(APPRAISER.phone || "")} · ${esc(APPRAISER.email || "")}</div>
   </div>`;
 
-        if (opening) {
-          previewHtml +=
-            secTitle("מהות הבקשה") + preText(opening, "openingOverride");
+        const previewDecl = APPRAISER.declaration || "";
+        if (previewDecl) {
+          previewHtml += secTitle("הצהרת שמאי") + preText(previewDecl);
+        }
+        const previewEducation = APPRAISER.education || "";
+        if (previewEducation) {
+          previewHtml += secTitle("השכלה וניסיון") + preText(previewEducation);
+        }
+        const previewCaseOpening = STATE.event.appraiserDeclaration || genAppraiserDeclarationText() || opening;
+        if (previewCaseOpening) {
+          previewHtml += secTitle("פתיח הדוח / מטרת הבדיקה") + preText(previewCaseOpening, "openingOverride");
         }
         if (circ) {
           previewHtml += secTitle("נסיבות המקרה") + preText(circ);
@@ -9493,12 +9890,6 @@
           previewHtml +=
             secTitle("ממצאי הביקור ותיאור הנזק") +
             preText(finds, "findingsOverride");
-        }
-
-        // הצהרת שמאי
-        const decl = STATE.event.appraiserDeclaration || "";
-        if (decl) {
-          previewHtml += secTitle("הצהרת שמאי") + preText(decl);
         }
 
         // תיאור המקום
@@ -9762,7 +10153,50 @@
     .c8-auto-text{font-size:12px;color:var(--muted);line-height:1.7;white-space:pre-line;max-height:80px;overflow:hidden;mask-image:linear-gradient(to bottom,black 60%,transparent);}
     @media(min-width:769px){.c8-grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;}}
     @media(max-width:768px){.c8-grid{display:flex;flex-direction:column;gap:14px;}}
-  </style>
+  
+.prof-report-pills{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.prof-report-pill{
+  min-width:52px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--primary3);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  font-family:'Heebo',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+}
+.prof-report-pill:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.prof-report-pill.active{
+  border-color:var(--green);
+  background:rgba(16,185,129,.12);
+  color:var(--green);
+}
+.prof-report-pill.no.active{
+  border-color:var(--red);
+  background:rgba(239,68,68,.10);
+  color:var(--red);
+}
+.prof-summary{
+  font-size:11px;
+  color:var(--muted);
+  white-space:normal;
+  line-height:1.4;
+}
+
+</style>
   <div class="c8-grid">
     <div style="position:sticky;top:20px;">`;
 
@@ -9897,9 +10331,16 @@
         const evName = evMap[ev.eventType] || "נזק";
         const addr = [b.street, b.streetNum, b.city].filter(Boolean).join(" ");
         const addrStr = addr ? `בנכס הממוקם ברחוב ${addr}` : "בנכס";
-        const evDate = fmtDate(b.eventDate) || "___";
-        const visitDate = fmtDate(b.visitDate) || "___";
-        return `הח"מ התבקש לערוך חוות דעת שמאית בגין ${evName} אשר אירעו ביום ${evDate}, ${addrStr}.\nהביקור בנכס נערך ביום ${visitDate}. במהלך הביקור נבדקו הנזקים, תועדו הממצאים ונערכה בדיקה מקצועית במקום.`;
+        const evDateRaw = fmtDate(b.eventDate) || "___";
+        const visitDateRaw = fmtDate(b.visitDate) || "___";
+        const evDate = evDateRaw === "___" ? evDateRaw : `\u200e${evDateRaw}\u200e`;
+        const visitDate = visitDateRaw === "___" ? visitDateRaw : `\u200e${visitDateRaw}\u200e`;
+        const purposes = (ev.visitPurpose || []).filter(Boolean);
+        const purposeStr = purposes.length
+          ? ` מטרת הביקור: ${purposes.join("; ")}.`
+          : "";
+        return `הח"מ התבקש לערוך חוות דעת שמאית בגין אירוע מסוג ${evName} מיום ${evDate}, ${addrStr}.
+הביקור בנכס נערך ביום ${visitDate}.${purposeStr} במהלך הביקור נבדקו הנזקים, תועדו הממצאים ונערכה בדיקה מקצועית במקום.`;
       }
       function genOpeningText() {
         const b = STATE.base,
@@ -9951,8 +10392,9 @@
           earthquake: "רעידת אדמה",
           third_party: "נזק מדייר/שכן",
         };
-        const subStr = ev.eventSubType
-          ? ` (${subTypeMapHe[ev.eventSubType] || ev.eventSubType})`
+        const displayedSub = getDisplayedEventSubType();
+        const subStr = displayedSub
+          ? ` (${subTypeMapHe[displayedSub] || displayedSub})`
           : "";
         const polStr = "";
         const _profLabelMap = {
@@ -9979,7 +10421,7 @@
           ? `\nלנכס הוזמנו:\n${profItems.map((x) => `   • ${x}`).join("\n")}`
           : "";
         if (mode === "tax") {
-          const sub = ev.eventSubType || "פגיעה";
+          const sub = getDisplayedEventSubType() || "פגיעה";
           return `הח"מ התבקש לערוך שומה במסגרת מס רכוש בגין ${sub} שאירעה ביום ${fmtDate(b.eventDate) || "___"} ${addrStr}. הביקור בנכס נערך ביום ${fmtDate(b.visitDate) || "___"}. במהלך הביקור נבדקו הנזקים ותועדו הממצאים לצורך הערכת שיפוי בהתאם לקריטריונים הרלוונטיים.`;
         }
         return `הח"מ התבקש ע"י ${reqName || "___"} לערוך חוות דעת שמאית בגין ${evName}${subStr} שאירעו ביום ${fmtDate(b.eventDate) || "___"} ${addrStr}. הביקור בנכס נערך ביום ${fmtDate(b.visitDate) || "___"}. במהלך הביקור נבדקו הנזקים, תועדו הממצאים ונערכה בדיקה ראשונית של נסיבות האירוע.${profStr}`;
@@ -9993,50 +10435,63 @@
           tenant: "הדייר",
           employee: "העובד",
           manager: "מנהל העסק",
-          other: c.infoName || "הגורם הרלוונטי",
+          other: c.infoName || "הגורם שמסר את המידע",
         };
         const src = srcMap[c.infoSource] || "המבוטח";
+        const etMap = {
+          water: "נזק מים",
+          fire: "נזקי שריפה/עשן",
+          burglary: "אירוע פריצה/גניבה",
+          electrical: "נזק חשמלי",
+          storm: "נזקי סערה/רוח",
+          thirdparty: "נזק צד ג'",
+          other: "נזק",
+        };
+        const evDesc = etMap[STATE.event.eventType] || "נזק";
         const parts = [];
-        if (c.discDate)
-          parts.push(
-            `ביום ${c.discDate}${c.discTime ? " בשעה " + c.discTime : ""} התגלה הנזק בנכס`,
-          );
-        if (c.wasOccupied)
+        if (c.discDate) {
+          const discDate = fmtDate(c.discDate) || c.discDate;
+          parts.push(`ביום ${discDate}${c.discTime ? " בשעה " + c.discTime : ""} התגלה ${evDesc} בנכס`);
+        }
+        if (c.wasOccupied) {
           parts.push(
             c.wasOccupied === "yes"
-              ? "הנכס היה מאוכלס בעת האירוע"
-              : "הנכס לא היה מאוכלס בעת האירוע",
+              ? "לדבריו, הנכס היה מאוכלס בעת גילוי האירוע"
+              : "לדבריו, הנכס לא היה מאוכלס בעת גילוי האירוע",
           );
+        }
         if (c.immediateAction)
-          parts.push(`בוצעה פעולה מיידית של ${c.immediateAction}`);
-        if (c.ongoingDmg === "yes") parts.push("הנזק המשיך להתפתח לאחר הגילוי");
+          parts.push(`לאחר הגילוי בוצעה פעולה מיידית של ${c.immediateAction}`);
+        if (c.ongoingDmg === "yes") parts.push("עוד נמסר כי הנזק המשיך להתפתח לאחר הגילוי");
+        if (c.ongoingDmg === "no") parts.push("עוד נמסר כי הנזק לא המשיך להתפתח לאחר הגילוי");
         if (c.pastEvent)
           parts.push(
             c.pastEvent === "yes"
-              ? "צוין כי אירע אירוע דומה בעבר"
-              : "לא דווח על אירועים דומים בעבר",
+              ? "נמסר כי אירע אירוע דומה בעבר"
+              : "נמסר כי לא ידוע על אירועים דומים בעבר",
           );
         const et = STATE.event.eventType;
         if (et === "water") {
-          if (c.waterOrigin) parts.push(`מקור המים המשוער: ${c.waterOrigin}`);
+          if (c.waterOrigin) parts.push(`מקור המים המשוער, כפי שנמסר בשלב הראשוני, הוא ${c.waterOrigin}`);
           if (c.prevRepair === "yes") {
-            let r = "בוצע תיקון קודם באזור";
-            if (c.prevRepairDate) r += ` בתאריך ${c.prevRepairDate}`;
-            if (c.prevRepairBy) r += ` ע"י ${c.prevRepairBy}`;
+            let r = "נמסר כי בוצע תיקון קודם באזור";
+            if (c.prevRepairDate) r += ` בתאריך ${fmtDate(c.prevRepairDate) || c.prevRepairDate}`;
+            if (c.prevRepairBy) r += ` ע\"י ${c.prevRepairBy}`;
             if (c.prevRepairReason) r += ` בגין ${c.prevRepairReason}`;
             parts.push(r);
           }
           if (c.recentPlumber === "yes") {
-            let r = "הוזמן שרברב בחודשים האחרונים";
+            let r = "נמסר כי הוזמן שרברב בחודשים האחרונים";
             if (c.recentPlumberReason) r += ` בגין ${c.recentPlumberReason}`;
             parts.push(r);
           }
         }
         if (et === "fire" && c.fireLocation)
-          parts.push(`השריפה פרצה ב${c.fireLocation}`);
+          parts.push(`לפי המידע שנמסר, מוקד השריפה היה ב${c.fireLocation}`);
         if (et === "burglary" && c.burglaryMethod)
-          parts.push(`הפריצה בוצעה ע"י ${c.burglaryMethod}`);
-        const base = `לדברי ${src}, ${parts.join(". ")}.`;
+          parts.push(`לפי המידע שנמסר, הפריצה בוצעה ע\"י ${c.burglaryMethod}`);
+        const body = parts.length ? parts.join(". ") + "." : "";
+        const base = body ? `לדברי ${src}, ${body}` : "";
         return base + (c.extraNotes ? `\n${c.extraNotes}` : "");
       }
 
@@ -11593,24 +12048,12 @@
       function generateReport() {
         saveCurrentCase();
         // Ensure profile is loaded (in case auth resolved after page load)
-        if (window._FB && window._currentUser && !APPRAISER.nameHe) {
+        if (window._FB && window._currentUser && (!APPRAISER.nameHe || !window._profile)) {
           window._FB
             .getProfile(window._currentUser.uid)
             .then((prof) => {
               if (prof) {
-                APPRAISER.nameHe = prof.fullName || "";
-                APPRAISER.title = prof.title || "שמאי רכוש";
-                APPRAISER.phone = prof.phone || "";
-                APPRAISER.email = prof.profEmail || prof.email || "";
-                APPRAISER.city = prof.city || "";
-                APPRAISER.license = prof.license || "";
-                APPRAISER.website = prof.website || "";
-                APPRAISER.logoInitials = prof.logoLetters || "YA";
-                APPRAISER.logoColor = prof.logoColor || "#f59e0b";
-                APPRAISER.logoImageUrl = prof.logoImageData || null;
-                APPRAISER.logoMode = prof.logoType || "initials";
-                APPRAISER.signatureUrl = prof.signature || null;
-                window._profile = prof;
+                applyAppraiserProfile(prof);
               }
               _doGenerateReport();
             })
@@ -11629,7 +12072,8 @@
         const T =
           REPORT_THEMES[STATE.reportTheme || "classic"] ||
           REPORT_THEMES.classic;
-        document.getElementById("rptModeLabel").textContent = modeLabels[mode];
+        const _reportFileNameForUi = _buildReportFileName().replace(/\.pdf$/i, "");
+        document.getElementById("rptModeLabel").textContent = _reportFileNameForUi || modeLabels[mode] || "דוח שמאות";
         const b = STATE.base,
           ins = STATE.insurance,
           boq = STATE.boq,
@@ -11659,6 +12103,11 @@
           v
             ? `<tr><td style="padding:6px 8px;font-weight:700;color:#6B7280;width:160px;">${k}:</td><td style="padding:6px 8px;">${esc(v)}</td></tr>`
             : "";
+        const rptText = (txt) =>
+          esc(txt || "")
+            .replace(/(\d{1,2}[\/.]\d{1,2}[\/.]\d{4})/g, '<span dir="ltr">$1</span>')
+            .replace(/(\d{4}-\d{2}-\d{2})/g, '<span dir="ltr">$1</span>')
+            .replace(/\n/g, "<br>");
         const mkBOQSection = (items, sectionTitle) => {
           if (!items.length)
             return `<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">📋 לא נוספו סעיפים לפרק זה עדיין</div>`;
@@ -11761,7 +12210,7 @@
 
                 h += `<tr style="${zebra}">
             <td style="color:#9CA3AF;font-size:10px;padding-right:16px;white-space:nowrap;">${displayId}</td>
-            <td style="word-break:break-word;">${esc(desc)}</td>
+            <td style="word-break:normal;overflow-wrap:break-word;line-height:1.55;min-width:220px;">${esc(desc)}</td>
             <td style="text-align:center;color:#6B7280;">${esc(item.unit)}</td>
             <td style="text-align:right;">${esc(item.qty)}</td>
             <td style="text-align:right;color:#6B7280;">${item.price && !item.zeroPrice ? "₪" + fmtNum(parseFloat(item.price)) : ""}</td>`;
@@ -11807,15 +12256,28 @@
           return h;
         };
 
+        const renderCustomSection = (custom) => {
+          if (!custom || !String(custom.title || '').trim() || !String(custom.body || '').trim()) return '';
+          return `<div class="rpt-section"><h3>${esc(custom.title)}</h3><p class="rpt-p" style="white-space:pre-line;">${esc(custom.body).replace(/\n/g,'<br>')}</p></div>`;
+        };
+        const getCustomSectionsByPosition = (position) => {
+          const sections = [APPRAISER.custom1, APPRAISER.custom2]
+            .filter(Boolean)
+            .filter(c => (c.position || 'end') === position);
+          return sections.map(renderCustomSection).join('');
+        };
+
         // Dynamic logo from Firestore profile
         const _prof = window._profile || {};
         let logoSvg;
         const _logoSize = APPRAISER.logoSizePx || _prof.logoSizePx || 56;
-        if (_prof.logoType === "image" && (_prof.logoImageData || _prof.logoImage)) {
-          logoSvg = `<img src="${_prof.logoImageData || _prof.logoImage}" style="width:${_logoSize}px;height:${_logoSize}px;border-radius:12px;object-fit:contain;">`;
+        const _logoMode = APPRAISER.logoMode || _prof.logoMode || _prof.logoType || 'initials';
+        const _logoImage = APPRAISER.logoImageUrl || _prof.logoImageData || _prof.logoImageUrl || _prof.logoImage;
+        if ((_logoMode === "upload" || _logoMode === "image") && _logoImage) {
+          logoSvg = `<img src="${_logoImage}" style="width:${_logoSize}px;height:${_logoSize}px;border-radius:12px;object-fit:contain;">`;
         } else {
           // ראשי תיבות אנגלית — מ-logoLetters, או מ-nameEn, או ברירת מחדל YA
-          let letters = _prof.logoLetters || "";
+          let letters = APPRAISER.logoInitials || _prof.logoInitials || _prof.logoLetters || "";
           if (!letters && APPRAISER.nameEn) {
             letters = APPRAISER.nameEn
               .split(" ")
@@ -11825,7 +12287,7 @@
               .slice(0, 2);
           }
           if (!letters) letters = "YA";
-          const bg = _prof.logoColor || "#f59e0b";
+          const bg = APPRAISER.logoColor || _prof.logoColor || "#f59e0b";
           const r = parseInt(bg.slice(1, 3), 16),
             g = parseInt(bg.slice(3, 5), 16),
             b_ = parseInt(bg.slice(5, 7), 16);
@@ -11881,7 +12343,50 @@
       .rpt-data-panel td{padding:6px 12px;border-bottom:1px solid #F3F4F6;line-height:1.5;}
       .rpt-data-panel td:first-child{color:#6B7280;font-weight:600;width:45%;}
       .rpt-data-panel td:last-child{font-weight:700;color:#111;}
-    </style>
+    
+.prof-report-pills{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.prof-report-pill{
+  min-width:52px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--primary3);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  font-family:'Heebo',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+}
+.prof-report-pill:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.prof-report-pill.active{
+  border-color:var(--green);
+  background:rgba(16,185,129,.12);
+  color:var(--green);
+}
+.prof-report-pill.no.active{
+  border-color:var(--red);
+  background:rgba(239,68,68,.10);
+  color:var(--red);
+}
+.prof-summary{
+  font-size:11px;
+  color:var(--muted);
+  white-space:normal;
+  line-height:1.4;
+}
+
+</style>
     <div class="rpt-data-grid">
       <div class="rpt-data-panel">
         <div class="rpt-data-panel-title">
@@ -11900,7 +12405,7 @@
         <table><tbody>
           ${b.eventDate ? `<tr><td>תאריך האירוע</td><td>${fmtDate(b.eventDate)}</td></tr>` : ""}
           ${b.visitDate ? `<tr><td>תאריך ביקור</td><td>${fmtDate(b.visitDate)}</td></tr>` : ""}
-          ${STATE.event.eventType ? `<tr><td>סוג האירוע</td><td>${STATE.event.eventSubType || STATE.event.eventType}</td></tr>` : ""}
+          ${STATE.event.eventType ? `<tr><td>סוג האירוע</td><td>${getDisplayedEventSubType() || STATE.event.eventType}</td></tr>` : ""}
           ${APPRAISER.nameHe ? `<tr><td>שמאי</td><td>${APPRAISER.nameHe}${APPRAISER.license ? " | רישיון " + APPRAISER.license : ""}</td></tr>` : ""}
           <tr><td>תאריך הפקה</td><td>${new Date().toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" })}</td></tr>
         </tbody></table>
@@ -11934,7 +12439,50 @@
       .data-panel{background:#fff;border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;margin-bottom:0;}
       .data-panel-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#374151;padding:10px 14px;background:#F9FAFB;border-bottom:1px solid #E5E7EB;}
       .data-panel table{width:100%;border-collapse:collapse;font-size:13px;}
-    </style>
+    
+.prof-report-pills{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.prof-report-pill{
+  min-width:52px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--primary3);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  font-family:'Heebo',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+}
+.prof-report-pill:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.prof-report-pill.active{
+  border-color:var(--green);
+  background:rgba(16,185,129,.12);
+  color:var(--green);
+}
+.prof-report-pill.no.active{
+  border-color:var(--red);
+  background:rgba(239,68,68,.10);
+  color:var(--red);
+}
+.prof-summary{
+  font-size:11px;
+  color:var(--muted);
+  white-space:normal;
+  line-height:1.4;
+}
+
+</style>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;direction:rtl;margin-top:16px;">
 
       <!-- פרטי המבוטח -->
@@ -11989,24 +12537,25 @@
     `;
         }
 
-        // ── Photos moved to end of report ──
+        rpt += getCustomSectionsByPosition('after_details');
 
         // ── For private/tax: client details already in header ──
         if (mode !== "insurance") {
           // Skip duplicate client table — already shown in header
         }
 
-        if (opening)
-          rpt += `<div class="rpt-section"><h3>מהות הבקשה ומטרת הביקור</h3><p class="rpt-p">${esc(opening).replace(/\n/g, "<br>")}</p></div>`;
-
-        // ── הצהרת שמאי — מהגדרות השמאי (fallback לשדה בתיק)
-        const declFinal = APPRAISER.declaration || STATE.event.appraiserDeclaration || '';
+        // ── הצהרת שמאי והשכלה — מהגדרות השמאי, מיד לאחר טבלת הנתונים הבסיסית
+        const declFinal = APPRAISER.declaration || '';
         if(declFinal)
-          rpt += `<div class="rpt-section"><h3>הצהרת שמאי</h3><p class="rpt-p" style="white-space:pre-line;">${esc(declFinal).replace(/\n/g,'<br>')}</p></div>`;
-        // ── השכלה וניסיון — מהגדרות השמאי
+          rpt += `<div class="rpt-section"><h3>הצהרת שמאי</h3><p class="rpt-p" style="white-space:pre-line;">${rptText(declFinal)}</p></div>`;
         const educationText = APPRAISER.education || '';
         if(educationText)
-          rpt += `<div class="rpt-section"><h3>השכלה וניסיון</h3><p class="rpt-p" style="white-space:pre-line;">${esc(educationText).replace(/\n/g,'<br>')}</p></div>`;
+          rpt += `<div class="rpt-section"><h3>השכלה וניסיון</h3><p class="rpt-p" style="white-space:pre-line;">${rptText(educationText)}</p></div>`;
+
+        // ── פתיח הדוח / מטרת הבדיקה — דינמי לפי נתוני התיק בלבד
+        const caseOpening = STATE.event.appraiserDeclaration || genAppraiserDeclarationText() || opening;
+        if (caseOpening)
+          rpt += `<div class="rpt-section"><h3>פתיח הדוח / מטרת הבדיקה</h3><p class="rpt-p" style="white-space:pre-line;">${rptText(caseOpening)}</p></div>`;
 
         // פרק תיאור המקום — שילוב propertyDesc + STATE.property
         const pd = STATE.propertyDesc || {};
@@ -12098,13 +12647,13 @@
           rpt += `<div class="rpt-section"><h3>תיאור המקום</h3>${pdHtml}</div>`;
         }
         if (circ)
-          rpt += `<div class="rpt-section"><h3>נסיבות המקרה</h3><p class="rpt-p">${esc(circ).replace(/\n/g, "<br>")}</p></div>`;
+          rpt += `<div class="rpt-section"><h3>נסיבות המקרה</h3><p class="rpt-p">${rptText(circ)}</p></div>`;
         // פרק סיבת הנזק (רק אם מולא)
         const causeText = STATE.findings?.causeExplanation || "";
         if (causeText)
-          rpt += `<div class="rpt-section"><h3>סיבת הנזק</h3><p class="rpt-p">${esc(causeText).replace(/\n/g, "<br>")}</p></div>`;
+          rpt += `<div class="rpt-section"><h3>סיבת הנזק</h3><p class="rpt-p">${rptText(causeText)}</p></div>`;
         if (finds)
-          rpt += `<div class="rpt-section"><h3>ממצאי הביקור ותיאור הנזק</h3><p class="rpt-p">${esc(finds).replace(/\n/g, "<br>")}</p></div>`;
+          rpt += `<div class="rpt-section"><h3>ממצאי הביקור ותיאור הנזק</h3><p class="rpt-p">${rptText(finds)}</p></div>`;
         // Lab test table in report
         if (
           STATE.findings.labTest &&
@@ -12227,7 +12776,7 @@
           <tr><td style="padding:8px 12px;border:1px solid #D1D5DB;">פחות השתתפות עצמית:</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;">${deduct > 0 ? `₪ ${fmtNum(deduct)} לפי פוליסה` : "—"}</td></tr>
           ${rentalTotal > 0 ? `<tr style="background:#EFF6FF;"><td style="padding:8px 12px;border:1px solid #D1D5DB;">שכירות חלופית (${f.rentalMonths} חודשים × ₪${fmtNum(parseCurrency(f.rentalMonthly))}):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;color:#1D4ED8;font-weight:700;">₪ ${fmtNum(rentalTotal)}</td></tr>` : ""}
           ${showClaimCol ? `<tr style="background:#FFFBEB;"><td style="padding:8px 12px;border:1px solid #D1D5DB;font-weight:900;font-size:13px;color:#92400E;">סה"כ תביעה (שמאי פרטי):</td><td style="padding:8px 12px;border:1px solid #D1D5DB;text-align:right;font-weight:900;font-size:15px;color:#92400E;">${totalClaim > 0 ? "₪ " + fmtNum(totalClaim) : "לא צוין"}</td></tr>` : ""}
-          <tr style="background:${T.summaryBg};border-top:2px solid "${T.summaryBorder}";">
+          <tr style="background:${T.summaryBg};border-top:2px solid ${T.summaryBorder};">
             <td style="padding:12px 16px;border:1px solid #A7F3D0;font-weight:900;font-size:15px;color:#065F46;">סכום נטו להערכה:</td>
             <td style="padding:12px 16px;border:1px solid #A7F3D0;text-align:right;font-weight:900;font-size:18px;color:#15803D;">₪ ${fmtNum(Math.max(0, (boq.vat ? Math.round(totalShiput * 1.18) : totalShiput) - deduct + rentalTotal))}</td>
           </tr>
@@ -12257,7 +12806,7 @@
         }
 
         if (expl)
-          rpt += `<div class="rpt-section"><h3>ביאורים והסברים להערכה</h3><p class="rpt-p">${esc(expl).replace(/\n/g, "<br>")}</p></div>`;
+          rpt += `<div class="rpt-section"><h3>ביאורים והסברים להערכה</h3><p class="rpt-p">${rptText(expl)}</p></div>`;
 
         if (s.rehabTime) {
           const rehabDays = parseInt(s.rehabTime);
@@ -12270,6 +12819,23 @@
         // המלצות לשיקום — הוסרו לחלוטין
         if (s.claimTotal)
           rpt += `<div class="rpt-section"><h3>הערת סיכום</h3><p class="rpt-p">${esc(s.claimTotal)}</p></div>`;
+
+        // ── תיעוד תמונות — לפני נספחים וחתימה ──
+        const allPhotos = [];
+        // main photo removed
+        (ph.items || []).forEach((img) => allPhotos.push(img));
+        if (allPhotos.length > 0) {
+          rpt += `<div class="rpt-section"><h3>תיעוד תמונות</h3>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">`;
+          allPhotos.forEach((img) => {
+            rpt += `<div style="text-align:center;">
+        <img src="${img.src}" style="width:100%;border-radius:6px;border:1px solid #E5E7EB;aspect-ratio:4/3;object-fit:cover;">
+        ${img.caption ? `<div style="font-size:10px;color:#6B7280;margin-top:3px;">${esc(img.caption)}</div>` : ""}
+      </div>`;
+          });
+          rpt += `</div></div>`;
+        }
+
 
         // ── נספחים ──
         const appendices = [];
@@ -12302,38 +12868,18 @@
     </div>`;
         }
 
+        rpt += getCustomSectionsByPosition('end');
+
         // ── סיום הדוח — מהגדרות השמאי
         const closingTextFinal = APPRAISER.closingText || '';
         if(closingTextFinal)
           rpt += `<div class="rpt-section" style="margin-top:24px;padding:14px 18px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;text-align:center;"><p class="rpt-p" style="font-size:13px;color:#374151;font-style:italic;white-space:pre-line;">${esc(closingTextFinal)}</p></div>`;
         const sigLine = s.signature || APPRAISER.nameHe || 'שמאי רכוש מוסמך';
-        const declText = `הצהרת שמאי\nאני הח"מ מצהיר כי חוות דעת זו נערכה על ידי באופן מקצועי, עצמאי ובלתי תלוי, בהתאם לממצאים שנצפו בביקור בנכס ולנתונים שעמדו בפניי במועד עריכת הדו"ח.\nההערכה בוצעה בהתאם לכללים המקובלים בתחום שמאות הרכוש ועל בסיס ניסיון מקצועי ומקורות תמחור מקובלים.\nחוות דעת זו מיועדת להערכת הנזק נשוא האירוע בלבד.`;
-        rpt += `<div class="rpt-section" style="border-top:2px solid #E5E7EB;margin-top:24px;padding-top:20px;">
-    <h3>הצהרת שמאי</h3>
-    <p class="rpt-p" style="white-space:pre-line;">${esc(declText)}</p>
-  </div>`;
         rpt += `<div class="rpt-signature">
     <p style="margin:24px 0 6px;">_______________________</p>
     <p style="font-weight:700;">${esc(sigLine)}</p>
     <p style="color:#9CA3AF;margin-top:4px;">תאריך: ${fmtDate(b.visitDate) || new Date().toLocaleDateString("he-IL")}</p>
   </div>`;
-
-        // Append digital signature from profile
-        // ── All photos at end of report ──
-        const allPhotos = [];
-        // main photo removed
-        (ph.items || []).forEach((img) => allPhotos.push(img));
-        if (allPhotos.length > 0) {
-          rpt += `<div class="rpt-section"><h3>תיעוד תמונות</h3>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">`;
-          allPhotos.forEach((img) => {
-            rpt += `<div style="text-align:center;">
-        <img src="${img.src}" style="width:100%;border-radius:6px;border:1px solid #E5E7EB;aspect-ratio:4/3;object-fit:cover;">
-        ${img.caption ? `<div style="font-size:10px;color:#6B7280;margin-top:3px;">${esc(img.caption)}</div>` : ""}
-      </div>`;
-          });
-          rpt += `</div></div>`;
-        }
 
         const _p2 = window._profile || {};
         if (_p2.signature) {
@@ -12434,28 +12980,66 @@
         if (ov) ov.classList.remove('active');
         _currentPdfUrl = null;
       }
+      function _buildReportFileName() {
+        const b = STATE.base || {};
+        const client = (b.fullName || b.clientName || b.insuredName || '').trim();
+        const address = [b.street, b.streetNum, b.apartment ? `דירה ${b.apartment}` : '', b.city].filter(Boolean).join(' ').trim();
+        const clean = (v) => String(v || '').replace(/[\\/:*?"<>|]/g, '-').replace(/\s+/g, ' ').trim();
+        return ["דוח שמאות", clean(client), clean(address)].filter(Boolean).join(' - ') + '.pdf';
+      }
+      function _withPdfDownloadDisposition(url, fileName) {
+        const safeName = fileName || _buildReportFileName();
+        try {
+          const u = new URL(url, window.location.href);
+          const encoded = encodeURIComponent(`attachment; filename*=UTF-8''${encodeURIComponent(safeName)}`);
+          u.searchParams.set('response-content-disposition', encoded);
+          return u.toString();
+        } catch (e) {
+          const sep = String(url).includes('?') ? '&' : '?';
+          return String(url) + sep + 'response-content-disposition=' + encodeURIComponent(`attachment; filename*=UTF-8''${encodeURIComponent(safeName)}`);
+        }
+      }
+
+      async function _downloadPdfUrl(url, fileName) {
+        if (!url) return false;
+        const safeName = fileName || _buildReportFileName();
+        try {
+          const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
+          if (!res.ok) throw new Error('download fetch failed');
+          const blob = await res.blob();
+          const objectUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = objectUrl;
+          a.download = safeName;
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+          return true;
+        } catch (e) {
+          const a = document.createElement('a');
+          a.href = _withPdfDownloadDisposition(url, safeName);
+          a.download = safeName;
+          a.rel = 'noopener';
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          return false;
+        }
+      }
       function _pdfActionOpen() {
         if (!_currentPdfUrl) return;
-        const _b = STATE.base || {};
-        const _name = (_b.fullName || '').trim();
-        const _addr = [_b.street, _b.city].filter(Boolean).join(' ');
-        const _fname = ['דוח שמאות', _name, _addr].filter(Boolean).join(' ') + '.pdf';
-        const a = document.createElement('a');
-        a.href = _currentPdfUrl;
-        a.download = _fname;
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        _downloadPdfUrl(_currentPdfUrl, _buildReportFileName());
       }
       async function _pdfActionShare() {
         if (!_currentPdfUrl) return;
-        const _base = STATE.base || {};
-        const fileName = ['דוח שמאות רכוש', (_base.fullName||'').trim(), [_base.street,_base.city].filter(Boolean).join(' ')].filter(Boolean).join(' ') + '.pdf';
+        const fileName = _buildReportFileName();
+        await _downloadPdfUrl(_currentPdfUrl, fileName);
         if (navigator.share) {
           try { await navigator.share({ title: fileName, url: _currentPdfUrl }); return; } catch (e) { if (e.name === 'AbortError') return; }
         }
-        window.open(_currentPdfUrl, '_blank');
       }
       async function _pdfActionCopy() {
         if (!_currentPdfUrl) return;
@@ -12463,7 +13047,7 @@
         catch (e) { if (typeof showToast === 'function') showToast('לא ניתן להעתיק'); }
       }
 
-      async function _generatePdf() {
+      async function _generatePdf(autoDownload = false) {
         showPdfProgress();
         try {
           setPdfStep(0);
@@ -12484,7 +13068,7 @@
             .replace(/data-logo-placeholder[^>]*>.*?<[/][^>]+>/gs, logoHtml)
             .replace(/data-sig-placeholder[^>]*>.*?<[/][^>]+>/gs, sigHtml);
           setPdfStep(2);
-          const resultPromise = window._callFn('generatePDF', { caseId: currentCaseId||null, htmlPayload: payload }, { timeout: 120000 });
+          const resultPromise = window._callFn('generatePDF', { caseId: currentCaseId||null, htmlPayload: payload, fileName: _buildReportFileName() }, { timeout: 120000 });
           await new Promise(r => setTimeout(r, 800));
           setPdfStep(3);
           const result = await resultPromise;
@@ -12492,6 +13076,11 @@
           setPdfStep(4);
           await new Promise(r => setTimeout(r, 500));
           showPdfReady(result.data.url);
+          if (autoDownload) {
+            await _downloadPdfUrl(result.data.url, _buildReportFileName());
+            if (typeof showToast === 'function') showToast('ה-PDF נשמר למחשב');
+            setTimeout(() => hidePdfProgress(), 700);
+          }
           try {
             const hasClient = !!(STATE.base?.fullName || STATE.insurance?.insuredName);
             const hasFindings = !!(STATE.findings?.findingsOverride || STATE.findings?.generalNotes || STATE.findings?.areas?.length);
@@ -13447,9 +14036,10 @@
       window._pdfActionOpen = _pdfActionOpen;
       window._pdfActionShare = _pdfActionShare;
       window._pdfActionCopy = _pdfActionCopy;
+      window._downloadPdfUrl = _downloadPdfUrl;
 
-            window.shareReport = async function(){ await _generatePdf(); };
-      window.savePdf    = async function(){ await _generatePdf(); };
+            window.shareReport = async function(){ await _generatePdf(false); };
+      window.savePdf    = async function(){ await _generatePdf(false); };
 
       function shareReport_orig() {
         // Try Web Share API (mobile/modern browsers)
@@ -13466,6 +14056,49 @@
       <style>body{font-family:'Heebo',Arial,sans-serif;direction:rtl;padding:20px;max-width:900px;margin:0 auto;}
       table{width:100%;border-collapse:collapse;}td,th{padding:6px 8px;border:1px solid #ddd;}
       .rpt-table td,.rpt-table th{padding:6px 8px;border:1px solid #e5e7eb;}
+
+.prof-report-pills{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.prof-report-pill{
+  min-width:52px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid var(--primary3);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  font-family:'Heebo',sans-serif;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+}
+.prof-report-pill:hover{
+  border-color:var(--border2);
+  color:var(--text);
+}
+.prof-report-pill.active{
+  border-color:var(--green);
+  background:rgba(16,185,129,.12);
+  color:var(--green);
+}
+.prof-report-pill.no.active{
+  border-color:var(--red);
+  background:rgba(239,68,68,.10);
+  color:var(--red);
+}
+.prof-summary{
+  font-size:11px;
+  color:var(--muted);
+  white-space:normal;
+  line-height:1.4;
+}
+
 </style>
       </head><body>${html}
 <\!-- ══════════════════ BOQ LIBRARY MODAL ══════════════════ \-\->
@@ -14073,10 +14706,10 @@
         }
       }
       function saveCurrentCase() {
-        if (!currentCaseId || !window._FB) return;
+        if (!currentCaseId || !window._FB) return Promise.resolve(false);
         const name =
           STATE.base?.fullName || STATE.base?.insuredName || "תיק חדש";
-        window._FB
+        return window._FB
           .saveCase({
             id: currentCaseId,
             name,
@@ -14084,8 +14717,55 @@
             createdAt: new Date().toLocaleDateString("he-IL"),
             state: JSON.parse(JSON.stringify(STATE)),
           })
-          .catch((e) => console.error("saveCase error", e));
+          .catch((e) => { console.error("saveCase error", e); throw e; });
       }
+
+      let _autoSaveTimer = null;
+      let _autoSaveBusy = false;
+      function _autoSaveStatus(txt, cls) {
+        let el = document.getElementById("autosaveStatus");
+        if (!el) {
+          el = document.createElement("div");
+          el.id = "autosaveStatus";
+          el.className = "autosave-status";
+          document.body.appendChild(el);
+        }
+        el.textContent = txt;
+        el.className = "autosave-status show " + (cls || "");
+        if (cls === "saved") setTimeout(() => el.classList.remove("show"), 1800);
+      }
+      function scheduleAutoSave(reason) {
+        if (!currentCaseId || !window._FB) return;
+        clearTimeout(_autoSaveTimer);
+        _autoSaveTimer = setTimeout(async () => {
+          if (_autoSaveBusy) return scheduleAutoSave("queued");
+          _autoSaveBusy = true;
+          _autoSaveStatus("שומר...", "saving");
+          try {
+            await saveCurrentCase();
+            _autoSaveStatus("נשמר", "saved");
+          } catch (e) {
+            _autoSaveStatus("שגיאת שמירה", "error");
+          } finally {
+            _autoSaveBusy = false;
+          }
+        }, 1000);
+      }
+      document.addEventListener("input", (e) => {
+        if (e.target && e.target.closest && e.target.closest("#appShell")) scheduleAutoSave("input");
+      }, true);
+      document.addEventListener("change", (e) => {
+        if (e.target && e.target.closest && e.target.closest("#appShell")) scheduleAutoSave("change");
+      }, true);
+      document.addEventListener("click", (e) => {
+        if (e.target && e.target.closest && e.target.closest("#appShell .pill, #appShell .chip, #appShell .event-card, #appShell .event-sub-card, #appShell .smart-action-btn")) {
+          setTimeout(() => scheduleAutoSave("click"), 0);
+        }
+      }, true);
+      window.addEventListener("beforeunload", () => {
+        clearTimeout(_autoSaveTimer);
+        try { saveCurrentCase(); } catch (e) {}
+      });
       async function deleteCase(id) {
         if (!confirm("למחוק תיק זה?")) return;
         if (window._FB)
@@ -14228,28 +14908,105 @@
           .forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
       }
+      function getSubTypeIcon(sub) {
+        const txt = String(sub || "");
+        if (txt.includes("צנרת") || txt.includes("איטום") || txt.includes("גשם") || txt.includes("הצפה") || txt.includes("מים")) return "💧";
+        if (txt.includes("עשן") || txt.includes("פיח") || txt.includes("שריפה") || txt.includes("כיבוי")) return "🔥";
+        if (txt.includes("קצר") || txt.includes("חשמל") || txt.includes("מתח")) return "🔌";
+        if (txt.includes("פריצה") || txt.includes("גניבה") || txt.includes("ונדליזם")) return "🚪";
+        if (txt.includes("שבר") || txt.includes("תלישה") || txt.includes("סערה") || txt.includes("רוח")) return "🌪️";
+        if (txt.includes("רשלנות") || txt.includes("שוגג") || txt.includes("תחזוקה")) return "👷";
+        if (txt.includes("אחר")) return "✍️";
+        return "•";
+      }
+      function getDisplayedEventSubType() {
+        const ev = STATE.event || {};
+        if (ev.eventSubType === "אחר" && ev.eventSubTypeOtherText) return `אחר: ${ev.eventSubTypeOtherText}`;
+        return ev.eventSubType || "";
+      }
+      function setEventSubTypeByIndex(eventType, idx) {
+        const subs = EVENT_SUBTYPES[eventType] || [];
+        const sub = subs[idx] || "";
+        STATE.event.eventSubType = sub;
+        if (sub !== "אחר") STATE.event.eventSubTypeOtherText = "";
+        STATE._eventSubTypeEdit = sub === "אחר";
+        renderCard(4);
+      }
       function setEventType(id) {
         STATE.event.eventType = id;
         STATE.event.eventSubType = "";
+        STATE.event.eventSubTypeOtherText = "";
+        STATE._eventTypeEdit = false;
+        STATE._eventSubTypeEdit = false;
         renderCard(4);
+      }
+      function editEventType() {
+        STATE._eventTypeEdit = true;
+        STATE._eventSubTypeEdit = true;
+        renderCard(4);
+      }
+      function editEventSubType() {
+        STATE._eventSubTypeEdit = true;
+        renderCard(4);
+      }
+      function updateCircLivePreview() {
+        const ta = document.getElementById("ta-circ-override");
+        if (!ta) return;
+        if (document.activeElement === ta) return;
+        if (STATE.circ.circumOverride) return;
+        ta.value = genCircumText() || "";
+      }
+      document.addEventListener("input", () => setTimeout(updateCircLivePreview, 0), true);
+      document.addEventListener("change", () => setTimeout(updateCircLivePreview, 0), true);
+      document.addEventListener("click", () => setTimeout(updateCircLivePreview, 0), true);
+
+      function _visitPurposeTogglePanel() {
+        const b = document.getElementById("visit-purpose-body");
+        const c = document.getElementById("visit-purpose-chevron");
+        if (!b) return;
+        const open = b.style.display === "none" || !b.style.display;
+        b.style.display = open ? "block" : "none";
+        if (c) c.textContent = open ? "−" : "+";
+      }
+      function _professionalsTogglePanel() {
+        const b = document.getElementById("professionals-body");
+        const c = document.getElementById("professionals-chevron");
+        if (!b) return;
+        const open = b.style.display === "none" || !b.style.display;
+        STATE._professionalsOpen = open;
+        b.style.display = open ? "block" : "none";
+        if (c) c.textContent = open ? "−" : "+";
       }
       function togglePurpose(p, btn) {
         const cur = STATE.event.visitPurpose || [];
         if (cur.includes(p))
           STATE.event.visitPurpose = cur.filter((x) => x !== p);
         else STATE.event.visitPurpose = [...cur, p];
-        btn.classList.toggle("checked");
+        renderCard(4);
       }
       function toggleProfessional(id, btn) {
         const cur = STATE.event.professionals || [];
+        STATE._professionalsOpen = true;
         if (cur.includes(id))
           STATE.event.professionals = cur.filter((x) => x !== id);
         else STATE.event.professionals = [...cur, id];
         renderCard(4);
       }
       function setProfDetail(id, field, val) {
+        STATE._professionalsOpen = true;
         if (!STATE.event.profDetails[id]) STATE.event.profDetails[id] = {};
         STATE.event.profDetails[id][field] = val;
+      }
+      function updateProfSummary(id) {
+        const el = document.getElementById("prof_summary_" + id);
+        if (!el) return;
+        const d = (STATE.event.profDetails || {})[id] || {};
+        const parts = [];
+        if (d.name) parts.push(d.name);
+        if (d.role) parts.push(d.role);
+        if (d.report === "yes") parts.push("נמסר דוח: כן");
+        if (d.report === "no") parts.push("נמסר דוח: לא");
+        el.textContent = parts.join(" — ");
       }
       function addArea(id, label, sqm) {
         if (STATE.findings.areas.find((a) => a.id === id)) return;
