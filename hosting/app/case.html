@@ -19,6 +19,9 @@
     />
     <style>
       :root {
+        --topbar-h: 56px;
+        --stepper-h: 44px;
+        --sidebar-w: 240px;
         --primary: #111827;
         --primary2: #1f2937;
         --primary3: #374151;
@@ -993,7 +996,7 @@
         backdrop-filter: blur(16px);
         border-bottom: 1px solid var(--border);
         padding: 0 20px;
-        height: 56px;
+        height: var(--topbar-h);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -1245,9 +1248,204 @@
         }
       }
 
+
+      /* ══ STEPPER STRIP ══ */
+      .stepper-strip {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: stretch;
+        position: sticky;
+        top: var(--topbar-h);
+        z-index: 90;
+        overflow-x: auto;
+        height: var(--stepper-h);
+        scrollbar-width: none;
+      }
+      .stepper-strip::-webkit-scrollbar { display: none; }
+      .stp {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 14px;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.15s;
+        margin-bottom: -1px;
+        font-family: "Heebo", sans-serif;
+        background: transparent;
+        border-top: none;
+        border-right: none;
+        border-left: none;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .stp:hover { background: rgba(255,255,255,0.03); }
+      .stp.active {
+        border-bottom-color: var(--accent);
+        background: rgba(245,158,11,0.06);
+        color: var(--accent);
+      }
+      .stp.done { border-bottom-color: var(--green); color: var(--green); }
+      .stp-n {
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 900;
+        background: var(--border2);
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+      .stp.active .stp-n { background: var(--accent); color: #fff; }
+      .stp.done .stp-n { background: var(--green); color: #fff; }
+      .stp-sep { color: var(--subtle); font-size: 10px; padding: 0 2px; }
+      .stp-ellipsis { color: var(--subtle); font-size: 11px; padding: 0 6px; display: flex; align-items: center; }
+      /* Generate PDF button inside stepper on last step */
+      #stepperPdfBtn {
+        display: none;
+        margin-right: auto;
+        margin-left: 16px;
+        padding: 7px 18px;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        font-family: "Heebo", sans-serif;
+        font-size: 13px;
+        font-weight: 900;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.15s;
+        display: none;
+        align-items: center;
+        gap: 6px;
+        line-height: 1;
+        letter-spacing: 0.01em;
+      }
+      #stepperPdfBtn:hover { opacity: 0.85; }
+
+      /* ══ NEW SIDEBAR ══ */
+      #sidebar {
+        width: var(--sidebar-w);
+        background: var(--card);
+        border-left: 1px solid var(--border);
+        padding: 0;
+        flex-shrink: 0;
+        position: sticky;
+        top: calc(var(--topbar-h) + var(--stepper-h));
+        height: calc(100vh - var(--topbar-h) - var(--stepper-h));
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        scrollbar-width: thin;
+      }
+      .sb-steps-label {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        color: var(--subtle);
+        text-transform: uppercase;
+        padding: 14px 16px 6px;
+      }
+      .sb-steps { padding: 0 8px 4px; display: flex; flex-direction: column; gap: 1px; }
+      .sb-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 5px 8px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        border-right: 3px solid transparent;
+        transition: all 0.15s;
+        cursor: pointer;
+      }
+      .sb-step:hover { background: var(--primary2); }
+      .sb-step.done { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.12); border-right-color: var(--green); }
+      .sb-step.current { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.15); border-right-color: var(--accent); }
+      .sb-step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+      .sb-step-dot {
+        width: 18px; height: 18px;
+        border-radius: 5px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 8px; font-weight: 900;
+        background: var(--border2); color: var(--subtle);
+        border: 1px solid var(--border2);
+      }
+      .sb-step.done .sb-step-dot { background: rgba(16,185,129,0.15); color: var(--green); }
+      .sb-step.current .sb-step-dot { background: rgba(245,158,11,0.15); color: var(--accent); border-color: rgba(245,158,11,0.3); }
+      .sb-step-connector { width: 1px; background: var(--border2); height: 8px; margin: 2px 0; }
+      .sb-step:last-child .sb-step-connector { display: none; }
+      .sb-step-body { flex: 1; min-width: 0; }
+      .sb-step-title { font-size: 10px; font-weight: 700; color: var(--muted); margin-top: 1px; }
+      .sb-step.done .sb-step-title { color: var(--green); }
+      .sb-step.current .sb-step-title { color: var(--accent); font-weight: 800; }
+      .sb-step-hint { font-size: 9px; color: var(--subtle); margin-top: 1px; line-height: 1.3; }
+      .sb-divider { height: 1px; background: var(--border); margin: 6px 16px; }
+      .sb-nav { flex: 1; padding: 4px 0; }
+      .sb-nav a, .sb-nav button {
+        display: flex; align-items: center; gap: 10px;
+        padding: 9px 20px;
+        color: var(--muted); font-size: 13px; font-weight: 600;
+        text-decoration: none; background: transparent; border: none;
+        cursor: pointer; font-family: "Heebo", sans-serif;
+        width: 100%; transition: all 0.15s;
+      }
+      .sb-nav a:hover, .sb-nav button:hover { background: var(--primary2); color: var(--text); }
+      .nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+      .sb-footer {
+        padding: 12px 16px 20px;
+        border-top: 1px solid var(--border);
+      }
+      .sb-user-name { font-size: 11px; color: var(--subtle); margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .btn-logout {
+        width: 100%; padding: 7px 12px;
+        background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+        color: #f87171; font-size: 11px; font-weight: 700;
+        border-radius: 8px; cursor: pointer; font-family: "Heebo", sans-serif;
+        transition: all 0.15s;
+      }
+      .btn-logout:hover { background: rgba(239,68,68,0.15); }
+
+      /* ══ BOTTOM NAV (mobile) ══ */
+      .bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        z-index: 200;
+        background: rgba(3,7,18,0.97);
+        border-top: 1px solid var(--border);
+        backdrop-filter: blur(12px);
+        padding: 10px 16px;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+      }
+      .nav-btns { display: flex; gap: 8px; }
+      .btn-back-nav {
+        padding: 8px 18px; border-radius: 9px;
+        border: 1px solid var(--border2); background: transparent;
+        color: var(--muted); font-size: 13px; font-weight: 700;
+        cursor: pointer; font-family: "Heebo", sans-serif; transition: all 0.15s;
+      }
+      .btn-back-nav:hover { color: var(--text); border-color: var(--subtle); }
+      .btn-next-nav {
+        padding: 8px 22px; border-radius: 9px;
+        border: none; background: var(--accent); color: #fff;
+        font-size: 13px; font-weight: 900;
+        cursor: pointer; font-family: "Heebo", sans-serif; transition: opacity 0.15s;
+      }
+      .btn-next-nav:hover { opacity: 0.9; }
+      .save-status-nav { font-size: 11px; font-weight: 700; color: var(--muted); }
+
       #layout {
         display: flex;
-        min-height: calc(100vh - 56px);
+        min-height: calc(100vh - var(--topbar-h) - var(--stepper-h));
       }
       #sidebar {
         width: 230px;
@@ -1548,113 +1746,2096 @@
         color: var(--accent);
       }
 
-      /* ── BOQ TABLE ── */
-      .boq-section {
-        margin-bottom: 20px;
-      }
+      /* ── BOQ CARD LAYOUT ── */
+      .boq-section { margin-bottom: 20px; }
       .boq-section-title {
-        font-size: 12px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        padding: 8px 12px;
-        border-radius: 6px;
-        margin-bottom: 8px;
+        font-size: 12px; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.06em; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px;
       }
-      .boq-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
+      .boq-ch-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 9px 14px; border-radius: 10px; margin: 10px 0 4px;
+        background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.15);
       }
-      /* Drag & Drop */
-      .boq-row-draggable {
-        cursor: grab;
+      .boq-ch-title { font-size: 12px; font-weight: 800; color: var(--blue); }
+      .boq-ch-total { font-size: 11px; font-weight: 700; color: var(--muted); }
+      .boq-room-header {
+        font-size: 11px; font-weight: 700; color: var(--accent);
+        padding: 5px 14px 3px; opacity: 0.85;
       }
-      .boq-row-draggable:active {
-        cursor: grabbing;
+      .boq-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 10px; margin-bottom: 4px; overflow: hidden;
+        transition: border-color 0.15s;
       }
-      .boq-drag-handle {
-        cursor: grab;
-        color: #4b5563;
+      .boq-card:hover { border-color: var(--border2); }
+      .boq-card.row-zero { opacity: 0.5; }
+      .boq-card.boq-dragging { opacity: 0.4; }
+      .boq-card.boq-drag-over { border-top: 2px solid var(--accent); }
+      .boq-card-top {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 11px 14px 7px;
+      }
+      .boq-card-id {
+        font-size: 9px; font-weight: 900; color: var(--accent);
+        background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.2);
+        border-radius: 5px; padding: 2px 6px; white-space: nowrap;
+        flex-shrink: 0; margin-top: 2px;
+      }
+      .boq-card-drag {
+        cursor: grab; color: var(--subtle); font-size: 14px;
+        flex-shrink: 0; margin-top: 2px; opacity: 0.4; user-select: none;
+      }
+      .boq-card-drag:hover { opacity: 1; }
+      .boq-card-desc {
+        flex: 1; background: transparent; border: none; outline: none;
+        resize: none; font-family: "Heebo", sans-serif; font-size: 14px;
+        font-weight: 600; color: var(--text); line-height: 1.45;
+        width: 100%; min-height: 24px; padding: 0;
+      }
+      .boq-card-desc:focus {
+        background: rgba(255,255,255,.03); border-radius: 4px; padding: 2px 4px;
+      }
+      /* ── BOQ Card — Mockup B Style ── */
+      .boq-card {
+        display: flex; align-items: stretch;
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 10px; margin-bottom: 4px; overflow: hidden;
+        transition: border-color 0.15s;
+      }
+      .boq-card:hover { border-color: var(--border2); }
+      .boq-card.row-zero { opacity: 0.5; }
+      .boq-card.boq-dragging { opacity: 0.4; }
+      .boq-card.boq-drag-over { border-top: 2px solid var(--accent); }
+      /* Left stripe (hover → blue) */
+      .boq-card-stripe { width: 3px; flex-shrink: 0; background: var(--border); transition: background 0.15s; }
+      .boq-card:hover .boq-card-stripe { background: var(--blue); }
+      /* Card body */
+      .boq-card-body { flex: 1; padding: 10px 14px; min-width: 0; }
+      /* Top row: id + desc + drag */
+      .boq-card-top {
+        display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+      }
+      .boq-card-id {
+        font-size: 9px; font-weight: 900; color: var(--accent);
+        background: rgba(245,158,11,.1); border-radius: 4px;
+        padding: 2px 6px; white-space: nowrap; flex-shrink: 0;
+      }
+      .boq-card-drag {
+        cursor: grab; color: var(--subtle); font-size: 14px;
+        flex-shrink: 0; opacity: 0.4; user-select: none; margin-right: auto;
+      }
+      .boq-card-drag:hover { opacity: 1; }
+      .boq-card-desc {
+        flex: 1; background: transparent; border: none; outline: none;
+        resize: none; font-family: "Heebo", sans-serif; font-size: 13px;
+        font-weight: 700; color: var(--text); line-height: 1.4;
+        width: 100%; min-height: 22px; padding: 0;
+      }
+      .boq-card-desc:focus { background: rgba(255,255,255,.03); border-radius: 4px; padding: 2px 4px; }
+      /* Bottom row: fields | divider | totals */
+      .boq-card-bot {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      }
+      /* Field group: label inline with input */
+      .boq-fields { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+      .boq-pill { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+      .boq-pill label {
+        font-size: 9px; font-weight: 800; color: var(--subtle);
+        text-transform: uppercase; white-space: nowrap;
+      }
+      .boq-pill input {
+        background: var(--primary2); border: 1px solid var(--border);
+        border-radius: 6px; color: var(--text); font-family: "Heebo", sans-serif;
+        font-size: 12px; font-weight: 700; padding: 4px 7px;
+        text-align: center; outline: none; transition: all 0.15s;
+      }
+      .boq-pill input:focus { border-color: var(--accent); color: var(--text); }
+      .boq-pill input:disabled { opacity: 0.35; }
+      .boq-pill.p-unit input { width: 40px; }
+      .boq-pill.p-qty input { width: 52px; }
+      .boq-pill.p-price input { width: 64px; }
+      /* Vertical divider between fields and totals */
+      .boq-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+      /* Totals — inline label+value */
+      .boq-totals { display: flex; align-items: center; gap: 12px; margin-right: auto; flex-wrap: wrap; }
+      .boq-tot-item { display: flex; align-items: baseline; gap: 4px; }
+      .boq-tot-item label { font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
+      .boq-tot-item span { font-size: 13px; font-weight: 900; white-space: nowrap; }
+      .boq-tot-kinun label { color: var(--blue); }
+      .boq-tot-kinun span { color: #60a5fa; }
+      .boq-tot-shiput label { color: var(--green); }
+      .boq-tot-shiput span { color: #34d399; }
+      .boq-tot-claim label { color: #FCD34D; }
+      .boq-tot-claim input {
+        background: transparent; border: none; border-bottom: 1px solid rgba(252,211,77,.35);
+        color: #FCD34D; font-family: "Heebo", sans-serif;
+        font-size: 12px; font-weight: 900; padding: 0 2px;
+        text-align: right; outline: none; width: 56px; direction: ltr;
+      }
+      .boq-tot-claim input::placeholder { color: rgba(252,211,77,.3); }
+      .boq-tot-claim input:focus { border-bottom-color: #FCD34D; }
+      /* Del button */
+      .del-btn {
+        background: none; border: none; color: var(--subtle); cursor: pointer;
+        font-size: 14px; padding: 10px 12px; opacity: 0.35;
+        transition: all 0.15s; flex-shrink: 0; align-self: stretch;
+        display: flex; align-items: center;
+      }
+      .del-btn:hover { opacity: 1; color: var(--red); }
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+    <title>OMDA | רכוש</title>
+    <link rel="manifest" href="../manifest.json" />
+    <link rel="icon" type="image/png" href="../assets/img/omda-icon.png" />
+    <link rel="apple-touch-icon" href="../assets/img/omda-icon.png" />
+    <meta name="theme-color" content="#1f2a44" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --topbar-h: 56px;
+        --stepper-h: 44px;
+        --sidebar-w: 240px;
+        --primary: #111827;
+        --primary2: #1f2937;
+        --primary3: #374151;
+        --r: 10px;
+        --r-sm: 8px;
+        --r-lg: 14px;
+        --r-xl: 18px;
+        --accent: #f59e0b;
+        --accent2: #fde68a;
+        --accent3: #d97706;
+        --blue: #3b82f6;
+        --red: #ef4444;
+        --green: #10b981;
+        --purple: #8b5cf6;
+        --text: #f9fafb;
+        --muted: #9ca3af;
+        --subtle: #6b7280;
+        --border: #1f2937;
+        --border2: #4b5563;
+        --card: #111827;
+        --bg: #030712;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      }
+       * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Heebo", sans-serif;
+        background: var(--bg);
+        color: var(--text);
         font-size: 14px;
-        padding: 0 4px;
-        user-select: none;
-        opacity: 0.5;
-        transition: opacity 0.15s;
+        line-height: 1.6;
+        min-height: 100vh;
       }
-      .boq-drag-handle:hover {
-        opacity: 1;
-        color: #9ca3af;
+
+      /* ── UTILITIES ── */
+      .hidden {
+        display: none !important;
       }
-      tr.boq-dragging {
-        opacity: 0.4;
-        background: rgba(245, 158, 11, 0.06) !important;
+      .flex {
+        display: flex;
       }
-      tr.boq-drag-over {
-        border-top: 2px solid #f59e0b !important;
+      .flex-col {
+        flex-direction: column;
       }
-      .boq-table th {
-        background: var(--primary2);
-        padding: 8px 10px;
+      .gap4 {
+        gap: 4px;
+      }
+      .gap8 {
+        gap: 8px;
+      }
+      .gap12 {
+        gap: 12px;
+      }
+      .gap16 {
+        gap: 16px;
+      }
+      .gap20 {
+        gap: 20px;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .justify-between {
+        justify-content: space-between;
+      }
+      .flex-wrap {
+        flex-wrap: wrap;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+      }
+      .span2 {
+        grid-column: 1/-1;
+      }
+      .w100 {
+        width: 100%;
+      }
+      .ta-r {
         text-align: right;
-        font-weight: 700;
-        color: var(--muted);
-        font-size: 11px;
-        border-bottom: 2px solid var(--primary3);
       }
-      .boq-table th.ta-l,
-      .boq-table td.ta-l {
+      .ta-l {
         text-align: left;
       }
-      .boq-table td {
-        padding: 7px 10px;
-        border-bottom: 1px solid var(--border);
-        vertical-align: top;
+      .ta-c {
+        text-align: center;
       }
-      .boq-table tr:hover td {
-        background: rgba(255, 255, 255, 0.02);
+      .fw7 {
+        font-weight: 700;
       }
-      .boq-table .row-subtotal td {
-        background: var(--primary2);
+      .fw8 {
         font-weight: 800;
-        vertical-align: middle;
       }
-      .boq-table .row-zero td {
-        color: var(--subtle) !important;
+      .fw9 {
+        font-weight: 900;
       }
-      /* BOQ inputs use the intentional .boq-input compact variant defined above. */
-      .boq-total-box {
-        background: rgba(15, 23, 42, 0.9);
-        border: 2px solid rgba(245, 158, 11, 0.25);
-        border-radius: 12px;
-        padding: 18px 20px;
-        margin-top: 16px;
+      .fs11 {
+        font-size: 11px;
       }
-      .total-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 0;
+      .fs12 {
+        font-size: 12px;
       }
-      .total-row + .total-row {
-        border-top: 1px solid var(--border);
+      .fs13 {
+        font-size: 13px;
       }
-      .total-row.grand {
-        padding-top: 12px;
+      .fs14 {
+        font-size: 14px;
+      }
+      .fs16 {
+        font-size: 16px;
+      }
+      .fs20 {
+        font-size: 20px;
+      }
+      .fs24 {
+        font-size: 24px;
+      }
+      .c-muted {
+        color: var(--muted);
+      }
+      .c-subtle {
+        color: var(--subtle);
+      }
+      .c-accent {
+        color: var(--accent);
+      }
+      .c-blue {
+        color: var(--blue);
+      }
+      .c-green {
+        color: var(--green);
+      }
+      .c-red {
+        color: var(--red);
+      }
+      .mt4 {
         margin-top: 4px;
       }
-      .del-btn {
-        background: none;
-        border: none;
-        color: var(--red);
-        cursor: pointer;
+      .mt8 {
+        margin-top: 8px;
+      }
+      .mt12 {
+        margin-top: 12px;
+      }
+      .mt16 {
+        margin-top: 16px;
+      }
+      .mt20 {
+        margin-top: 20px;
+      }
+      .mb8 {
+        margin-bottom: 8px;
+      }
+      .mb12 {
+        margin-bottom: 12px;
+      }
+      .mb16 {
+        margin-bottom: 16px;
+      }
+      .p12 {
+        padding: 12px;
+      }
+      .p16 {
+        padding: 16px;
+      }
+      .p20 {
+        padding: 20px;
+      }
+      .rounded8 {
+        border-radius: 8px;
+      }
+      .rounded12 {
+        border-radius: 12px;
+      }
+      .rounded16 {
+        border-radius: 16px;
+      }
+      .divider {
+        height: 1px;
+        background: var(--primary3);
+        margin: 16px 0;
+      }
+      .label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .note {
+        font-size: 12px;
+        color: var(--subtle);
+        padding: 8px 12px;
+        background: #1f293780;
+        border-radius: 6px;
+        border-right: 3px solid var(--accent);
+        margin-top: 8px;
+      }
+      .note-blue {
+        border-right-color: var(--blue);
+        background: #3b82f610;
+      }
+      .note-red {
+        border-right-color: var(--red);
+        background: #ef444410;
+      }
+      .note-green {
+        border-right-color: var(--green);
+        background: #10b98110;
+      }
+
+      /* ── FORM CONTROLS — intentional variants, no local reset overrides ── */
+      :where(
+        input[type="text"], input[type="number"], input[type="tel"],
+        input[type="email"], input[type="date"], input[type="time"],
+        select, textarea
+      ):not(.prop-input):not(.boq-input) {
+        background: var(--primary2);
+        border: 1.5px solid var(--primary3);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: var(--text);
         font-size: 13px;
-        padding: 2px 4px;
-        opacity: 0.5;
+        font-family: "Heebo", sans-serif;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      :where(
+        input[type="text"], input[type="number"], input[type="tel"],
+        input[type="email"], input[type="date"], input[type="time"],
+        select, textarea
+      ):not(.prop-input):not(.boq-input):focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+      }
+      .prop-input {
+        background: var(--primary2);
+        border: 1.5px solid var(--border2);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: var(--text);
+        font-size: 13px;
+        font-family: "Heebo", sans-serif;
+        width: 100%;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        display: block;
+        box-sizing: border-box;
+        min-height: 42px;
+      }
+      .prop-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+      }
+      .boq-input {
+        background: var(--primary2);
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 7px;
+        color: var(--text);
+        font-size: 12px;
+        font-family: "Heebo", sans-serif;
+        width: 100%;
+        min-height: unset;
+        height: auto;
+        outline: none;
+        line-height: 1.5;
+        box-shadow: none;
+      }
+      .boq-input:focus {
+        border-color: var(--accent);
+        box-shadow: none;
+      }
+      .boq-input.num,
+      .boq-table input.boq-input[type="number"] {
+        width: 80px;
+        text-align: left;
+      }
+      .boq-input.desc-input,
+      .boq-table textarea.boq-input {
+        resize: none;
+        overflow: hidden;
+        min-height: 28px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      select { cursor: pointer; }
+      select option { background: var(--primary2); }
+      textarea:not(.boq-input) {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      /* ── BUTTONS ── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 20px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-family: "Heebo", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        transition: all 0.18s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent3));
+        color: #111;
+        box-shadow: 0 3px 12px rgba(245, 158, 11, 0.3);
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 18px rgba(245, 158, 11, 0.4);
+      }
+      .btn-secondary {
+        background: var(--primary2);
+        border: 1px solid var(--primary3);
+        color: var(--text);
+      }
+      .btn-secondary:hover {
+        border-color: var(--muted);
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--primary3);
+        color: var(--muted);
+      }
+      .btn-ghost:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+      .btn-danger {
+        background: #ef444420;
+        border: 1px solid #ef4444;
+        color: #ef4444;
+      }
+      .btn-sm {
+        padding: 6px 14px;
+        font-size: 12px;
+        border-radius: 10px;
+      }
+      .btn-xs {
+        padding: 4px 10px;
+        font-size: 11px;
+        border-radius: 8px;
+      }
+
+      /* ── RADIO PILLS ── */
+      .pill-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .pill {
+        padding: 7px 16px;
+        border-radius: 20px;
+        border: 1.5px solid var(--primary3);
+        background: var(--primary2);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+      }
+      .pill:hover {
+        border-color: var(--muted);
+      }
+      .pill.active {
+        border-color: var(--accent);
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--accent);
+      }
+      .pill.active-blue {
+        border-color: var(--blue);
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--blue);
+      }
+      .pill.active-green {
+        border-color: var(--green);
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--green);
+      }
+      .pill.active-red {
+        border-color: var(--red);
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--red);
+      }
+
+      /* ── CHECK CHIPS ── */
+      .chip {
+        padding: 6px 13px;
+        border-radius: 16px;
+        border: 1.5px solid var(--primary3);
+        background: var(--primary2);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .chip:hover {
+        border-color: var(--muted);
+      }
+      .chip.checked {
+        border-color: var(--green);
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--green);
+      }
+
+      /* ── EVENT CARDS ── */
+      .event-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 10px;
+      }
+      .event-card {
+        border: 2px solid var(--primary3);
+        border-radius: 12px;
+        padding: 14px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: var(--primary2);
+      }
+      .event-card:hover {
+        border-color: var(--muted);
+      }
+      .event-card.active {
+        border-color: var(--accent);
+        background: rgba(245, 158, 11, 0.08);
+      }
+      .event-card .ei {
+        font-size: 26px;
+        margin-bottom: 7px;
+      }
+      .event-card .el {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .event-card.active .el {
+        color: var(--accent);
+      }
+      .event-sub-panel {
+        margin-top: -2px;
+        margin-bottom: 16px;
+        padding: 14px;
+        border: 1px solid rgba(245, 158, 11, 0.22);
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.62);
+      }
+      .event-sub-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .event-sub-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .event-sub-hint {
+        font-size: 11px;
+        color: var(--subtle);
+      }
+      .event-sub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+      }
+      .event-sub-card {
+        min-height: 74px;
+        border: 1.5px solid var(--primary3);
+        border-radius: 12px;
+        background: rgba(31, 41, 55, 0.76);
+        color: var(--muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 12px;
+        font-family: 'Heebo', sans-serif;
+        font-size: 12px;
+        font-weight: 800;
+        transition: all 0.15s ease;
+      }
+      .event-sub-card:hover {
+        border-color: var(--muted);
+        color: var(--text);
+      }
+      .event-sub-card.active {
+        border-color: var(--accent);
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.12);
+      }
+      .event-sub-card .sub-ico {
+        font-size: 20px;
+        line-height: 1;
+      }
+      .event-sub-other {
+        margin-top: 10px;
+      }
+      .event-choice-summary {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 14px;
+        border: 1px solid var(--primary3);
+        border-radius: 12px;
+        background: rgba(3, 7, 18, 0.35);
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 10px;
+      }
+      .event-choice-summary strong {
+        color: var(--accent);
+      }
+      .event-selected-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1.5px solid rgba(245, 158, 11, 0.42);
+        border-radius: 13px;
+        background: rgba(245, 158, 11, 0.06);
+        margin-bottom: 14px;
+      }
+      .event-selected-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .event-selected-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: rgba(245, 158, 11, 0.1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        flex-shrink: 0;
+      }
+      .event-selected-kicker {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--subtle);
+        letter-spacing: 0.06em;
+        margin-bottom: 1px;
+      }
+      .event-selected-label {
+        font-size: 13px;
+        font-weight: 900;
+        color: var(--accent);
+        line-height: 1.25;
+      }
+      .event-change-btn {
+        border: 1px solid var(--primary3);
+        background: rgba(17, 24, 39, 0.7);
+        color: var(--muted);
+        border-radius: 10px;
+        padding: 6px 11px;
+        font-family: 'Heebo', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+      }
+      .event-change-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      @media (max-width: 768px) {
+        .event-sub-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .event-sub-card {
+          min-height: 66px;
+          padding: 9px 8px;
+        }
+      }
+
+      .event-sub-selected-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 11px 14px;
+        border: 1.5px solid rgba(245, 158, 11, 0.36);
+        border-radius: 13px;
+        background: rgba(245, 158, 11, 0.055);
+        margin-bottom: 14px;
+      }
+      .event-sub-selected-main {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+      }
+      .event-sub-selected-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        background: rgba(245, 158, 11, 0.1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        flex-shrink: 0;
+      }
+      .event-sub-selected-kicker {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--subtle);
+        letter-spacing: 0.06em;
+        margin-bottom: 1px;
+      }
+      .event-sub-selected-label {
+        font-size: 12px;
+        font-weight: 900;
+        color: var(--accent);
+        line-height: 1.25;
+      }
+      .circ-smart-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .circ-live-panel {
+        border: 1.5px solid rgba(59, 130, 246, 0.35);
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(59,130,246,.09), rgba(15,23,42,.42));
+        padding: 14px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      }
+      .circ-live-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .circ-live-title {
+        font-size: 12px;
+        font-weight: 900;
+        color: #93c5fd;
+      }
+      .circ-live-badge {
+        font-size: 10px;
+        font-weight: 800;
+        color: #93c5fd;
+        border: 1px solid rgba(59,130,246,.35);
+        background: rgba(59,130,246,.1);
+        border-radius: 999px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
+      .circ-live-text {
+        min-height: 70px;
+        color: #dbeafe;
+        font-size: 12px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+      }
+      .circ-live-text.empty {
+        color: var(--subtle);
+      }
+      .circ-accordion {
+        border: 1.5px solid rgba(75, 85, 99, 0.72);
+        border-radius: 13px;
+        background: rgba(15, 23, 42, 0.35);
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+      }
+      .circ-accordion + .circ-accordion {
+        margin-top: 10px;
+      }
+      .circ-basic-accordion {
+        margin-top: 14px;
+        margin-bottom: 12px;
+      }
+      .circ-accordion > summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 11px 13px;
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 900;
+        user-select: none;
+        background: rgba(31, 41, 55, 0.62);
+      }
+      .circ-accordion > summary::-webkit-details-marker { display: none; }
+      .circ-accordion > summary::before {
+        content: none;
+      }
+      .circ-accordion > summary::after {
+        content: '+';
+        color: var(--subtle);
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 1;
+        margin-inline-start: 10px;
+        flex: 0 0 auto;
+      }
+      .circ-accordion[open] > summary::after {
+        content: '−';
+        color: var(--accent);
+      }
+      .circ-accordion-body {
+        padding: 14px;
+      }
+      .circ-section-mini {
+        color: var(--subtle);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      @media (max-width: 768px) {
+        .event-selected-summary, .event-sub-selected-summary {
+          align-items: stretch;
+          flex-direction: column;
+        }
+        .event-change-btn {
+          width: 100%;
+          justify-content: center;
+        }
+        .circ-live-panel {
+          padding: 12px;
+        }
+      }
+
+      .smart-text-panel { border: 1.5px solid rgba(245, 158, 11, 0.30); border-radius: 14px; background: linear-gradient(180deg, rgba(245,158,11,.075), rgba(15,23,42,.38)); padding: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,.03); }
+      .smart-text-panel + .smart-text-panel { margin-top: 12px; }
+      .smart-text-head { display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px; }
+      .smart-text-title { font-size:12px;font-weight:900;color:var(--accent); }
+      .smart-text-status { font-size:10px;font-weight:800;color:var(--muted);border:1px solid rgba(75,85,99,.7);background:rgba(17,24,39,.65);border-radius:999px;padding:3px 9px;white-space:nowrap;cursor:default; }
+      .smart-text-toolbar { display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 10px;padding:7px;border:1px solid rgba(75,85,99,.45);border-radius:12px;background:rgba(3,7,18,.22); }
+      .smart-action-btn { display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:30px;padding:6px 11px;border-radius:9px;border:1px solid rgba(75,85,99,.70);background:rgba(17,24,39,.78);color:var(--muted);font-family:'Heebo',sans-serif;font-size:11px;font-weight:800;cursor:pointer;transition:all .15s;box-shadow:none; }
+      .smart-action-btn:hover { color:var(--text);border-color:var(--muted);background:rgba(31,41,55,.92); }
+      .smart-action-primary { color:#111827;border-color:rgba(245,158,11,.75);background:linear-gradient(135deg,var(--accent),var(--accent3)); }
+      .smart-action-primary:hover { color:#111827;border-color:var(--accent2);filter:brightness(1.04); }
+      .smart-action-secondary { color:#dbeafe;border-color:rgba(59,130,246,.55);background:rgba(59,130,246,.12); }
+      .smart-action-secondary:hover { color:#eff6ff;border-color:#93c5fd;background:rgba(59,130,246,.18); }
+      .smart-text-panel textarea { min-height:110px;resize:vertical;line-height:1.75; }
+      .smart-text-panel.declaration { border-color:rgba(59,130,246,.32);background:linear-gradient(180deg, rgba(59,130,246,.07), rgba(15,23,42,.36)); }
+      .smart-text-panel.declaration .smart-text-title { color:#93c5fd; }
+      @media (max-width:768px){ .smart-text-head{align-items:stretch;flex-direction:column;} .smart-text-toolbar{align-items:stretch;} .smart-action-btn{flex:1;} }
+
+
+      .circ-summary-meta { display:inline-flex;align-items:center;gap:7px;margin-right:auto;color:var(--subtle);font-size:11px;font-weight:800;white-space:nowrap; }
+      .circ-status-dot { width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--subtle);animation:circDotPulse 1.6s ease-in-out infinite; }
+      .circ-status-dot.empty { background:var(--subtle); color:var(--subtle); }
+      .circ-status-dot.partial { background:var(--accent); color:var(--accent); }
+      .circ-status-dot.done { background:var(--green); color:var(--green); }
+      @keyframes circDotPulse { 0%{box-shadow:0 0 0 0 currentColor;opacity:.95;} 70%{box-shadow:0 0 0 7px transparent;opacity:.72;} 100%{box-shadow:0 0 0 0 transparent;opacity:.95;} }
+      .circ-specific-accordion { margin-top: 10px; }
+      .voice-btn[data-tip] { position: relative; }
+      .voice-btn[data-tip]::after { content: attr(data-tip); position:absolute; z-index:40; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(4px); opacity:0; pointer-events:none; white-space:nowrap; background:rgba(3,7,18,.96); color:var(--text); border:1px solid var(--border2); border-radius:8px; padding:5px 9px; font-size:10px; font-weight:800; box-shadow:var(--shadow); transition:opacity .22s ease .5s, transform .22s ease .5s; }
+      .voice-btn[data-tip]:hover::after { opacity:1; transform:translateX(-50%) translateY(0); }
+      .autosave-status { position:fixed; left:50%; bottom:18px; z-index:9000; min-width:88px; text-align:center; padding:7px 11px; border-radius:999px; border:1px solid rgba(75,85,99,.65); background:rgba(17,24,39,.92); color:var(--muted); font-size:11px; font-weight:800; box-shadow:var(--shadow); opacity:0; transform:translateX(-50%) translateY(6px); pointer-events:none; transition:opacity .18s ease, transform .18s ease; }
+      .autosave-status.show { opacity:1; transform:translateX(-50%) translateY(0); }
+      .autosave-status.saving { color:var(--accent); border-color:rgba(245,158,11,.5); }
+      .autosave-status.saved { color:var(--green); border-color:rgba(16,185,129,.45); }
+      .autosave-status.error { color:var(--red); border-color:rgba(239,68,68,.55); }
+
+      /* ── SECTION CARD ── */
+      .sc {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .sc-head {
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        border-bottom: 1px solid var(--border);
+      }
+      .sc-head:hover {
+        background: var(--primary2);
+      }
+      .sc-title {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .sc-body {
+        padding: 18px;
+      }
+      .sc-toggle {
+        color: var(--subtle);
+        transition: transform 0.2s;
+      }
+      .sc.collapsed .sc-body {
+        display: none;
+      }
+      .sc.collapsed .sc-toggle {
+        transform: rotate(-90deg);
+      }
+
+      /* ── LANDING ── */
+      #landing {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, #020812, #0d1117 50%, #060c18);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 32px 20px;
+      }
+      .land-title {
+        font-size: 40px;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      .land-sub {
+        color: var(--subtle);
+        font-size: 15px;
+        text-align: center;
+        margin-bottom: 48px;
+      }
+      .mode-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        max-width: 688px;
+        width: 100%;
+      }
+      .mode-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 2px solid rgba(255, 255, 255, 0.07);
+        border-radius: 18px;
+        padding: 28px 22px;
+        cursor: pointer;
+        text-align: right;
+        transition: all 0.25s;
+        position: relative;
+        overflow: hidden;
+      }
+      .mode-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 18px;
+        opacity: 0;
+        transition: opacity 0.25s;
+      }
+      .mode-card:hover::before {
+        opacity: 1;
+      }
+      .mode-card.pm::before {
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(59, 130, 246, 0.1),
+          transparent 60%
+        );
+      }
+      .mode-card.im::before {
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(239, 68, 68, 0.1),
+          transparent 60%
+        );
+      }
+      .mode-card.tm::before {
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(16, 185, 129, 0.1),
+          transparent 60%
+        );
+      }
+      .mode-card:hover {
+        transform: translateY(-4px);
+      }
+      .mode-card.pm:hover {
+        border-color: var(--blue);
+        box-shadow: 0 16px 50px rgba(59, 130, 246, 0.2);
+      }
+      .mode-card.im:hover {
+        border-color: var(--red);
+        box-shadow: 0 16px 50px rgba(239, 68, 68, 0.2);
+      }
+      .mode-card.tm:hover {
+        border-color: var(--green);
+        box-shadow: 0 16px 50px rgba(16, 185, 129, 0.2);
+      }
+      .mode-icon {
+        font-size: 38px;
+        margin-bottom: 14px;
+        display: block;
+      }
+      .mode-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+      .mode-tag {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .mode-desc {
+        font-size: 12px;
+        color: var(--subtle);
+        line-height: 1.6;
+      }
+      .mode-cta {
+        margin-top: 18px;
+        display: flex;
+        justify-content: flex-start;
+      }
+      .mode-cta span {
+        padding: 7px 18px;
+        border-radius: 18px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #111;
+      }
+
+      /* ── TOP BAR ── */
+      #topbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(15, 23, 42, 0.97);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 20px;
+        height: var(--topbar-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .tb-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .tb-logo-img {
+        height: 30px;
+        width: auto;
+      }
+      .tb-divider {
+        width: 1px;
+        height: 20px;
+        background: var(--border2);
+        flex-shrink: 0;
+      }
+      .tb-name {
+        font-size: 15px;
+        font-weight: 900;
+        color: var(--text);
+        letter-spacing: -0.2px;
+      }
+      .tb-mode {
+        padding: 3px 10px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+      }
+      /* Right actions */
+      .tb-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .tb-icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: transparent;
+        border: 1px solid var(--border2);
+        color: var(--muted);
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: inherit;
+        text-decoration: none;
+        flex-shrink: 0;
+      }
+      .tb-icon-btn:hover {
+        background: var(--primary2);
+        color: var(--text);
+        border-color: var(--border2);
+      }
+      .tb-icon-btn.danger:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+      .tb-sep {
+        width: 1px;
+        height: 22px;
+        background: var(--border2);
+        margin: 0 2px;
+      }
+      /* Progress */
+      .progress-wrap {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .progress-bar {
+        width: 80px;
+        height: 4px;
+        background: var(--primary2);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 4px;
+        transition: width 0.4s ease;
+      }
+      #progressTxt {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent);
+        min-width: 28px;
+        text-align: right;
+      }
+
+      /* ── FORM MOBILE BOTTOM NAV ── */
+      .form-mob-nav {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        width: 100%;
+        background: rgba(13, 17, 23, 0.98);
+        border-top: 1px solid var(--border);
+        backdrop-filter: blur(16px);
+        height: 64px;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        box-sizing: border-box;
+      }
+      .form-mob-nav-inner {
+        display: flex;
+        flex-direction: row;
+        direction: ltr;
+        align-items: center;
+        justify-content: stretch;
+        width: 100%;
+        height: 64px;
+      }
+      .fmn-item {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        cursor: pointer;
+        color: var(--subtle);
+        border: none;
+        background: none;
+        font-family: inherit;
+        text-decoration: none;
+        transition: color 0.15s;
+        height: 100%;
+        padding-bottom: 4px;
+      }
+      .fmn-item .fmn-icon {
+        font-size: 20px;
+        line-height: 1;
+      }
+      .fmn-item .fmn-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1;
+        direction: rtl;
+        margin-top: 1px;
+      }
+      .fmn-item:hover,
+      .fmn-item.active {
+        color: var(--accent);
+      }
+      .fmn-item.report-action {
+        position: relative;
+        top: -2px;
+      }
+      .fmn-item.report-action .fmn-wrap {
+        background: linear-gradient(135deg, var(--accent), var(--accent3));
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4);
+      }
+      .fmn-item.report-action .fmn-label {
+        color: var(--accent);
+        position: relative;
+        top: 2px;
+      }
+
+      .area-picker {
+        background: var(--primary2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .area-group {
+        margin-bottom: 10px;
+      }
+      .area-group-label {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+      }
+      .area-chip {
+        font-size: 12px;
+        padding: 5px 10px;
+      }
+
+      .merged-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: stretch;
+      }
+      .merged-grid > div:first-child,
+      .merged-grid > div:last-child {
+        background: var(--primary2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px;
+      }
+      .merged-sep {
+        display: none;
+      }
+      .merged-label {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      /* צמצם gap בשדות נתוני בסיס */
+      .merged-grid > div:first-child .grid2 {
+        gap: 10px;
+      }
+      .merged-grid > div:first-child .field {
+        gap: 4px;
+      }
+      .merged-grid > div:first-child .divider {
+        margin: 10px 0;
+      }
+      /* הוסף מרווח בין שדות מאפייני נכס */
+      .merged-grid > div:last-child .grid2 {
+        gap: 14px;
+      }
+      .merged-grid > div:last-child .field {
+        gap: 4px;
+      }
+      @media (max-width: 768px) {
+        .merged-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+
+      /* ══ STEPPER STRIP ══ */
+      .stepper-strip {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: stretch;
+        position: sticky;
+        top: var(--topbar-h);
+        z-index: 90;
+        overflow-x: auto;
+        height: var(--stepper-h);
+        scrollbar-width: none;
+      }
+      .stepper-strip::-webkit-scrollbar { display: none; }
+      .stp {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 14px;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.15s;
+        margin-bottom: -1px;
+        font-family: "Heebo", sans-serif;
+        background: transparent;
+        border-top: none;
+        border-right: none;
+        border-left: none;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .stp:hover { background: rgba(255,255,255,0.03); }
+      .stp.active {
+        border-bottom-color: var(--accent);
+        background: rgba(245,158,11,0.06);
+        color: var(--accent);
+      }
+      .stp.done { border-bottom-color: var(--green); color: var(--green); }
+      .stp-n {
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: 900;
+        background: var(--border2);
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+      .stp.active .stp-n { background: var(--accent); color: #fff; }
+      .stp.done .stp-n { background: var(--green); color: #fff; }
+      .stp-sep { color: var(--subtle); font-size: 10px; padding: 0 2px; }
+      .stp-ellipsis { color: var(--subtle); font-size: 11px; padding: 0 6px; display: flex; align-items: center; }
+      /* Generate PDF button inside stepper on last step */
+      #stepperPdfBtn {
+        display: none;
+        margin-right: auto;
+        margin-left: 16px;
+        padding: 7px 18px;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 9px;
+        font-family: "Heebo", sans-serif;
+        font-size: 13px;
+        font-weight: 900;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.15s;
+        display: none;
+        align-items: center;
+        gap: 6px;
+        line-height: 1;
+        letter-spacing: 0.01em;
+      }
+      #stepperPdfBtn:hover { opacity: 0.85; }
+
+      /* ══ NEW SIDEBAR ══ */
+      #sidebar {
+        width: var(--sidebar-w);
+        background: var(--card);
+        border-left: 1px solid var(--border);
+        padding: 0;
+        flex-shrink: 0;
+        position: sticky;
+        top: calc(var(--topbar-h) + var(--stepper-h));
+        height: calc(100vh - var(--topbar-h) - var(--stepper-h));
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        scrollbar-width: thin;
+      }
+      .sb-steps-label {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        color: var(--subtle);
+        text-transform: uppercase;
+        padding: 14px 16px 6px;
+      }
+      .sb-steps { padding: 0 8px 4px; display: flex; flex-direction: column; gap: 1px; }
+      .sb-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 5px 8px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        border-right: 3px solid transparent;
+        transition: all 0.15s;
+        cursor: pointer;
+      }
+      .sb-step:hover { background: var(--primary2); }
+      .sb-step.done { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.12); border-right-color: var(--green); }
+      .sb-step.current { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.15); border-right-color: var(--accent); }
+      .sb-step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+      .sb-step-dot {
+        width: 18px; height: 18px;
+        border-radius: 5px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 8px; font-weight: 900;
+        background: var(--border2); color: var(--subtle);
+        border: 1px solid var(--border2);
+      }
+      .sb-step.done .sb-step-dot { background: rgba(16,185,129,0.15); color: var(--green); }
+      .sb-step.current .sb-step-dot { background: rgba(245,158,11,0.15); color: var(--accent); border-color: rgba(245,158,11,0.3); }
+      .sb-step-connector { width: 1px; background: var(--border2); height: 8px; margin: 2px 0; }
+      .sb-step:last-child .sb-step-connector { display: none; }
+      .sb-step-body { flex: 1; min-width: 0; }
+      .sb-step-title { font-size: 10px; font-weight: 700; color: var(--muted); margin-top: 1px; }
+      .sb-step.done .sb-step-title { color: var(--green); }
+      .sb-step.current .sb-step-title { color: var(--accent); font-weight: 800; }
+      .sb-step-hint { font-size: 9px; color: var(--subtle); margin-top: 1px; line-height: 1.3; }
+      .sb-divider { height: 1px; background: var(--border); margin: 6px 16px; }
+      .sb-nav { flex: 1; padding: 4px 0; }
+      .sb-nav a, .sb-nav button {
+        display: flex; align-items: center; gap: 10px;
+        padding: 9px 20px;
+        color: var(--muted); font-size: 13px; font-weight: 600;
+        text-decoration: none; background: transparent; border: none;
+        cursor: pointer; font-family: "Heebo", sans-serif;
+        width: 100%; transition: all 0.15s;
+      }
+      .sb-nav a:hover, .sb-nav button:hover { background: var(--primary2); color: var(--text); }
+      .nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+      .sb-footer {
+        padding: 12px 16px 20px;
+        border-top: 1px solid var(--border);
+      }
+      .sb-user-name { font-size: 11px; color: var(--subtle); margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .btn-logout {
+        width: 100%; padding: 7px 12px;
+        background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+        color: #f87171; font-size: 11px; font-weight: 700;
+        border-radius: 8px; cursor: pointer; font-family: "Heebo", sans-serif;
+        transition: all 0.15s;
+      }
+      .btn-logout:hover { background: rgba(239,68,68,0.15); }
+
+      /* ══ BOTTOM NAV (mobile) ══ */
+      .bottom-nav {
+        display: none;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        z-index: 200;
+        background: rgba(3,7,18,0.97);
+        border-top: 1px solid var(--border);
+        backdrop-filter: blur(12px);
+        padding: 10px 16px;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+      }
+      .nav-btns { display: flex; gap: 8px; }
+      .btn-back-nav {
+        padding: 8px 18px; border-radius: 9px;
+        border: 1px solid var(--border2); background: transparent;
+        color: var(--muted); font-size: 13px; font-weight: 700;
+        cursor: pointer; font-family: "Heebo", sans-serif; transition: all 0.15s;
+      }
+      .btn-back-nav:hover { color: var(--text); border-color: var(--subtle); }
+      .btn-next-nav {
+        padding: 8px 22px; border-radius: 9px;
+        border: none; background: var(--accent); color: #fff;
+        font-size: 13px; font-weight: 900;
+        cursor: pointer; font-family: "Heebo", sans-serif; transition: opacity 0.15s;
+      }
+      .btn-next-nav:hover { opacity: 0.9; }
+      .save-status-nav { font-size: 11px; font-weight: 700; color: var(--muted); }
+
+      #layout {
+        display: flex;
+        min-height: calc(100vh - var(--topbar-h) - var(--stepper-h));
+      }
+      #sidebar {
+        width: 230px;
+        background: rgba(15, 23, 42, 0.85);
+        border-left: 1px solid var(--border);
+        padding: 10px 8px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 56px;
+        height: calc(100vh - 56px);
+        overflow-y: auto;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 3px;
+        transition: all 0.18s;
+        border-right: 3px solid transparent;
+      }
+      .nav-item:hover {
+        background: var(--primary2);
+      }
+      .nav-item.active {
+        background: rgba(245, 158, 11, 0.08);
+        border-right-color: var(--accent);
+      }
+      .nav-item .ni {
+        font-size: 16px;
+      }
+      .nav-item .nt {
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+      .nav-item.active .nt {
+        color: var(--accent);
+      }
+      .nav-item .ns {
+        font-size: 10px;
+        color: var(--subtle);
+      }
+
+      /* ── MAIN ── */
+      #main {
+        flex: 1;
+        padding: 24px 32px;
+        overflow-y: auto;
+        min-width: 0;
+      }
+      #main .page-title {
+        font-size: 22px;
+        font-weight: 900;
+        margin-bottom: 4px;
+      }
+      .card-container {
+        width: 100%;
+        max-width: 100%;
+      }
+      #main .page-sub {
+        font-size: 13px;
+        color: var(--subtle);
+        margin-bottom: 22px;
+      }
+      .card-nav {
+        display: flex;
+        direction: ltr;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .card-nav .btn {
+        min-width: 110px;
+        justify-content: center;
+      }
+      .card-nav .btn-primary {
+        order: 2;
+      }
+      .card-nav .btn-secondary {
+        order: 1;
+      }
+
+      /* ── AREA CARDS (FINDINGS) ── */
+      .area-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+      }
+      .area-card.ac-open {
+        border-color: rgba(245, 158, 11, 0.35);
+        box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.15);
+      }
+      .area-card.ac-done {
+        border-color: rgba(16, 185, 129, 0.3);
+        background: rgba(16, 185, 129, 0.04);
+      }
+      /* Collapsed summary row */
+      .area-head {
+        background: var(--primary2);
+        padding: 11px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.15s;
+      }
+      .area-head:hover {
+        background: var(--primary3);
+      }
+      .area-card.ac-done .area-head {
+        background: rgba(16, 185, 129, 0.07);
+      }
+      .area-title {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .area-sqm {
+        width: 70px;
+        background: var(--primary3);
+        border: none;
+        border-radius: 6px;
+        padding: 4px 8px;
+        color: var(--text);
+        font-size: 12px;
+        text-align: left;
+      }
+      .area-body {
+        padding: 16px;
+      }
+      /* Wizard steps */
+      .wz-step {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 8px;
+        overflow: hidden;
+      }
+      .wz-step-head {
+        padding: 9px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        background: var(--primary2);
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        user-select: none;
+      }
+      .wz-step-head.active {
+        color: var(--text);
+      }
+      .wz-step-head .wz-num {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 800;
+        margin-left: 8px;
+        flex-shrink: 0;
+      }
+      .wz-step-head .wz-num.done {
+        background: var(--green);
+        color: #000;
+      }
+      .wz-step-head .wz-num.active {
+        background: var(--accent);
+        color: #000;
+      }
+      .wz-step-body {
+        padding: 12px 14px 14px;
+        display: none;
+      }
+      .wz-step-body.open {
+        display: block;
+      }
+      .wz-next {
+        margin-top: 12px;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .wz-btn {
+        padding: 7px 20px;
+        border-radius: 8px;
+        border: none;
+        background: var(--accent);
+        color: #000;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: "Heebo", sans-serif;
         transition: opacity 0.15s;
       }
-      .del-btn:hover {
-        opacity: 1;
+      .wz-btn:hover {
+        opacity: 0.85;
+      }
+      .wz-btn.ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      /* Done summary */
+      .area-done-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-size: 12px;
+      }
+      .area-done-badge {
+        padding: 2px 10px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .area-done-sev-none {
+        background: rgba(107, 114, 128, 0.15);
+        color: #9ca3af;
+      }
+      .area-done-sev-light {
+        background: rgba(59, 130, 246, 0.12);
+        color: #93c5fd;
+      }
+      .area-done-sev-medium {
+        background: rgba(245, 158, 11, 0.12);
+        color: #fbbf24;
+      }
+      .area-done-sev-severe {
+        background: rgba(239, 68, 68, 0.12);
+        color: #fca5a5;
+      }
+      /* Sub-area chips */
+      .sub-chip {
+        padding: 5px 12px;
+        border-radius: 12px;
+        border: 1.5px solid var(--primary3);
+        background: transparent;
+        color: var(--muted);
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.14s;
+        display: inline-block;
+        margin: 3px 3px 0 0;
+      }
+      .sub-chip:hover {
+        border-color: var(--muted);
+      }
+      .sub-chip.on {
+        border-color: var(--blue);
+        background: rgba(59, 130, 246, 0.12);
+        color: #93c5fd;
+      }
+
+      /* ── SIGN CHIPS ── */
+      .sign-group {
+        margin-bottom: 14px;
+      }
+      .sign-group-label {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--subtle);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .sign-chip {
+        padding: 5px 11px;
+        border-radius: 14px;
+        border: 1.5px solid var(--primary3);
+        background: transparent;
+        color: var(--muted);
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.14s;
+        display: inline-block;
+        margin: 3px 3px 0 0;
+      }
+      .sign-chip:hover {
+        border-color: var(--muted);
+      }
+      .sign-chip.on {
+        border-color: var(--accent);
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent);
+      }
+
+      /* ── BOQ CARD LAYOUT ── */
+      .boq-section { margin-bottom: 20px; }
+      .boq-section-title {
+        font-size: 12px; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.06em; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px;
+      }
+      .boq-ch-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 9px 14px; border-radius: 10px; margin: 10px 0 4px;
+        background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.15);
+      }
+      .boq-ch-title { font-size: 12px; font-weight: 800; color: var(--blue); }
+      .boq-ch-total { font-size: 11px; font-weight: 700; color: var(--muted); }
+      .boq-room-header {
+        font-size: 11px; font-weight: 700; color: var(--accent);
+        padding: 5px 14px 3px; opacity: 0.85;
+      }
+      .boq-card {
+        background: var(--card); border: 1px solid var(--border);
+        border-radius: 10px; margin-bottom: 4px; overflow: hidden;
+        transition: border-color 0.15s;
+      }
+      .boq-card:hover { border-color: var(--border2); }
+      .boq-card.row-zero { opacity: 0.5; }
+      .boq-card.boq-dragging { opacity: 0.4; }
+      .boq-card.boq-drag-over { border-top: 2px solid var(--accent); }
+      .boq-card-top {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 11px 14px 7px;
+      }
+      .boq-card-id {
+        font-size: 9px; font-weight: 900; color: var(--accent);
+        background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.2);
+        border-radius: 5px; padding: 2px 6px; white-space: nowrap;
+        flex-shrink: 0; margin-top: 2px;
+      }
+      .boq-card-drag {
+        cursor: grab; color: var(--subtle); font-size: 14px;
+        flex-shrink: 0; margin-top: 2px; opacity: 0.4; user-select: none;
+      }
+      .boq-card-drag:hover { opacity: 1; }
+      .boq-card-desc {
+        flex: 1; background: transparent; border: none; outline: none;
+        resize: none; font-family: "Heebo", sans-serif; font-size: 14px;
+        font-weight: 600; color: var(--text); line-height: 1.45;
+        width: 100%; min-height: 24px; padding: 0;
+      }
+      .boq-card-desc:focus {
+        background: rgba(255,255,255,.03); border-radius: 4px; padding: 2px 4px;
+      }
+      /* ── BOQ Card bottom row ── */
+      .boq-card-bot {
+        display: flex; align-items: center; gap: 12px;
+        padding: 8px 14px 10px;
+        border-top: 1px solid rgba(255,255,255,.05);
+        flex-wrap: wrap;
+      }
+      /* Input fields group */
+      .boq-fields {
+        display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+      }
+      .boq-pill { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+      .boq-pill label {
+        font-size: 9px; font-weight: 800; color: var(--subtle);
+        text-transform: uppercase; letter-spacing: 0.06em;
+      }
+      .boq-pill input {
+        background: var(--primary2); border: 1px solid var(--border);
+        border-radius: 8px; color: var(--text); font-family: "Heebo", sans-serif;
+        font-size: 13px; font-weight: 700; padding: 6px 8px;
+        text-align: center; outline: none; transition: border-color 0.15s;
+      }
+      .boq-pill input:focus { border-color: var(--accent); }
+      .boq-pill input:disabled { opacity: 0.35; }
+      .boq-pill.p-unit input { width: 48px; }
+      .boq-pill.p-qty input { width: 64px; }
+      .boq-pill.p-price input { width: 80px; }
+      /* Totals — horizontal inline chips */
+      .boq-totals {
+        display: flex; align-items: center; gap: 6px;
+        margin-right: auto; flex-wrap: nowrap;
+      }
+      .boq-tot-item {
+        display: flex; flex-direction: column; gap: 2px;
+        padding: 5px 10px; border-radius: 8px; flex-shrink: 0;
+      }
+      .boq-tot-item label {
+        font-size: 9px; font-weight: 800; text-transform: uppercase;
+        letter-spacing: 0.05em; white-space: nowrap;
+      }
+      .boq-tot-item span { font-size: 14px; font-weight: 900; white-space: nowrap; }
+      .boq-tot-kinun { background: rgba(59,130,246,.07); }
+      .boq-tot-kinun label { color: var(--blue); }
+      .boq-tot-kinun span { color: #60a5fa; }
+      .boq-tot-shiput { background: rgba(16,185,129,.07); }
+      .boq-tot-shiput label { color: var(--green); }
+      .boq-tot-shiput span { color: #34d399; }
+      .boq-tot-claim { background: rgba(252,211,77,.07); border-radius: 7px; }
+      .boq-tot-claim label { color: #FCD34D; font-size: 8px; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 1px; }
+      .boq-tot-claim input {
+        background: transparent; border: none; border-bottom: 1px solid rgba(252,211,77,.3);
+        color: #FCD34D; font-family: "Heebo", sans-serif;
+        font-size: 12px; font-weight: 900; padding: 0 2px;
+        text-align: right; outline: none; width: 60px; direction: ltr;
+        border-radius: 0;
+      }
+      .boq-tot-claim input::placeholder { color: rgba(252,211,77,.3); }
+      .boq-tot-claim input:focus { border-bottom-color: #FCD34D; }
+      /* Del button */
+      .del-btn {
+        background: none; border: none; color: var(--subtle); cursor: pointer;
+        font-size: 13px; padding: 2px 4px; opacity: 0.35;
+        transition: all 0.15s; flex-shrink: 0;
+      }
+      .del-btn:hover { opacity: 1; color: var(--red); }
+      /* ── Chapter block wrapper ── */
+      .boq-ch-block {
+        border: 1px solid rgba(30,41,59,.8);
+        border-radius: 12px; padding: 10px 10px 0;
+        background: rgba(8,18,32,.35); margin-bottom: 10px;
+      }
+      /* Chapter header: title blue, totals removed (go to subtotal row) */
+      .boq-ch-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 4px 8px; margin: 0 0 6px;
+        border-bottom: 1px solid rgba(30,41,59,.9);
+      }
+      .boq-ch-title { font-size: 12px; font-weight: 900; color: var(--blue); text-transform: uppercase; letter-spacing: 0.05em; }
+      /* Room wrapper */
+      .boq-room-block { margin-bottom: 6px; }
+      /* Room header: dot + name + count + add button */
+      .boq-room-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 5px 8px 5px 4px;
+      }
+      .boq-room-header-left { display: flex; align-items: center; gap: 7px; }
+      .boq-room-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+      .boq-room-name { font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+      .boq-room-count { font-size: 10px; color: var(--subtle); font-weight: 600; }
+      .boq-room-add {
+        background: none; border: 1px solid rgba(245,158,11,.2);
+        border-radius: 6px; color: var(--accent); font-size: 10px;
+        font-family: "Heebo", sans-serif; font-weight: 800; cursor: pointer;
+        padding: 2px 9px; opacity: 0.6; transition: all .15s;
+      }
+      .boq-room-add:hover { opacity: 1; background: rgba(245,158,11,.07); }
+      /* Room subtotal — compact, grey */
+      .boq-room-subtotal {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 5px 10px; margin: 2px 0 6px;
+        background: rgba(15,25,40,.5); border-radius: 7px;
+        border: 1px solid rgba(30,41,59,.7);
+      }
+      .boq-room-subtotal-label { font-size: 9px; font-weight: 800; color: var(--subtle); text-transform: uppercase; letter-spacing: 0.05em; }
+      .boq-room-subtotal-vals { display: flex; gap: 12px; }
+      .boq-room-subtotal-vals span { font-size: 11px; font-weight: 800; white-space: nowrap; }
+      .boq-room-subtotal-vals em { font-size: 8px; font-weight: 700; font-style: normal; color: var(--subtle); margin-right: 3px; }
+      .boq-room-subtotal-vals .k { color: #4b8fd4; }
+      .boq-room-subtotal-vals .s { color: #2a9e78; }
+      /* Chapter subtotal — medium weight, flush to bottom of block */
+      .boq-ch-subtotal {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 8px 14px; margin: 4px -10px 0;
+        background: rgba(12,22,38,.6);
+        border-top: 1px solid rgba(30,41,59,.9);
+        border-radius: 0 0 11px 11px;
+      }
+      .boq-ch-subtotal-label { font-size: 10px; font-weight: 800; color: #4a6080; text-transform: uppercase; letter-spacing: 0.05em; }
+      .boq-ch-subtotal-vals { display: flex; gap: 16px; }
+      .boq-ch-subtotal-vals span { font-size: 13px; font-weight: 900; white-space: nowrap; }
+      .boq-ch-subtotal-vals em { font-size: 9px; font-weight: 700; font-style: normal; color: var(--subtle); margin-right: 3px; }
+      .boq-ch-subtotal-vals .k { color: #60a5fa; }
+      .boq-ch-subtotal-vals .s { color: #34d399; }
+      /* Section (פרק א') total — most prominent */
+      .boq-sec-total {
+        display: flex; justify-content: flex-end; align-items: center;
+        gap: 14px; padding: 9px 16px; border-radius: 10px; margin-top: 6px;
+        background: rgba(245,158,11,.05); border: 2px solid rgba(245,158,11,.2);
+      }
+      .boq-sec-total-item { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+      .boq-sec-total-item label { font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
+      .boq-sec-total-item span { font-size: 15px; font-weight: 900; }
+      /* Total box */
+      .boq-total-box {
+        background: rgba(15,23,42,0.9); border: 2px solid rgba(245,158,11,.25);
+        border-radius: 12px; padding: 18px 20px; margin-top: 16px;
+      }
+      .total-row {
+        display: flex; justify-content: space-between; align-items: center; padding: 5px 0;
+      }
+      .total-row + .total-row { border-top: 1px solid var(--border); }
+      .total-row.grand { padding-top: 12px; margin-top: 4px; }
+      @media (max-width: 768px) {
+        /* BOQ mobile: natural wrap, compact sizes */
+        .boq-card-body { padding: 8px 10px; }
+        .boq-card-top { margin-bottom: 6px; }
+        .boq-card-desc { font-size: 13px; }
+        .boq-card-bot { gap: 6px; }
+        .boq-fields { gap: 4px; }
+        .boq-pill input { font-size: 12px; padding: 3px 6px; }
+        .boq-pill.p-unit input { width: 38px; }
+        .boq-pill.p-qty input { width: 48px; }
+        .boq-pill.p-price input { width: 60px; }
+        .boq-totals { gap: 10px; margin-right: 0; }
+        .boq-tot-item span { font-size: 12px; }
+        .boq-ch-subtotal { padding: 6px 10px; }
+        .boq-ch-subtotal-vals span { font-size: 12px; }
+        .boq-room-subtotal { padding: 4px 8px; }
+        .boq-room-subtotal-vals span { font-size: 10px; }
       }
 
       /* ── SUMMARY / REPORT ── */
@@ -1830,75 +4011,46 @@
    RESPONSIVE — MOBILE (max 768px)
 ══════════════════════════════════════════ */
       @media (max-width: 768px) {
-        /* Sidebar */
-        #sidebar {
-          display: none;
+        /* Sidebar — hidden on mobile */
+        #sidebar { display: none; }
+
+        /* Stepper strip — always visible on mobile, no scroll */
+        .stepper-strip {
+          top: var(--topbar-h);
+          position: sticky;
+          overflow-x: hidden;
         }
+        /* Each stp takes equal share of the strip — 4 always fit */
+        .stp {
+          flex: 1;
+          min-width: 0;
+          padding: 0 4px;
+          font-size: 11px;
+          gap: 4px;
+          justify-content: center;
+          text-align: center;
+        }
+        .stp-n { width: 14px; height: 14px; font-size: 7px; flex-shrink: 0; }
+        .stp-sep { display: none; }
+        .stp-ellipsis { padding: 0 2px; font-size: 9px; flex-shrink: 0; }
+        /* Stepper-strip itself fills width evenly */
+        #stepperStrip { flex: 1; }
+
+        /* Bottom nav — visible on mobile */
+        .bottom-nav { display: flex; }
 
         /* Layout */
-        #main {
-          padding: 14px 12px 140px;
-        }
-        #layout {
-          flex-direction: column;
-        }
+        #main { padding: 14px 12px 130px; }
+        #layout { flex-direction: column; }
 
-        /* Topbar — slim on mobile: just logo + mode + save + report */
-        #topbar {
-          padding: 0 12px;
-          height: 52px;
-        }
-        .tb-left {
-          gap: 7px;
-        }
-        .tb-name {
-          font-size: 13px;
-        }
-        /* Hide secondary icon buttons on mobile — moved to bottom nav */
-        .tb-icon-btn {
-          display: none;
-        }
-        .tb-sep {
-          display: none;
-        }
-        #progressWrap {
-          display: none !important;
-        }
-        /* Keep only logo + mode + save + report visible */
-        .tb-right .btn-save,
-        .tb-right .btn-report {
-          display: inline-flex;
-        }
-        .tb-right {
-          gap: 6px;
-        }
+        /* Topbar */
+        #topbar { padding: 0 12px; height: 52px; }
 
-        /* Show mobile bottom nav */
-        .form-mob-nav {
-          display: flex;
-        }
+        /* Card nav hidden on mobile — we use bottom-nav instead */
+        .card-nav { display: none; }
 
-        /* Card nav — RTL: הבא on right (first in DOM), הקודם on left */
-        .card-nav {
-          flex-direction: row;
-          flex-wrap: nowrap;
-          gap: 8px;
-          position: sticky;
-          bottom: 68px;
-          background: var(--bg);
-          padding: 10px 0 8px;
-          z-index: 10;
-          border-top: 1px solid var(--border);
-        }
-        .card-nav .btn {
-          flex: 1;
-          justify-content: center;
-          min-width: 0;
-        }
-        /* תוספת מרווח תחתון לכרטיסיה — למניעת דריסה ע"י כפתורי ניווט */
-        .card-container {
-          padding-bottom: 100px !important;
-        }
+        /* Padding for bottom nav */
+        .card-container { padding-bottom: 100px !important; }
         .grid2,
         .grid3 {
           grid-template-columns: 1fr;
@@ -3175,6 +5327,206 @@
   line-height:1.4;
 }
 
+
+
+/* === BOQ MOBILE STRUCTURE FIX — layout only, existing colors preserved === */
+@media (max-width: 768px) {
+  .boq-ch-block {
+    padding: 8px 8px 0;
+  }
+
+  .boq-room-header,
+  .boq-ch-header {
+    gap: 8px;
+  }
+
+  .boq-card {
+    display: grid !important;
+    grid-template-columns: 3px minmax(0, 1fr) 34px;
+    align-items: stretch;
+    margin-bottom: 8px;
+  }
+
+  .boq-card-stripe {
+    width: 3px;
+    height: 100%;
+  }
+
+  .boq-card-body {
+    min-width: 0;
+    padding: 9px 10px 10px;
+  }
+
+  .boq-card-top {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 7px;
+    margin-bottom: 7px;
+  }
+
+  .boq-card-id {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .boq-card-desc {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    width: 100%;
+    font-size: 13px;
+    line-height: 1.35;
+    min-height: 20px;
+    max-height: 38px;
+    overflow: hidden;
+  }
+
+  .boq-card:focus-within .boq-card-desc {
+    max-height: 120px;
+    overflow: auto;
+  }
+
+  .boq-card-drag {
+    grid-column: 3;
+    grid-row: 1;
+    margin: 0;
+    align-self: start;
+  }
+
+  .boq-card-bot {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .boq-fields {
+    display: grid !important;
+    grid-template-columns: 0.75fr 0.75fr 1fr;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .boq-pill {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .boq-pill label {
+    line-height: 1.1;
+  }
+
+  .boq-pill.p-unit input,
+  .boq-pill.p-qty input,
+  .boq-pill.p-price input {
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  .boq-divider {
+    display: none;
+  }
+
+  .boq-totals {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 10px;
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .boq-tot-item {
+    min-width: 0;
+    justify-content: space-between;
+  }
+
+  .boq-tot-item span {
+    font-size: 12px;
+  }
+
+  .boq-tot-claim {
+    grid-column: 1 / -1;
+  }
+
+  .boq-tot-claim input {
+    width: 100%;
+  }
+
+  .del-btn {
+    width: 34px;
+    min-width: 34px;
+    padding: 0;
+    justify-content: center;
+    align-self: stretch;
+  }
+
+  .boq-room-subtotal,
+  .boq-ch-subtotal,
+  .boq-sec-total {
+    overflow: hidden;
+  }
+}
+
+
+/* === BOQ MOBILE TOTALS ALIGNMENT FIX — structure only, colors preserved === */
+@media (max-width: 768px) {
+  .boq-totals {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 6px;
+    width: 100%;
+    margin-right: 0 !important;
+  }
+  .boq-tot-item:not(.boq-tot-claim) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    min-width: 0;
+    min-height: 56px;
+    padding: 7px 10px;
+    border-radius: 8px;
+  }
+  .boq-tot-item:not(.boq-tot-claim) label {
+    display: block;
+    line-height: 1.1;
+    text-align: right;
+  }
+  .boq-tot-item:not(.boq-tot-claim) span {
+    display: block;
+    min-height: 20px;
+    line-height: 1.3;
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+
+
+/* === SIDEBAR FONT SIZE FIX — compact final size === */
+#sidebar .nav-item .nt,
+#sidebar .sb-nav a,
+#sidebar .sb-nav button,
+#sidebar .sb-step-title {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+#sidebar .nav-item .ns,
+#sidebar .sb-step-hint,
+#sidebar .sb-user-name {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+}
+#sidebar .nav-icon,
+#sidebar .nav-item .ni {
+  font-size: 15px !important;
+}
 </style>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -3210,15 +5562,85 @@
       const _auth = getAuth(_app);
       const _db = getFirestore(_app);
       const _functions = getFunctions(_app, 'us-central1');
+
+      // ─────────────────────────────────────────────
+      // OMDA CORE Monitoring — non-blocking, silent
+      // ─────────────────────────────────────────────
+      window.OMDA_PRODUCT_ID = "omda-property";
+      window.omdaCoreLogEvent = function(eventType, metadata = {}) {
+        try {
+          const user = window._currentUser || (_auth && _auth.currentUser) || null;
+          const payload = {
+            productId: "omda-property",
+            eventType,
+            uid: user && user.uid ? user.uid : null,
+            page: location.pathname,
+            metadata: Object.assign({ href: location.href }, metadata || {}),
+            createdAt: new Date().toISOString()
+          };
+          fetch("https://us-central1-omda-core.cloudfunctions.net/logSystemEvent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            keepalive: true
+          }).catch(() => {});
+        } catch (_) {}
+      };
+
+      window.omdaCoreLogError = function(errorType, metadata = {}) {
+        try {
+          const user = window._currentUser || (_auth && _auth.currentUser) || null;
+          const payload = {
+            productId: "omda-property",
+            source: "property-case",
+            errorType,
+            status: "open",
+            severity: metadata.severity || "warning",
+            message: metadata.message || errorType || "Unknown error",
+            uid: user && user.uid ? user.uid : null,
+            page: location.pathname,
+            metadata: Object.assign({ href: location.href }, metadata || {}),
+            createdAt: new Date().toISOString()
+          };
+          fetch("https://us-central1-omda-core.cloudfunctions.net/logError", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            keepalive: true
+          }).catch(() => {});
+        } catch (_) {}
+      };
+      window.addEventListener("error", function(event) {
+        window.omdaCoreLogEvent && window.omdaCoreLogEvent("frontend_error", {
+          message: event.message || "",
+          source: event.filename || "",
+          line: event.lineno || null,
+          column: event.colno || null
+        });
+      });
+      window.addEventListener("unhandledrejection", function(event) {
+        const reason = event.reason || {};
+        window.omdaCoreLogEvent && window.omdaCoreLogEvent("unhandled_rejection", {
+          message: reason.message || String(reason || ""),
+          stack: reason.stack ? String(reason.stack).slice(0, 900) : ""
+        });
+      });
+
       window._callFn = (name, data, opts) => httpsCallable(_functions, name, opts || {})(data);
 
       // ── Auth state ──
       onAuthStateChanged(_auth, async (user) => {
         window._currentUser = user || null;
+        if (user) window.omdaCoreLogEvent && window.omdaCoreLogEvent("page_view", { pageName: "property_case", caseId: new URLSearchParams(location.search).get("case") || null });
         const ls = document.getElementById("loginScreen");
         if (user) {
           if (ls) ls.style.display = "none";
           document.body.style.overflow = "";
+          // Topbar: show user email
+          const _tbEmail = document.getElementById("tbUserEmail");
+          if (_tbEmail) { _tbEmail.textContent = user.email || ""; _tbEmail.style.display = ""; }
+          const _sbUser = document.getElementById("sidebarUser");
+          if (_sbUser) _sbUser.textContent = user.email || "";
           // Load appraiser profile from Firestore
           try {
             const prof = await window._FB.getProfile(user.uid);
@@ -3463,10 +5885,11 @@
         },
         saveCase: async (data) => {
           if (!window._currentUser) throw new Error("לא מחובר");
+          const cleanData = typeof window.sanitizeForFirestore === "function" ? window.sanitizeForFirestore(data) : data;
           await setDoc(
-            doc(_db, "cases", data.id),
+            doc(_db, "cases", cleanData.id),
             {
-              ...data,
+              ...cleanData,
               uid: window._currentUser.uid,
               updatedAt: serverTimestamp(),
             },
@@ -3631,6 +6054,7 @@
             "
           />
         </div>
+        <form id="loginInlineForm" onsubmit="doLogin(); return false;">
         <div style="margin-bottom: 14px; text-align: right">
           <label
             style="
@@ -3646,9 +6070,8 @@
           >
           <input
             id="loginUser"
-            type="text"
-            placeholder="your@email.com"
             type="email"
+            placeholder="your@email.com"
             autocomplete="email"
             style="
               width: 100%;
@@ -3698,7 +6121,7 @@
               font-family: inherit;
               outline: none;
             "
-            onkeydown="if (event.key === 'Enter') doLogin();"
+            
           />
         </div>
         <div style="text-align: left; margin-bottom: 10px">
@@ -3724,7 +6147,7 @@
           שם משתמש או סיסמה שגויים
         </div>
         <button
-          onclick="doLogin()"
+          type="submit"
           class="login-btn"
           style="
             width: 100%;
@@ -3744,6 +6167,7 @@
         >
           כניסה למערכת
         </button>
+        </form>
         <div
           style="
             text-align: center;
@@ -3879,247 +6303,62 @@
 
     <div id="appShell" class="hidden">
       <div id="topbar">
-        <!-- Logo + Mode -->
-        <div class="tb-left">
-          <a
-            href="dashboard.html"
-            class="tb-icon-btn"
-            title="חזרה לדשבורד"
-            style="
-              font-size: 13px;
-              font-weight: 800;
-              width: auto;
-              padding: 0 10px;
-              gap: 4px;
-              color: var(--muted);
-            "
-            >← דשבורד</a
-          >
+        <!-- Right: Logo -->
+        <div class="tb-left" style="gap:10px;">
+          <a href="dashboard.html" style="display:flex;align-items:center;gap:6px;text-decoration:none;">
+            <img src="../assets/img/omda-icon.png" alt="" style="height:30px;width:30px;object-fit:contain;" onerror="this.style.display='none'"/>
+            <img src="../assets/img/omda-logo.png" alt="OMDA רכוש" style="height:22px;object-fit:contain;filter:brightness(0) invert(1);" onerror="this.style.display='none'"/>
+          </a>
           <div class="tb-divider"></div>
-          <img
-            src="../assets/img/omda-icon.png"
-            alt=""
-            style="height: 32px; width: 32px; object-fit: contain"
-          />
-          <img
-            src="../assets/img/omda-logo.png"
-            alt="OMDA רכוש"
-            style="
-              height: 26px;
-              object-fit: contain;
-              filter: brightness(0) invert(1);
-            "
-          />
-
-          <span class="tb-mode" id="tbModeLabel"></span>
+          <span class="tb-mode" id="tbModeLabel" style="font-size:11px;"></span>
         </div>
-        <!-- Actions -->
-        <div class="tb-right">
-          <!-- Progress -->
-          <div class="progress-wrap" id="progressWrap" style="display: none">
-            <div class="progress-bar">
-              <div
-                class="progress-fill"
-                id="progressFill"
-                style="width: 0%"
-              ></div>
-            </div>
-            <span id="progressTxt">0%</span>
-          </div>
-          <!-- Secondary icon buttons (hidden on mobile) -->
-          <button
-            class="tb-icon-btn"
-            id="fieldModeBtn"
-            onclick="toggleFieldMode()"
-            title="מצב שטח"
-          >
-            📱
-          </button>
-          <a
-            href="settings.html"
-            class="tb-icon-btn"
-            style="text-decoration: none"
-            title="הגדרות"
-            >⚙️</a
-          >
-          <button class="tb-icon-btn" onclick="openCaseMgr()" title="תיקים">
-            📁
-          </button>
-          <button
-            class="tb-icon-btn"
-            onclick="changeMode()"
-            title="שינוי סוג שמאות"
-          >
-            ↩
-          </button>
-          <button
-            class="tb-icon-btn danger"
-            onclick="doLogout()"
-            title="התנתקות"
-          >
-            🚪
-          </button>
-          <div class="tb-sep"></div>
-          <!-- Primary actions — always visible -->
-          <button
-            class="btn btn-secondary btn-sm btn-save"
-            onclick="saveDraft()"
-            style="gap: 5px"
-          >
-            💾 שמור
-          </button>
-          <button
-            class="btn btn-primary btn-sm btn-report"
-            onclick="generateReport()"
-            style="gap: 5px"
-          >
-            📄 דוח
-          </button>
+        <!-- Left: email + case number + case mgr -->
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="tbUserEmail" style="font-size:11px;color:var(--subtle);display:none;"></span>
+          <button id="tbCaseNumBadge" onclick="openCaseMgr()" style="display:none;padding:3px 10px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:8px;color:#60a5fa;font-size:11px;font-weight:800;cursor:pointer;font-family:Heebo,sans-serif;">—</button>
+          <button onclick="openCaseMgr()" style="font-size:11px;font-weight:700;color:var(--muted);background:transparent;border:none;cursor:pointer;font-family:Heebo,sans-serif;">ניהול תיק</button>
         </div>
       </div>
 
       <!-- Mobile Bottom Nav -->
-      <nav class="form-mob-nav">
-        <div class="form-mob-nav-inner">
-          <a href="dashboard.html" class="fmn-item">
-            <span class="fmn-icon">🏠</span>
-            <span class="fmn-label">דשבורד</span>
-          </a>
-          <button class="fmn-item" onclick="openCaseMgr()">
-            <span class="fmn-icon">📁</span>
-            <span class="fmn-label">תיקים</span>
-          </button>
-          <button class="fmn-item report-action" onclick="generateReport()">
-            <div class="fmn-wrap">📄</div>
-            <span class="fmn-label">דוח</span>
-          </button>
-          <a href="settings.html" class="fmn-item">
-            <span class="fmn-icon">⚙️</span>
-            <span class="fmn-label">הגדרות</span>
-          </a>
-          <button class="fmn-item" onclick="doLogout()">
-            <span class="fmn-icon">🚪</span>
-            <span class="fmn-label">יציאה</span>
-          </button>
+      <!-- ══ STEPPER STRIP ══ -->
+      <div class="stepper-strip no-print" id="stepperStrip">
+        <!-- filled by updateStepper() -->
+        <button id="stepperPdfBtn" onclick="generateReport()">📄 הפק דוח סופי</button>
+      </div>
+
+      <!-- ══ BOTTOM NAV (mobile) ══ -->
+      <div class="bottom-nav no-print" id="bottomNav">
+        <div class="nav-btns">
+          <button class="btn-back-nav" id="btnBack" onclick="prevCard()" style="display:none;">→ הקודם</button>
+          <a href="dashboard.html" class="btn-back-nav" id="btnDashboard" style="text-decoration:none;display:none;">→ דשבורד</a>
+          <button class="btn-next-nav" id="btnNext" onclick="nextCard()">המשך ←</button>
         </div>
-      </nav>
+        <span class="save-status-nav" id="saveStatusNav">נשמר ✓</span>
+      </div>
+
       <div id="layout">
-        <div id="sidebar">
-          <div class="nav-item active" data-card="1" onclick="goCard(1)">
-            <span class="ni">👤</span>
-            <div>
-              <div class="nt">נתוני בסיס + נכס</div>
-              <div class="ns">שם, כתובת, תאריכים</div>
-            </div>
+        <!-- ══ SIDEBAR ══ -->
+        <aside id="sidebar">
+          <div class="sb-steps-label">שלבי התיק</div>
+          <div class="sb-steps" id="sbSteps">
+            <!-- filled by updateStepper() -->
           </div>
-          <div
-            class="nav-item nav-insurance-only"
-            data-card="3"
-            onclick="goCard(3)"
-          >
-            <span class="ni">📋</span>
-            <div>
-              <div class="nt">ביטוח וכיסויים</div>
-              <div class="ns">פוליסה וסכומים</div>
-            </div>
+          <div class="sb-divider"></div>
+          <nav class="sb-nav">
+            <a href="dashboard.html"><span class="nav-icon">📊</span> דשבורד</a>
+            <a href="reports.html"><span class="nav-icon">📄</span> דוחות</a>
+            <a href="clients.html"><span class="nav-icon">👥</span> לקוחות</a>
+            <a href="payments.html"><span class="nav-icon">💰</span> תשלומים</a>
+            <div style="height:1px;background:var(--border);margin:6px 20px;"></div>
+            <a href="settings.html"><span class="nav-icon">⚙️</span> הגדרות</a>
+            <a href="account-billing.html"><span class="nav-icon">💳</span> מנוי</a>
+          </nav>
+          <div class="sb-footer">
+            <div class="sb-user-name" id="sidebarUser"></div>
+            <button class="btn-logout" onclick="doLogout()">🚪 התנתקות</button>
           </div>
-          <div class="nav-item" data-card="4" onclick="goCard(4)">
-            <span class="ni">⚡</span>
-            <div>
-              <div class="nt">אירוע ונסיבות</div>
-              <div class="ns">סוג, מקור, גורמים</div>
-            </div>
-          </div>
-          <div class="nav-item" data-card="6" onclick="goCard(6)">
-            <span class="ni">🔍</span>
-            <div>
-              <div class="nt">ממצאים וסיבות לנזק</div>
-              <div class="ns">אזורים וסימני פגיעה</div>
-            </div>
-          </div>
-          <div class="nav-item" data-card="7" onclick="goCard(7)">
-            <span class="ni">📊</span>
-            <div>
-              <div class="nt">כתב כמויות</div>
-              <div class="ns">עבודות ותמחור</div>
-            </div>
-          </div>
-          <div class="nav-item" data-card="8" onclick="goCard(8)">
-            <span class="ni">✅</span>
-            <div>
-              <div class="nt">סיכום ומסקנות</div>
-              <div class="ns">הערכה סופית</div>
-            </div>
-          </div>
-          <!-- כרטיסי מס רכוש — מוסתרים כברירת מחדל, מוצגים ע"י updateTaxNavItems -->
-          <div
-            class="nav-item"
-            data-card="10"
-            onclick="goCard(10)"
-            style="display: none"
-          >
-            <span class="ni">🛋️</span>
-            <div>
-              <div class="nt">תכולה ביתית</div>
-              <div class="ns">תקרות חוקיות</div>
-            </div>
-          </div>
-          <div
-            class="nav-item"
-            data-card="13"
-            onclick="goCard(13)"
-            style="display: none"
-          >
-            <span class="ni">🖥️</span>
-            <div>
-              <div class="nt">ציוד עסקי</div>
-              <div class="ns">שווי שוק</div>
-            </div>
-          </div>
-          <div
-            class="nav-item"
-            data-card="14"
-            onclick="goCard(14)"
-            style="display: none"
-          >
-            <span class="ni">📦</span>
-            <div>
-              <div class="nt">מלאי</div>
-              <div class="ns">פירוט מלאי שנפגע</div>
-            </div>
-          </div>
-          <div
-            class="nav-item"
-            data-card="15"
-            onclick="goCard(15)"
-            style="display: none"
-          >
-            <span class="ni">💰</span>
-            <div>
-              <div class="nt">הוצאות נלוות</div>
-              <div class="ns">פינוי, אחסון, בדיקות</div>
-            </div>
-          </div>
-          <div class="nav-item" data-card="9" onclick="goCard(9)">
-            <span class="ni">📷</span>
-            <div>
-              <div class="nt">תמונות</div>
-              <div class="ns">תיעוד ביקור</div>
-            </div>
-          </div>
-          <div
-            class="nav-item"
-            data-card="12"
-            onclick="goCard(12)"
-            style="display: none"
-          >
-            <span class="ni">⚖️</span>
-            <div>
-              <div class="nt">החלטת שמאי</div>
-              <div class="ns">קשר סיבתי וסיכום</div>
-            </div>
-          </div>
-        </div>
+        </aside>
         <div id="main"></div>
       </div>
     </div>
@@ -7002,6 +9241,10 @@
       }
       let currentCard = 1;
       let currentCaseId = null;
+      function updateCaseBadge(caseId) {
+        const b = document.getElementById("tbCaseNumBadge");
+        if (b && caseId) { b.textContent = caseId; b.style.display = ""; }
+      }
       let STATE = {
         base: {
           fullName: "",
@@ -7955,7 +10198,7 @@
         document.querySelectorAll(".nav-insurance-only").forEach((el) => {
           el.style.display = m === "tax" ? "none" : "";
         });
-        document.getElementById("progressWrap").style.display = "flex";
+        /* progressWrap removed */;
         // Auto-create case if none
         if (!currentCaseId) {
           currentCaseId = "case_" + Date.now();
@@ -7970,6 +10213,7 @@
           saveCases(cases);
         }
         goCard(1);
+        updateStepper();
       }
       function changeMode() {
         document.getElementById("appShell").classList.add("hidden");
@@ -7983,10 +10227,9 @@
       // ══════════════════════════════════════════════════
       function goCard(n) {
         currentCard = n;
-        document.querySelectorAll(".nav-item").forEach((el) => {
-          el.classList.toggle("active", parseInt(el.dataset.card) === n);
-        });
         renderCard(n);
+        updateStepper();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
       function nextCard() {
         const cards = getVisibleCards();
@@ -8002,16 +10245,133 @@
       function getVisibleCards() {
         if (mode === "tax") {
           const sub = STATE.taxSubMode;
-          if (sub === "residential") return [1, 4, 6, 7, 10, 12, 9]; // +תכולה+החלטה
-          if (sub === "business") return [1, 4, 6, 7, 13, 14, 15, 12, 9]; // +ציוד+מלאי+הוצ+החלטה
-          return [1, 4, 6, 7, 12, 9]; // ברירת מחדל — ללא sub mode עדיין
+          if (sub === "residential") return [1, 4, 6, 7, 10, 9, 12]; // +תכולה+החלטה
+          if (sub === "business") return [1, 4, 6, 7, 13, 14, 15, 9, 12]; // +ציוד+מלאי+הוצ+החלטה
+          return [1, 4, 6, 7, 9, 12]; // ברירת מחדל — ללא sub mode עדיין
         }
-        return [1, 3, 4, 6, 7, 8, 9];
+        return [1, 3, 4, 6, 7, 9, 8];
       }
 
       // ══════════════════════════════════════════════════
       // RENDER CARD
       // ══════════════════════════════════════════════════
+
+      // ══════════════════════════════════════════════════
+      // STEPPER + SIDEBAR UPDATE
+      // ══════════════════════════════════════════════════
+      const CARD_LABELS = {
+        1: "נתוני בסיס", 3: "ביטוח", 4: "אירוע",
+        6: "ממצאים", 7: "כתב כמויות", 9: "תמונות",
+        8: "סיכום", 10: "תכולה", 12: "החלטה",
+        13: "ציוד", 14: "מלאי", 15: "הוצאות"
+      };
+      const CARD_HINTS = {
+        1: "פרטי מזמין וכתובת", 3: "פוליסה וסכומים", 4: "סוג, מקור, גורמים",
+        6: "אזורים וסימני פגיעה", 7: "עבודות ותמחור", 9: "תיעוד ביקור",
+        8: "הערכה סופית", 10: "תקרות חוקיות", 12: "קשר סיבתי",
+        13: "שווי שוק", 14: "פירוט מלאי", 15: "פינוי ואחסון"
+      };
+
+      function updateStepper() {
+        const cards = getVisibleCards();
+        const cur = currentCard;
+        const curIdx = cards.indexOf(cur);
+        const isMobile = window.innerWidth <= 768;
+
+        // On mobile: show a sliding window of 4 steps centered on current
+        // Window: 2 before current (done) + current + 1 after (next)
+        // But clamp to array bounds
+        let visStart, visEnd;
+        if (isMobile) {
+          // Try to show: [curIdx-2, curIdx-1, curIdx, curIdx+1]
+          visStart = Math.max(0, curIdx - 2);
+          visEnd = Math.min(cards.length - 1, visStart + 3);
+          // Adjust start if we hit the end
+          visStart = Math.max(0, visEnd - 3);
+        } else {
+          visStart = 0;
+          visEnd = cards.length - 1;
+        }
+
+        // ── Stepper strip ──
+        const strip = document.getElementById("stepperStrip");
+        const pdfBtn = document.getElementById("stepperPdfBtn");
+        if (strip) {
+          strip.querySelectorAll(".stp, .stp-sep, .stp-ellipsis").forEach(el => el.remove());
+          const frag = document.createDocumentFragment();
+
+          // Show ellipsis if there are hidden steps before window
+          if (isMobile && visStart > 0) {
+            const el = document.createElement("span");
+            el.className = "stp-ellipsis"; el.textContent = "···";
+            frag.appendChild(el);
+          }
+
+          for (let i = visStart; i <= visEnd; i++) {
+            const cardId = cards[i];
+            if (i > visStart) {
+              const sep = document.createElement("span");
+              sep.className = "stp-sep"; sep.textContent = "›";
+              frag.appendChild(sep);
+            }
+            const btn = document.createElement("button");
+            btn.className = "stp" + (cardId === cur ? " active" : (i < curIdx ? " done" : ""));
+            btn.onclick = () => goCard(cardId);
+            btn.innerHTML = `<span class="stp-n">${i < curIdx ? "✓" : i+1}</span>${CARD_LABELS[cardId]||cardId}`;
+            frag.appendChild(btn);
+          }
+
+          // Show ellipsis if there are hidden steps after window
+          if (isMobile && visEnd < cards.length - 1) {
+            const el = document.createElement("span");
+            el.className = "stp-ellipsis"; el.textContent = "···";
+            frag.appendChild(el);
+          }
+
+          strip.insertBefore(frag, pdfBtn);
+          if (pdfBtn) pdfBtn.style.display = curIdx === cards.length - 1 ? "inline-flex" : "none";
+        }
+
+        // ── Sidebar steps ──
+        const sbSteps = document.getElementById("sbSteps");
+        if (sbSteps) {
+          sbSteps.innerHTML = "";
+          cards.forEach((cardId, i) => {
+            const isDone = i < curIdx;
+            const isCur = cardId === cur;
+            const div = document.createElement("div");
+            div.className = "sb-step" + (isDone ? " done" : isCur ? " current" : "");
+            div.onclick = () => goCard(cardId);
+            div.innerHTML = `
+              <div class="sb-step-left">
+                <div class="sb-step-dot">${isDone ? "✓" : i+1}</div>
+                ${i < cards.length-1 ? '<div class="sb-step-connector"></div>' : ""}
+              </div>
+              <div class="sb-step-body">
+                <div class="sb-step-title">${CARD_LABELS[cardId]||cardId}</div>
+                <div class="sb-step-hint">${CARD_HINTS[cardId]||""}</div>
+              </div>`;
+            sbSteps.appendChild(div);
+          });
+        }
+
+        // ── Mobile bottom nav ──
+        const btnBack = document.getElementById("btnBack");
+        const btnNext = document.getElementById("btnNext");
+        const btnDash = document.getElementById("btnDashboard");
+        if (btnDash) btnDash.style.display = curIdx === 0 ? "inline-flex" : "none";
+        if (btnBack) btnBack.style.display = curIdx > 0 ? "inline-flex" : "none";
+        if (btnNext) {
+          if (curIdx === cards.length - 1) {
+            btnNext.textContent = "📄 הפק דוח סופי";
+            btnNext.onclick = () => generateReport();
+          } else {
+            btnNext.textContent = "המשך ←";
+            btnNext.onclick = () => nextCard();
+          }
+        }
+      }
+
       function renderCard(n) {
         updateProgress();
         const main = document.getElementById("main");
@@ -9389,9 +11749,15 @@
         const deduct = parseCurrency(STATE.insurance.deductStruct) || 0;
         const recPayout = Math.max(0, shiput - deduct);
 
-        let html = `<div class="flex flex-wrap gap12 mb16 items-center">
-    <button class="btn btn-primary" onclick="runBOQEngine()">⚡ ייצר כתב כמויות אוטומטי</button>
-    <button class="btn btn-secondary" onclick="openBOQLibrary()" style="display:flex;align-items:center;gap:6px;">📚 ספריה מקומית/בינארית</button>
+        let html = `<div class="flex flex-wrap gap12 mb16 items-center" style="justify-content:space-between;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="runBOQEngine()">⚡ ייצר כתב כמויות אוטומטי</button>
+      <button class="btn btn-secondary" onclick="openBOQLibrary()" style="display:flex;align-items:center;gap:6px;">📚 ספריה מקומית/בינארית</button>
+    </div>
+    ${mode === "insurance" ? `<button onclick="setBOQClaimMode(!STATE.boq.hasClaim);" style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1.5px solid ${boq.hasClaim?'rgba(252,211,77,.5)':'var(--border2)'};background:${boq.hasClaim?'rgba(252,211,77,.08)':'transparent'};cursor:pointer;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;color:${boq.hasClaim?'#FCD34D':'var(--muted)'};transition:all .15s;">
+      <span style="font-size:16px;">${boq.hasClaim?'✅':'☐'}</span>
+      יש שמאי פרטי (תביעה)
+    </button>` : ''}
   </div>`;
 
         // שרברב הסדר question — הוסר
@@ -9438,25 +11804,24 @@
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
       <div class="label" style="color:var(--accent);margin:0;">סיכום כתב כמויות</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        ${mode === "insurance" ? `<button class="chip ${boq.hasClaim ? "checked" : ""}" onclick="STATE.boq.hasClaim=!STATE.boq.hasClaim;renderCard(7)" style="font-size:12px;">📋 תביעת שמאי פרטי</button>` : ""}
         <button class="chip ${boq.vat ? "checked" : ""}" onclick="toggleVAT()" style="font-size:12px;">מע"מ 18%</button>
       </div>
     </div>
     ${
       mode === "insurance"
         ? `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px;font-size:11px;">
+    <div style="display:grid;grid-template-columns:${boq.hasClaim ? '1fr 1fr 1fr' : '1fr 1fr'};gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px;font-size:11px;">
       <div style="padding:7px 10px;background:rgba(59,130,246,.08);text-align:center;font-weight:700;color:var(--blue);border-bottom:1px solid var(--border);">כינון</div>
-      <div style="padding:7px 10px;background:rgba(16,185,129,.08);text-align:center;font-weight:700;color:var(--green);border-bottom:1px solid var(--border);border-inline:1px solid var(--border);">שיפוי ×0.67</div>
-      <div style="padding:7px 10px;background:rgba(252,211,77,.08);text-align:center;font-weight:700;color:#FCD34D;border-bottom:1px solid var(--border);">תביעה</div>
+      <div style="padding:7px 10px;background:rgba(16,185,129,.08);text-align:center;font-weight:700;color:var(--green);border-bottom:1px solid var(--border);${boq.hasClaim ? 'border-inline:1px solid var(--border);' : 'border-right:1px solid var(--border);'}">שיפוי ×0.67</div>
+      ${boq.hasClaim ? `<div style="padding:7px 10px;background:rgba(252,211,77,.08);text-align:center;font-weight:700;color:#FCD34D;border-bottom:1px solid var(--border);">תביעה</div>` : ''}
       <div style="padding:8px 10px;text-align:center;font-weight:800;color:var(--blue);font-size:14px;" id="sumGrand">₪${fmtNum(grand)}</div>
-      <div style="padding:8px 10px;text-align:center;font-weight:800;color:var(--green);font-size:14px;border-inline:1px solid var(--border);" id="sumShiput">₪${fmtNum(shiput)}</div>
-      <div style="padding:8px 10px;text-align:center;font-weight:800;color:#FCD34D;font-size:14px;" id="sumClaim">₪${fmtNum(
+      <div style="padding:8px 10px;text-align:center;font-weight:800;color:var(--green);font-size:14px;${boq.hasClaim ? 'border-inline:1px solid var(--border);' : 'border-right:1px solid var(--border);'}" id="sumShiput">₪${fmtNum(shiput)}</div>
+      ${boq.hasClaim ? `<div style="padding:8px 10px;text-align:center;font-weight:800;color:#FCD34D;font-size:14px;" id="sumClaim">₪${fmtNum(
         (boq.structItems || [])
           .concat(boq.contentsItems || [])
           .concat(boq.serviceItems || [])
           .reduce((s, i) => s + (parseFloat(i.claim) || 0), 0),
-      )}</div>
+      )}</div>` : ''}
     </div>
     <div class="total-row" style="font-size:11px;"><span class="c-muted">מבנה (כינון)</span><span class="fw7 c-blue" id="sumStruct">₪${fmtNum(structTotal)}</span></div>
     <div class="total-row" style="font-size:11px;"><span class="c-muted">תכולה (כינון)</span><span class="fw7 c-blue" id="sumCont">₪${fmtNum(contTotal)}</span></div>
@@ -9494,7 +11859,7 @@
     `
     }
     ${
-      mode === "insurance" && grand > 0
+      mode === "insurance" && boq.hasClaim && grand > 0
         ? `
     <div class="divider"></div>
     <div class="total-row" style="background:rgba(251,191,36,.06);padding:8px 10px;border-radius:8px;gap:8px;align-items:center;">
@@ -9509,253 +11874,135 @@
       function renderBOQSection(key, title, color) {
         const items = STATE.boq[key] || [];
         const isIns = typeof mode !== "undefined" && mode === "insurance";
-
-        // Resolve supervision price (5% of ALL repair work)
-        const allRepairTotal =
-          calcSectionTotal(STATE.boq.structItems) +
-          calcSectionTotal(STATE.boq.contentsItems);
+        const allRepairTotal = calcSectionTotal(STATE.boq.structItems) + calcSectionTotal(STATE.boq.contentsItems);
         const supervisionRate2 = STATE.boq.supervisionRate || 5;
-        const supervisionAmt = Math.round(
-          allRepairTotal * (supervisionRate2 / 100),
-        );
-        items.forEach((i) => {
-          if (i.isSupervision)
-            i.price = String(supervisionAmt > 0 ? supervisionAmt : 0);
-        });
+        const supervisionAmt = Math.round(allRepairTotal * (supervisionRate2 / 100));
+        items.forEach((i) => { if (i.isSupervision) i.price = String(supervisionAmt > 0 ? supervisionAmt : 0); });
         const totalSec = calcSectionTotal(items.filter((i) => !i.isRental));
-        const totalClaim = isIns
-          ? (items || []).reduce((s, i) => s + (parseFloat(i.claim) || 0), 0)
-          : 0;
-        const COLS = isIns ? 9 : 7;
+        const hasClaim = isIns && !!STATE.boq.hasClaim;
+        const totalClaim = hasClaim ? (items || []).reduce((s, i) => s + (parseFloat(i.claim) || 0), 0) : 0;
 
         let html = `<div class="boq-section">
     <div class="flex justify-between items-center mb8">
       <div class="boq-section-title" style="color:${color};background:${color}15;">${title}</div>
-    </div>
-    <table class="boq-table">
-      <thead>`;
+    </div>`;
 
-        if (isIns) {
-          html += `<tr style="font-size:11px;">
-        <th rowspan="2" style="width:46px">#</th>
-        <th rowspan="2">תיאור עבודה</th>
-        <th rowspan="2" style="width:50px" class="ta-c">יח'</th>
-        <th rowspan="2" style="width:62px" class="ta-l">כמות</th>
-        <th rowspan="2" style="width:76px" class="ta-l">מחיר יח'</th>
-        <th colspan="2" style="text-align:center;background:rgba(59,130,246,.1);color:var(--blue);border-bottom:1px solid rgba(59,130,246,.25);">הערכה ב-₪</th>
-        <th rowspan="2" style="width:84px;background:rgba(252,211,77,.07);color:#FCD34D;" class="ta-l">תביעה ₪</th>
-        <th rowspan="2" style="width:24px"></th>
-      </tr>
-      <tr style="font-size:11px;">
-        <th style="width:78px;background:rgba(59,130,246,.07);color:var(--blue);" class="ta-l">כינון</th>
-        <th style="width:78px;background:rgba(16,185,129,.07);color:var(--green);" class="ta-l">שיפוי</th>
-      </tr>`;
-        } else {
-          html += `<tr>
-        <th style="width:60px">#</th><th>תיאור עבודה</th>
-        <th style="width:70px" class="ta-c">יח'</th>
-        <th style="width:80px" class="ta-l">כמות</th>
-        <th style="width:90px" class="ta-l">מחיר יח'</th>
-        <th style="width:95px" class="ta-l">סה"כ</th>
-        <th style="width:28px"></th>
-      </tr>`;
-        }
-        html += `</thead><tbody>`;
-
-        // ── Build chapter → room → items hierarchy ──
-        const chapterOrder = [];
-        const chapterMap = {}; // ch → { roomOrder:[], roomMap: { room → items[] } }
-
+        const chapterOrder = [], chapterMap = {};
         items.forEach((item) => {
-          const ch =
-            item.ch ||
-            (typeof guessChFromDesc === "function"
-              ? guessChFromDesc(item.desc)
-              : 0) ||
-            0;
+          const ch = item.ch || (typeof guessChFromDesc === "function" ? guessChFromDesc(item.desc) : 0) || 0;
           const room = item.roomHeader || "__none__";
-          if (!chapterMap[ch]) {
-            chapterMap[ch] = { roomOrder: [], roomMap: {} };
-            chapterOrder.push(ch);
-          }
-          if (!chapterMap[ch].roomMap[room]) {
-            chapterMap[ch].roomMap[room] = [];
-            chapterMap[ch].roomOrder.push(room);
-          }
+          if (!chapterMap[ch]) { chapterMap[ch] = { roomOrder: [], roomMap: {} }; chapterOrder.push(ch); }
+          if (!chapterMap[ch].roomMap[room]) { chapterMap[ch].roomMap[room] = []; chapterMap[ch].roomOrder.push(room); }
           chapterMap[ch].roomMap[room].push(item);
-        });
-
-        // Last index tracking for + buttons
-        const lastIdxGlobal = {};
-        items.forEach((item, i) => {
-          const ch =
-            item.ch ||
-            (typeof guessChFromDesc === "function"
-              ? guessChFromDesc(item.desc)
-              : 0) ||
-            0;
-          const room = item.roomHeader || "__none__";
-          lastIdxGlobal[`${ch}__${room}`] = item.id;
         });
 
         let chIdx = 0;
         chapterOrder.forEach((chNum) => {
           chIdx++;
-          const chName = chNum
-            ? BOQ_CHAPTER_NAMES[chNum] || `פרק ${chNum}`
-            : "כללי";
+          const chName = chNum ? BOQ_CHAPTER_NAMES[chNum] || `פרק ${chNum}` : "כללי";
           const chData = chapterMap[chNum];
-          const chAllItems = chData.roomOrder.reduce(
-            (a, r) => a.concat(chData.roomMap[r]),
-            [],
-          );
-          const chTotal = calcSectionTotal(
-            chAllItems.filter((i) => !i.isRental),
-          );
-          const chShiput = Math.round(
-            calcShiputBase(chAllItems.filter((i) => !i.isRental)) * 0.67,
-          );
+          const chAllItems = chData.roomOrder.reduce((a, r) => a.concat(chData.roomMap[r]), []);
+          const chTotal = calcSectionTotal(chAllItems.filter((i) => !i.isRental));
+          const chShiput = Math.round(calcShiputBase(chAllItems.filter((i) => !i.isRental)) * 0.67);
 
-          // Chapter header row
-          html += `<tr style="background:rgba(59,130,246,.08);">
-      <td colspan="${COLS}" style="padding:7px 10px;font-weight:800;font-size:12px;color:var(--blue);border-top:2px solid rgba(59,130,246,.2);">
-        ${chIdx}. ${chName}</td></tr>`;
+          html += `<div class="boq-ch-block">
+    <div class="boq-ch-header" data-ch="${key}_${chNum}">
+      <div class="boq-ch-title">${chIdx}. ${chName}</div>
+    </div>`;
 
           let roomIdx = 0;
           chData.roomOrder.forEach((room) => {
             const roomItems = chData.roomMap[room];
             const hasRoom = room !== "__none__";
-
+            const _roomItems = chData.roomMap[room];
+            const _roomKinun = hasRoom ? _roomItems.filter(i=>!i.isRental).reduce((s,i)=>(parseFloat(i.qty)||0)*(parseFloat(i.price)||0)+s,0) : 0;
+            const _roomShiput = hasRoom ? Math.round(calcShiputBase(_roomItems.filter(i=>!i.isRental))*0.67) : 0;
             if (hasRoom) {
               roomIdx++;
-              html += `<tr style="background:rgba(245,158,11,.06);">
-          <td colspan="${COLS}" style="padding:5px 10px 5px 20px;font-weight:700;font-size:11px;color:var(--accent);">
-            ${chIdx}.${roomIdx} ${room}</td></tr>`;
+              html += `<div class="boq-room-block">
+      <div class="boq-room-header">
+        <div class="boq-room-header-left">
+          <div class="boq-room-dot"></div>
+          <div class="boq-room-name">${chIdx}.${roomIdx} ${room}</div>
+          <div class="boq-room-count">${_roomItems.length} פריטים</div>
+        </div>
+        <button class="boq-room-add" onclick="addBOQItem('${key}','${room.replace(/'/g,"\'").replace(/`/g,'\`')}',${chNum})">+ שורה ל${room}</button>
+      </div>`;
             }
 
             roomItems.forEach((item, itemIdx) => {
-              const displayId = hasRoom
-                ? `${chIdx}.${roomIdx}.${itemIdx + 1}`
-                : `${chIdx}.${itemIdx + 1}`;
-              const kinun = item.isRental
-                ? item.rentalAmount || 0
-                : (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
-              const shiput_val =
-                item.isSupervision || item.isRental || item.noShiput
-                  ? null
-                  : Math.round(kinun * 0.67);
+              const displayId = hasRoom ? `${chIdx}.${roomIdx}.${itemIdx + 1}` : `${chIdx}.${itemIdx + 1}`;
+              const kinun = item.isRental ? (item.rentalAmount || 0) : (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+              const shiput_val = (item.isSupervision || item.isRental || item.noShiput) ? null : Math.round(kinun * 0.67);
 
-              if (isIns) {
-                html += `<tr class="boq-row-draggable ${item.zeroPrice ? "row-zero" : ""} ${item.isRental ? "row-rental" : ""}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader || ""}">
-            <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
-            <td>${
-              item.isSupervision
+              const descHtml = item.isSupervision
                 ? `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <span style="font-size:12px;font-weight:600;color:var(--muted);">פיקוח וניהול עבודות</span>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  ${[3, 5, 7, 10].map((p) => `<button onclick="STATE.boq.supervisionRate=${p};const si=STATE.boq.serviceItems.find(i=>i.isSupervision);if(si)si.desc='פיקוח וניהול עבודות (${p}% מעלויות תיקון)';renderCard(7);" style="padding:2px 7px;border-radius:6px;border:1px solid ${(STATE.boq.supervisionRate || 5) === p ? "var(--accent)" : "var(--border)"};background:${(STATE.boq.supervisionRate || 5) === p ? "rgba(245,158,11,.15)" : "var(--primary2)"};color:${(STATE.boq.supervisionRate || 5) === p ? "var(--accent)" : "var(--muted)"};font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">${p}%</button>`).join("")}
-                </div>
-              </div>`
-                : `<textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea>`
-            }</td>
-            <td><input class="boq-input" style="width:44px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
-            <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
-            <td>${
-              item.isSupervision
-                ? `<div style="display:flex;align-items:center;gap:4px;">
-                <input class="boq-input num" type="number" value="${item.price}" disabled style="opacity:.5;width:60px;">
-                
-              </div>`
-                : `<input class="boq-input num" type="number" value="${item.zeroPrice || item.isRental ? "" : esc(item.price)}" ${item.zeroPrice || item.isRental ? "disabled" : ""} oninput="updateBOQItem('${key}','${item.id}','price',this.value)">`
-            }</td>
-            <td class="ta-l" style="background:rgba(59,130,246,.04);color:${kinun > 0 ? "var(--blue)" : "var(--subtle)"};font-weight:700;font-size:12px;" data-total="${key}_${item.id}">${item.zeroPrice ? "—" : kinun > 0 ? "₪" + fmtNum(kinun) : ""}</td>
-            <td class="ta-l" style="background:rgba(16,185,129,.04);color:${shiput_val > 0 ? "var(--green)" : "var(--subtle)"};font-size:12px;" data-shiput="${key}_${item.id}">${item.zeroPrice ? "—" : shiput_val != null && shiput_val > 0 ? "₪" + fmtNum(shiput_val) : "—"}</td>
-            <td style="background:${STATE.boq.hasClaim ? "rgba(252,211,77,.04)" : "rgba(0,0,0,.2)"};">
-              <input class="boq-input num" type="number" placeholder="₪" style="width:70px;color:#FCD34D;${STATE.boq.hasClaim ? "" : "opacity:.25;pointer-events:none;"}" value="${esc(item.claim || "")}" ${STATE.boq.hasClaim ? "" : "disabled"} oninput="updateBOQItem('${key}','${item.id}','claim',this.value)" title="תביעת השמאי הפרטי לסעיף זה"></td>
-            <td><button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button></td>
-          </tr>`;
-              } else {
-                html += `<tr class="boq-row-draggable ${item.zeroPrice ? "row-zero" : ""} ${item.isRental ? "row-rental" : ""}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader || ""}">
-            <td class="c-subtle fs11" style="color:var(--accent);font-weight:700;vertical-align:top;padding-top:9px;white-space:nowrap;"><span class="boq-drag-handle" title="גרור להזזה">⠿</span> ${displayId}</td>
-            <td>${
-              item.isSupervision
-                ? `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <span style="font-size:12px;font-weight:600;color:var(--muted);">פיקוח וניהול עבודות</span>
-                <div style="display:flex;gap:4px;align-items:center;">
-                  ${[3, 5, 7, 10].map((p) => `<button onclick="STATE.boq.supervisionRate=${p};const si=STATE.boq.serviceItems.find(i=>i.isSupervision);if(si)si.desc='פיקוח וניהול עבודות (${p}% מעלויות תיקון)';renderCard(7);" style="padding:2px 7px;border-radius:6px;border:1px solid ${(STATE.boq.supervisionRate || 5) === p ? "var(--accent)" : "var(--border)"};background:${(STATE.boq.supervisionRate || 5) === p ? "rgba(245,158,11,.15)" : "var(--primary2)"};color:${(STATE.boq.supervisionRate || 5) === p ? "var(--accent)" : "var(--muted)"};font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">${p}%</button>`).join("")}
-                </div>
-              </div>`
-                : `<textarea class="boq-input desc-input w100" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea>`
-            }</td>
-            <td><input class="boq-input" style="width:60px;text-align:center;" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></td>
-            <td><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)"></td>
-            <td>${
-              item.isSupervision
-                ? `<div style="display:flex;align-items:center;gap:4px;">
-                <input class="boq-input num" type="number" value="${item.price}" disabled style="opacity:.5;width:60px;">
-                
-              </div>`
-                : `<input class="boq-input num" type="number" value="${item.zeroPrice || item.isRental ? "" : esc(item.price)}" ${item.zeroPrice || item.isRental ? "disabled" : ""} oninput="updateBOQItem('${key}','${item.id}','price',this.value)">`
-            }</td>
-            <td class="ta-l fw7" data-total="${key}_${item.id}" style="color:${kinun > 0 ? "var(--accent)" : "var(--subtle)"};">${item.zeroPrice ? "—" : item.isRental ? `<span style="color:var(--blue);">₪${fmtNum(kinun)}</span>` : kinun > 0 ? "₪" + fmtNum(kinun) : ""}</td>
-            <td><button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button></td>
-          </tr>`;
-              }
+                    <span style="font-size:12px;font-weight:600;color:var(--muted);">פיקוח וניהול עבודות</span>
+                    <div style="display:flex;gap:4px;">${[3,5,7,10].map((p) => `<button onclick="STATE.boq.supervisionRate=${p};const si=STATE.boq.serviceItems.find(i=>i.isSupervision);if(si)si.desc='פיקוח וניהול עבודות (${p}% מעלויות תיקון)';renderCard(7);" style="padding:2px 7px;border-radius:6px;border:1px solid ${(STATE.boq.supervisionRate||5)===p?'var(--accent)':'var(--border)'};background:${(STATE.boq.supervisionRate||5)===p?'rgba(245,158,11,.15)':'var(--primary2)'};color:${(STATE.boq.supervisionRate||5)===p?'var(--accent)':'var(--muted)'};font-size:11px;font-weight:700;cursor:pointer;font-family:'Heebo',sans-serif;">${p}%</button>`).join("")}</div>
+                  </div>`
+                : `<textarea class="boq-card-desc boq-input desc-input" rows="1" oninput="updateBOQItem('${key}','${item.id}','desc',this.value);autoResizeTA(this)">${esc(item.desc)}</textarea>`;
 
-              // + button after last item in room
-              if (itemIdx === roomItems.length - 1) {
-                const roomLabel = hasRoom ? room : null;
-                const btnLabel = roomLabel
-                  ? `+ שורה ל${roomLabel}`
-                  : "+ הוסף שורה";
-                const addCall = roomLabel
-                  ? `addBOQItem('${key}','${roomLabel.replace(/'/g, "\\'")}',${chNum})`
-                  : `addBOQItem('${key}',null,${chNum})`;
-                html += `<tr><td colspan="${COLS}" style="padding:2px 8px 6px;">
-            <button class="btn btn-ghost btn-xs" style="font-size:10px;color:var(--accent);opacity:.7;" onclick="${addCall}">${btnLabel}</button>
-          </td></tr>`;
+              html += `<div class="boq-card ${item.zeroPrice?'row-zero':''} ${item.isRental?'row-rental':''}" draggable="true" data-boqid="${item.id}" data-boqkey="${key}" data-room="${item.roomHeader||''}" data-ch="${chNum}">
+      <div class="boq-card-stripe"></div>
+      <div class="boq-card-body">
+        <div class="boq-card-top">
+          <div class="boq-card-id">${displayId}</div>
+          ${descHtml}
+          <span class="boq-card-drag" title="גרור להזזה">⠿</span>
+        </div>
+        <div class="boq-card-bot">
+          <div class="boq-fields">
+            <div class="boq-pill p-unit"><label>יח'</label><input class="boq-input" value="${esc(item.unit)}" oninput="updateBOQItem('${key}','${item.id}','unit',this.value)"></div>
+            <div class="boq-pill p-qty"><label>כמות</label><input class="boq-input num" type="number" value="${esc(item.qty)}" oninput="updateBOQItem('${key}','${item.id}','qty',this.value)" ${item.isRental?'disabled':''}></div>
+            <div class="boq-pill p-price"><label>מחיר יח'</label><input class="boq-input num" type="number" value="${item.zeroPrice||item.isRental?'':esc(item.price)}" ${item.zeroPrice||item.isRental||item.isSupervision?'disabled':''} oninput="updateBOQItem('${key}','${item.id}','price',this.value)"></div>
+          </div>
+          <div class="boq-divider"></div>
+          <div class="boq-totals">
+            <div class="boq-tot-item boq-tot-kinun"><label>כינון</label><span data-total="${key}_${item.id}">${item.zeroPrice?'—':kinun>0?'₪'+fmtNum(kinun):'₪0'}</span></div>
+            ${isIns ? `<div class="boq-tot-item boq-tot-shiput"><label>שיפוי</label><span data-shiput="${key}_${item.id}">${item.zeroPrice?'—':shiput_val!=null?(shiput_val>0?'₪'+fmtNum(shiput_val):'₪0'):'—'}</span></div>
+            ${STATE.boq.hasClaim ? `<div class="boq-tot-item boq-tot-claim"><label>תביעה</label><input type="number" placeholder="₪" value="${esc(item.claim||'')}" oninput="updateBOQItem('${key}','${item.id}','claim',this.value)"></div>` : ''}` : ''}
+          </div>
+        </div>
+      </div>
+      <button class="del-btn" onclick="removeBOQItem('${key}','${item.id}')">✕</button>
+    </div>`;
+
+              if (itemIdx === roomItems.length - 1 && hasRoom) {
+                html += `<div class="boq-room-subtotal">
+      <span class="boq-room-subtotal-label">סה"כ ${room}</span>
+      <div class="boq-room-subtotal-vals">
+        <span class="k"><em>כינון</em><span data-room-kinun="${key}_${chNum}_${esc(room)}">${_roomKinun>0?'₪'+fmtNum(_roomKinun):'—'}</span></span>
+        ${isIns?`<span class="s"><em>שיפוי</em><span data-room-shiput="${key}_${chNum}_${esc(room)}">${_roomShiput>0?'₪'+fmtNum(_roomShiput):'—'}</span></span>`:''}
+      </div>
+    </div></div>`;
+              } else if (itemIdx === roomItems.length - 1 && !hasRoom) {
+                const addCall = `addBOQItem('${key}',null,${chNum})`;
+                html += `<div style="padding:2px 4px 4px;"><button class="btn btn-ghost btn-xs" style="font-size:10px;color:var(--accent);opacity:.7;" onclick="${addCall}">+ הוסף שורה</button></div>`;
               }
             });
           });
 
-          // Chapter subtotal
-          if (chTotal > 0) {
-            html += `<tr style="background:var(--primary2);border-top:1px solid var(--primary3);">
-        <td colspan="${isIns ? 5 : 5}" style="text-align:right;padding:6px 10px;font-size:11px;color:var(--muted);">סה"כ ${chName}</td>`;
-            if (isIns) {
-              html += `<td style="text-align:left;padding:6px 10px;font-size:11px;color:var(--blue);font-weight:700;">₪${fmtNum(chTotal)}</td>
-                 <td style="text-align:left;padding:6px 10px;font-size:11px;color:var(--green);font-weight:700;">₪${fmtNum(chShiput)}</td>
-                 <td></td><td></td>`;
-            } else {
-              html += `<td style="text-align:left;padding:6px 10px;font-size:11px;font-weight:700;">₪${fmtNum(chTotal)}</td><td></td>`;
-            }
-            html += `</tr>`;
-          }
+          html += `<div class="boq-ch-subtotal">
+      <span class="boq-ch-subtotal-label">סה"כ ${chName}</span>
+      <div class="boq-ch-subtotal-vals">
+        <span class="k"><em>כינון</em><span data-ch-kinun="${key}_${chNum}">₪${fmtNum(chTotal)}</span></span>
+        ${isIns?`<span class="s"><em>שיפוי</em><span data-ch-shiput="${key}_${chNum}">₪${fmtNum(chShiput)}</span></span>`:''}
+      </div>
+    </div></div>`;
         });
 
-        // Section total
-        if (isIns && totalSec > 0) {
-          const totalShiput = Math.round(
-            calcShiputBase(items.filter((i) => !i.isRental)) * 0.67,
-          );
-          html += `<tr class="row-subtotal">
-      <td colspan="5" class="ta-r">סה"כ פרק</td>
-      <td class="ta-l" style="color:var(--blue);">₪${fmtNum(totalSec)}</td>
-      <td class="ta-l" style="color:var(--green);">₪${fmtNum(totalShiput)}</td>
-      <td class="ta-l" style="color:#FCD34D;">${totalClaim > 0 ? "₪" + fmtNum(totalClaim) : ""}</td>
-      <td></td>
-    </tr>`;
-        } else if (!isIns && totalSec > 0) {
-          html += `<tr class="row-subtotal"><td colspan="5" class="ta-r">סה"כ פרק</td><td class="ta-l">₪${fmtNum(totalSec)}</td><td></td></tr>`;
-        }
-        if (items.length === 0)
-          html += `<tr><td colspan="${COLS}" class="ta-c c-subtle" style="padding:20px;font-size:13px;">אין פריטים</td></tr>`;
-        html += `</tbody></table>
-    <div style="padding:6px 4px;">
-      <button class="btn btn-ghost btn-xs" style="font-size:11px;" onclick="addBOQItem('${key}')">+ הוסף שורה ללא שיוך</button>
-    </div>
+        if (totalSec > 0) {
+          const totalShiput = Math.round(calcShiputBase(items.filter((i)=>!i.isRental))*0.67);
+          html += `<div class="boq-sec-total" style="margin-top:8px;border:2px solid rgba(245,158,11,.2);background:rgba(245,158,11,.04);">
+    <span style="font-size:11px;font-weight:800;color:var(--accent);margin-left:auto;">סה"כ פרק</span>
+    <div class="boq-sec-total-item boq-tot-kinun"><label>כינון</label><span data-sec-kinun="${key}">₪${fmtNum(totalSec)}</span></div>
+    ${isIns?`<div class="boq-sec-total-item boq-tot-shiput"><label>שיפוי</label><span data-sec-shiput="${key}">₪${fmtNum(totalShiput)}</span></div>`:''}
+    ${hasClaim?`<div class="boq-sec-total-item boq-tot-claim"><label>תביעה</label><span data-sec-claim="${key}">${totalClaim>0?'₪'+fmtNum(totalClaim):'—'}</span></div>`:''}
   </div>`;
+        }
 
+        if (items.length===0) html += `<div style="text-align:center;padding:24px;color:var(--subtle);font-size:13px;">אין פריטים</div>`;
+        html += `<div style="padding:6px 4px;"><button class="btn btn-ghost btn-xs" style="font-size:11px;" onclick="addBOQItem('${key}')">+ הוסף שורה ללא שיוך</button></div></div>`;
         return html;
       }
 
@@ -10294,9 +12541,8 @@
 
         // Right: live preview
         editHtml += `<div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div style="display:flex;align-items:center;margin-bottom:12px;">
       <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">👁️ תצוגה מקדימה — דוח סופי</div>
-      <button class="btn btn-primary btn-sm" onclick="generateReport()" style="font-size:12px;">📄 הפק דוח מלא</button>
     </div>
     ${previewHtml}
   </div>`;
@@ -12045,22 +14291,54 @@
         },
       };
 
-      function generateReport() {
-        saveCurrentCase();
+      let _reportBuildBusy = false;
+      async function generateReport() {
+        if (_reportBuildBusy) {
+          if (typeof showToast === "function") showToast("הדוח כבר בתהליך הכנה");
+          return;
+        }
+        _reportBuildBusy = true;
+        try {
+          await saveCurrentCase();
+        } catch (e) {
+          console.warn("save before report failed; report generation stopped", e);
+          window.omdaCoreLogEvent && window.omdaCoreLogEvent("case_save_failed", {
+            caseId: currentCaseId || null,
+            source: "generateReport",
+            message: e.message || String(e),
+          });
+          window.omdaCoreLogError && window.omdaCoreLogError("case_save_failed", {
+            caseId: currentCaseId || null,
+            source: "generateReport",
+            message: e.message || String(e),
+            severity: "error",
+          });
+          if (typeof showToast === "function") showToast("שגיאת שמירה — הדוח לא הופק");
+          _reportBuildBusy = false;
+          return;
+        }
+
+        const finish = () => {
+          try {
+            _doGenerateReport();
+          } finally {
+            _reportBuildBusy = false;
+          }
+        };
+
         // Ensure profile is loaded (in case auth resolved after page load)
         if (window._FB && window._currentUser && (!APPRAISER.nameHe || !window._profile)) {
           window._FB
             .getProfile(window._currentUser.uid)
             .then((prof) => {
-              if (prof) {
-                applyAppraiserProfile(prof);
-              }
-              _doGenerateReport();
+              if (prof) applyAppraiserProfile(prof);
+              finish();
             })
-            .catch(() => _doGenerateReport());
+            .catch(() => finish());
           return;
         }
-        _doGenerateReport();
+
+        finish();
       }
 
       function _doGenerateReport() {
@@ -12297,7 +14575,7 @@
               : "#ffffff";
           const fs =
             letters.length > 2 ? "15" : letters.length === 2 ? "20" : "24";
-          logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${_logoSize} ${_logoSize}" width="${_logoSize}" height="${_logoSize}"><rect width="${_logoSize}" height="${_logoSize}" rx="${Math.round(_logoSize*0.18)}" fill="${bg}"/><text x="${_logoSize/2}" y="${Math.round(_logoSize*0.68)}" font-family="'Helvetica Neue',Arial,sans-serif" font-size="${letters.length>2?Math.round(_logoSize*0.27):letters.length===2?Math.round(_logoSize*0.36):Math.round(_logoSize*0.43)}" font-weight="900" fill="${fg}" text-anchor="middle" letter-spacing="-0.5">${letters}</text></svg>`;
+          logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" width="56" height="56"><rect width="56" height="56" rx="14" fill="${bg}"/><text x="28" y="38" font-family="'Helvetica Neue',Arial,sans-serif" font-size="${fs}" font-weight="900" fill="${fg}" text-anchor="middle" letter-spacing="-0.5">${letters}</text></svg>`;
         }
 
         let rpt = `<div class="rpt-header">
@@ -12958,7 +15236,6 @@ ${(function(){
       // PDF — Puppeteer via Cloud Function
       // ══════════════════════════════════════════════
       let _currentPdfUrl = null;
-      let _currentPdfBlob = null;
       const _PDF_STEPS = ['pdfStep1','pdfStep2','pdfStep3','pdfStep4','pdfStep5'];
       const _PDF_PROGRESS = [8, 25, 55, 82, 100];
 
@@ -12990,9 +15267,8 @@ ${(function(){
         });
         setPdfProgressBar(_PDF_PROGRESS[idx] || 0);
       }
-      function showPdfReady(url, blob) {
+      function showPdfReady(url) {
         _currentPdfUrl = url;
-        _currentPdfBlob = blob || null;
         document.getElementById('pdfProgressSpinner').style.display = 'none';
         document.getElementById('pdfProgressBar').style.display = 'none';
         document.getElementById('pdfProgressSteps').style.display = 'none';
@@ -13000,12 +15276,13 @@ ${(function(){
         document.getElementById('pdfReadyIcon').style.display = 'flex';
         document.getElementById('pdfReadyActions').style.display = 'flex';
         const lbl = document.getElementById('pdfCopyLabel'); if (lbl) lbl.textContent = 'העתק קישור';
+        // הורדה אוטומטית מיד עם מוכנות הקובץ
+        _downloadPdfUrl(url, _buildReportFileName());
       }
       function hidePdfProgress() {
         const ov = document.getElementById('pdfProgressOverlay');
         if (ov) ov.classList.remove('active');
         _currentPdfUrl = null;
-        _currentPdfBlob = null;
       }
       function _buildReportFileName() {
         const b = STATE.base || {};
@@ -13027,37 +15304,37 @@ ${(function(){
         }
       }
 
-      function _triggerBlobDownload(blob, name) {
-        const u = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = u; a.download = name; a.style.display = 'none';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(u), 5000);
-      }
       async function _downloadPdfUrl(url, fileName) {
-        if (!url && !_currentPdfBlob) return false;
+        if (!url) return false;
         const safeName = fileName || _buildReportFileName();
-        if (_currentPdfBlob) { _triggerBlobDownload(_currentPdfBlob, safeName); return true; }
         try {
           const res = await fetch(url, { mode: 'cors', credentials: 'omit' });
-          if (!res.ok) throw new Error('err');
-          _triggerBlobDownload(await res.blob(), safeName); return true;
-        } catch(_){}
-        try {
-          const blob = await new Promise((ok,no) => {
-            const x = new XMLHttpRequest(); x.open('GET', url, true); x.responseType = 'blob';
-            x.onload = () => x.status===200 ? ok(x.response) : no(); x.onerror = no; x.send();
-          });
-          _triggerBlobDownload(blob, safeName); return true;
-        } catch(_){}
-        window.open(url, '_blank'); return false;
+          if (!res.ok) throw new Error('download fetch failed');
+          const blob = await res.blob();
+          const objectUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = objectUrl;
+          a.download = safeName;
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+          return true;
+        } catch (e) {
+          // CORS fallback — פתח בטאב חדש (שם קובץ לא יישמר)
+          window.open(url, '_blank');
+          return false;
+        }
       }
       function _pdfActionOpen() {
         if (!_currentPdfUrl) return;
+        window.omdaCoreLogEvent && window.omdaCoreLogEvent("pdf_downloaded", { caseId: currentCaseId || null, source: "pdf_ready_open" });
         _downloadPdfUrl(_currentPdfUrl, _buildReportFileName());
       }
       async function _pdfActionShare() {
         if (!_currentPdfUrl) return;
+        window.omdaCoreLogEvent && window.omdaCoreLogEvent("pdf_shared", { caseId: currentCaseId || null });
         const fileName = _buildReportFileName();
         await _downloadPdfUrl(_currentPdfUrl, fileName);
         if (navigator.share) {
@@ -13066,11 +15343,19 @@ ${(function(){
       }
       async function _pdfActionCopy() {
         if (!_currentPdfUrl) return;
-        try { await navigator.clipboard.writeText(_currentPdfUrl); const lbl = document.getElementById('pdfCopyLabel'); if (lbl) { lbl.textContent = '✓ הועתק!'; setTimeout(() => { lbl.textContent = 'העתק קישור'; }, 2000); } }
+        try { window.omdaCoreLogEvent && window.omdaCoreLogEvent("pdf_link_copied", { caseId: currentCaseId || null }); await navigator.clipboard.writeText(_currentPdfUrl); const lbl = document.getElementById('pdfCopyLabel'); if (lbl) { lbl.textContent = '✓ הועתק!'; setTimeout(() => { lbl.textContent = 'העתק קישור'; }, 2000); } }
         catch (e) { if (typeof showToast === 'function') showToast('לא ניתן להעתיק'); }
       }
 
+      let _pdfGenerationBusy = false;
+      let _lastPdfGeneratedAt = 0;
+
       async function _generatePdf(autoDownload = false) {
+        if (_pdfGenerationBusy) {
+          if (typeof showToast === 'function') showToast('הפקת PDF כבר מתבצעת');
+          return null;
+        }
+        _pdfGenerationBusy = true;
         showPdfProgress();
         try {
           setPdfStep(0);
@@ -13079,7 +15364,7 @@ ${(function(){
             await new Promise(r => setTimeout(r, 400));
           }
           const reportHtml = document.getElementById('rptContent')?.innerHTML || '';
-          if (!reportHtml.trim()) { hidePdfProgress(); showToast('שגיאה: הדוח ריק'); return null; }
+          if (!reportHtml.trim()) { hidePdfProgress(); showToast('שגיאה: הדוח ריק'); _pdfGenerationBusy = false; return null; }
           setPdfStep(1);
           await new Promise(r => setTimeout(r, 300));
           const _prof = window._profile || {};
@@ -13096,24 +15381,11 @@ ${(function(){
           setPdfStep(3);
           const result = await resultPromise;
           if (!result.data?.url) throw new Error('לא התקבל קישור PDF');
+          window.omdaCoreLogEvent && window.omdaCoreLogEvent("pdf_generated", { caseId: currentCaseId || null });
           setPdfStep(4);
-          let _readyBlob = null;
-          try {
-            const _r = await fetch(result.data.url, { mode:'cors', credentials:'omit' });
-            if (_r.ok) _readyBlob = await _r.blob();
-          } catch(_){}
-          if (!_readyBlob) {
-            try {
-              _readyBlob = await new Promise((ok,no) => {
-                const x = new XMLHttpRequest(); x.open('GET', result.data.url, true);
-                x.responseType = 'blob'; x.onload = () => x.status===200 ? ok(x.response) : no();
-                x.onerror = no; x.send();
-              });
-            } catch(_){}
-          }
-          showPdfReady(result.data.url, _readyBlob);
+          await new Promise(r => setTimeout(r, 500));
+          showPdfReady(result.data.url);
           if (autoDownload) {
-            await _downloadPdfUrl(result.data.url, _buildReportFileName());
             if (typeof showToast === 'function') showToast('ה-PDF נשמר למחשב');
             setTimeout(() => hidePdfProgress(), 700);
           }
@@ -13126,11 +15398,15 @@ ${(function(){
               saveCurrentCase();
             }
           } catch(e) {}
+          _lastPdfGeneratedAt = Date.now();
+          _pdfGenerationBusy = false;
           return result.data.url;
         } catch(err) {
           hidePdfProgress();
+          window.omdaCoreLogEvent && window.omdaCoreLogEvent("pdf_generation_failed", { caseId: currentCaseId || null, message: err.message || String(err) });
           console.error('_generatePdf error:', err);
           showToast('שגיאה ביצירת PDF: ' + (err.message||err));
+          _pdfGenerationBusy = false;
           return null;
         }
       }
@@ -14707,6 +16983,7 @@ ${(function(){
           STATE = c.state;
           mode = c.mode;
           currentCaseId = id;
+        updateCaseBadge(id);
           closeCaseMgr();
           document.getElementById("landing").classList.add("hidden");
           document.getElementById("appShell").classList.remove("hidden");
@@ -14729,18 +17006,155 @@ ${(function(){
           };
           const ml = document.getElementById("tbModeLabel");
           const mi = modeMap[mode] || modeMap.private;
-          ml.textContent = mi.label;
-          ml.style.color = mi.color;
-          ml.style.background = mi.bg;
-          ml.style.cssText +=
-            "padding:4px 12px;border-radius:12px;font-weight:700;font-size:11px;";
-          document.getElementById("progressWrap").style.display = "flex";
+          if (ml) { ml.textContent = mi.label; ml.style.color = mi.color; ml.style.background = mi.bg; ml.style.cssText += "padding:4px 12px;border-radius:12px;font-weight:700;font-size:11px;"; }
+          /* progressWrap removed */;
           document.querySelectorAll(".nav-insurance-only").forEach((el) => {
             el.style.display = mode === "tax" ? "none" : "";
           });
           goCard(1);
         }
       }
+      function sanitizeForFirestore(value, ctx = { inArray: false, seen: new WeakSet(), path: "root" }) {
+        const t = typeof value;
+
+        if (value === undefined || t === "function" || t === "symbol" || t === "bigint") return null;
+        if (value === null || t === "string" || t === "boolean") return value;
+        if (t === "number") return Number.isFinite(value) ? value : null;
+
+        if (value instanceof Date) {
+          return Number.isFinite(value.getTime()) ? value.toISOString() : null;
+        }
+
+        if (value && typeof value.toDate === "function") {
+          try {
+            const d = value.toDate();
+            return d instanceof Date && Number.isFinite(d.getTime()) ? d.toISOString() : null;
+          } catch (_) {
+            return null;
+          }
+        }
+
+        if (typeof Element !== "undefined" && value instanceof Element) return null;
+        if (typeof Event !== "undefined" && value instanceof Event) return null;
+        if (typeof Blob !== "undefined" && value instanceof Blob) return null;
+        if (typeof File !== "undefined" && value instanceof File) return null;
+
+        if (Array.isArray(value)) {
+          const arr = value.map((item, idx) =>
+            sanitizeForFirestore(item, {
+              inArray: true,
+              seen: ctx.seen,
+              path: `${ctx.path}[${idx}]`,
+            })
+          );
+          // Firestore rejects direct nested arrays. Store nested arrays as a plain object.
+          return ctx.inArray ? { _items: arr } : arr;
+        }
+
+        if (t === "object") {
+          if (ctx.seen.has(value)) return null;
+          ctx.seen.add(value);
+
+          const proto = Object.getPrototypeOf(value);
+          const isPlain = proto === Object.prototype || proto === null;
+
+          // Convert array-like browser objects, class instances and other non-plain objects
+          // into plain JSON-safe data. Firestore rejects many of these as "invalid nested entity".
+          if (!isPlain) {
+            try {
+              if (typeof value.toJSON === "function") {
+                const jsonValue = value.toJSON();
+                ctx.seen.delete(value);
+                return sanitizeForFirestore(jsonValue, {
+                  inArray: ctx.inArray,
+                  seen: ctx.seen,
+                  path: ctx.path,
+                });
+              }
+
+              if (typeof value.length === "number" && value.length >= 0 && value.length < 5000) {
+                const arr = Array.from(value);
+                ctx.seen.delete(value);
+                return sanitizeForFirestore(arr, {
+                  inArray: ctx.inArray,
+                  seen: ctx.seen,
+                  path: ctx.path,
+                });
+              }
+
+              const jsonClone = JSON.parse(JSON.stringify(value));
+              ctx.seen.delete(value);
+              return sanitizeForFirestore(jsonClone, {
+                inArray: ctx.inArray,
+                seen: ctx.seen,
+                path: ctx.path,
+              });
+            } catch (_) {
+              ctx.seen.delete(value);
+              return null;
+            }
+          }
+
+          const out = {};
+          for (const [rawKey, rawVal] of Object.entries(value)) {
+            const key = String(rawKey);
+            if (!key || key === "__proto__" || key === "constructor" || key === "prototype") continue;
+
+            const clean = sanitizeForFirestore(rawVal, {
+              inArray: false,
+              seen: ctx.seen,
+              path: `${ctx.path}.${key}`,
+            });
+
+            if (clean !== undefined) out[key] = clean;
+          }
+
+          ctx.seen.delete(value);
+          return out;
+        }
+
+        return null;
+      }
+
+      function assertFirestoreSafe(value, path = "root", inArray = false) {
+        if (value === undefined || typeof value === "function" || typeof value === "symbol" || typeof value === "bigint") {
+          return path;
+        }
+        if (value === null || typeof value === "string" || typeof value === "number" || typeof value === "boolean") return null;
+        if (Array.isArray(value)) {
+          if (inArray) return path;
+          for (let i = 0; i < value.length; i++) {
+            const bad = assertFirestoreSafe(value[i], `${path}[${i}]`, true);
+            if (bad) return bad;
+          }
+          return null;
+        }
+        if (typeof value === "object") {
+          const proto = Object.getPrototypeOf(value);
+          if (proto !== Object.prototype && proto !== null) return path;
+          for (const [k, v] of Object.entries(value)) {
+            const bad = assertFirestoreSafe(v, `${path}.${k}`, false);
+            if (bad) return bad;
+          }
+        }
+        return null;
+      }
+
+      function getCleanCaseState() {
+        const clean = sanitizeForFirestore(STATE);
+        const invalidPath = assertFirestoreSafe(clean);
+        if (invalidPath) {
+          console.warn("Firestore sanitizer warning: invalid value remained at", invalidPath);
+          window.omdaCoreLogEvent && window.omdaCoreLogEvent("case_state_sanitize_warning", {
+            caseId: currentCaseId || null,
+            invalidPath,
+          });
+        }
+        return clean;
+      }
+      window.sanitizeForFirestore = sanitizeForFirestore;
+      window.getCleanCaseState = getCleanCaseState;
+
       function saveCurrentCase() {
         if (!currentCaseId || !window._FB) return Promise.resolve(false);
         const name =
@@ -14751,9 +17165,24 @@ ${(function(){
             name,
             mode,
             createdAt: new Date().toLocaleDateString("he-IL"),
-            state: JSON.parse(JSON.stringify(STATE)),
+            state: getCleanCaseState(),
           })
-          .catch((e) => { console.error("saveCase error", e); throw e; });
+          .then((result) => {
+            window.omdaCoreLogEvent && window.omdaCoreLogEvent("case_saved", { caseId: currentCaseId, mode, source: "case" });
+            return result;
+          })
+          .catch((e) => {
+            const message = e && e.message ? e.message : String(e);
+            window.omdaCoreLogEvent && window.omdaCoreLogEvent("case_save_failed", { caseId: currentCaseId, message });
+            window.omdaCoreLogError && window.omdaCoreLogError("case_save_failed", {
+              caseId: currentCaseId,
+              message,
+              severity: "error",
+              source: "saveCurrentCase",
+            });
+            console.error("saveCase error", e);
+            throw e;
+          });
       }
 
       let _autoSaveTimer = null;
@@ -14909,6 +17338,96 @@ ${(function(){
           if (i.isSupervision || i.isRental || i.noShiput) return s;
           return s + (parseFloat(i.qty) || 0) * (parseFloat(i.price) || 0);
         }, 0);
+      }
+      function calcBOQLineKinun(item) {
+        if (!item || item.zeroPrice) return 0;
+        if (item.isRental) return parseCurrency(item.rentalAmount || item.price || 0);
+        return (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+      }
+      function calcBOQLineShiput(item) {
+        if (!item || item.zeroPrice || item.isSupervision || item.isRental || item.noShiput) return null;
+        return Math.round(calcBOQLineKinun(item) * 0.67);
+      }
+      function fmtBOQMoney(n, emptyAsZero = false) {
+        const val = Math.round(parseFloat(n) || 0);
+        if (val > 0) return "₪" + fmtNum(val);
+        return emptyAsZero ? "₪0" : "—";
+      }
+      function setBOQMoneyEl(el, value, kind, emptyAsZero = false) {
+        if (!el) return;
+        const txt = fmtBOQMoney(value, emptyAsZero);
+        el.textContent = txt;
+        if (kind === "kinun") el.style.color = value > 0 ? "var(--blue)" : "var(--subtle)";
+        if (kind === "shiput") el.style.color = value > 0 ? "var(--green)" : "var(--subtle)";
+        if (kind === "claim") el.style.color = value > 0 ? "#FCD34D" : "var(--subtle)";
+      }
+      function normalizeBOQSupervision() {
+        const boq = STATE.boq || {};
+        const repairTotal = calcSectionTotal(boq.structItems) + calcSectionTotal(boq.contentsItems);
+        const rate = boq.supervisionRate || 5;
+        const supervisionAmt = Math.round(repairTotal * (rate / 100));
+        (boq.serviceItems || []).forEach((i) => {
+          if (i.isSupervision) i.price = String(supervisionAmt > 0 ? supervisionAmt : 0);
+        });
+      }
+      function updateAllBOQTotals(scheduleSave = false) {
+        normalizeBOQSupervision();
+        const boq = STATE.boq || {};
+        const sections = ["structItems", "contentsItems", "serviceItems"];
+
+        sections.forEach((section) => {
+          (boq[section] || []).forEach((item) => {
+            const kinun = calcBOQLineKinun(item);
+            const shiputVal = calcBOQLineShiput(item);
+            setBOQMoneyEl(document.querySelector(`[data-total="${section}_${item.id}"]`), kinun, "kinun", true);
+            const shiputEl = document.querySelector(`[data-shiput="${section}_${item.id}"]`);
+            if (shiputEl) {
+              if (shiputVal === null) {
+                shiputEl.textContent = "—";
+                shiputEl.style.color = "var(--subtle)";
+              } else {
+                setBOQMoneyEl(shiputEl, shiputVal, "shiput", true);
+              }
+            }
+            const priceInput = document.querySelector(`.boq-card[data-boqkey="${section}"][data-boqid="${item.id}"] .p-price input`);
+            if (priceInput && item.isSupervision && priceInput.value !== String(item.price || "")) priceInput.value = String(item.price || "");
+          });
+
+          const sectionItems = (boq[section] || []);
+          const secKinun = calcSectionTotal(sectionItems.filter((i) => !i.isRental));
+          const secShiput = Math.round(calcShiputBase(sectionItems.filter((i) => !i.isRental)) * 0.67);
+          const secClaim = boq.hasClaim ? sectionItems.reduce((sum, i) => sum + (parseFloat(i.claim) || 0), 0) : 0;
+          setBOQMoneyEl(document.querySelector(`[data-sec-kinun="${section}"]`), secKinun, "kinun");
+          setBOQMoneyEl(document.querySelector(`[data-sec-shiput="${section}"]`), secShiput, "shiput");
+          setBOQMoneyEl(document.querySelector(`[data-sec-claim="${section}"]`), secClaim, "claim");
+
+          const itemCh = (i) => String(i.ch || (typeof guessChFromDesc === "function" ? guessChFromDesc(i.desc) : 0) || 0);
+          const chapterNums = [...new Set(sectionItems.map(itemCh))];
+          chapterNums.forEach((chNum) => {
+            const chItems = sectionItems.filter((i) => itemCh(i) === String(chNum) && !i.isRental);
+            const chKinun = calcSectionTotal(chItems);
+            const chShiput = Math.round(calcShiputBase(chItems) * 0.67);
+            setBOQMoneyEl(document.querySelector(`[data-ch-kinun="${section}_${chNum}"]`), chKinun, "kinun");
+            setBOQMoneyEl(document.querySelector(`[data-ch-shiput="${section}_${chNum}"]`), chShiput, "shiput");
+
+            const roomNames = [...new Set(sectionItems.filter((i) => itemCh(i) === String(chNum)).map((i) => i.roomHeader || "__none__"))];
+            roomNames.forEach((room) => {
+              if (room === "__none__") return;
+              const roomItems = sectionItems.filter((i) => itemCh(i) === String(chNum) && (i.roomHeader || "__none__") === room && !i.isRental);
+              const roomKinun = calcSectionTotal(roomItems);
+              const roomShiput = Math.round(calcShiputBase(roomItems) * 0.67);
+              document.querySelectorAll("[data-room-kinun]").forEach((el) => {
+                if (el.getAttribute("data-room-kinun") === `${section}_${chNum}_${esc(room)}`) setBOQMoneyEl(el, roomKinun, "kinun");
+              });
+              document.querySelectorAll("[data-room-shiput]").forEach((el) => {
+                if (el.getAttribute("data-room-shiput") === `${section}_${chNum}_${esc(room)}`) setBOQMoneyEl(el, roomShiput, "shiput");
+              });
+            });
+          });
+        });
+
+        updateBOQSummary();
+        if (scheduleSave && typeof scheduleAutoSave === "function") scheduleAutoSave("boq");
       }
       function makePills(opts, curVal, onClickExpr) {
         return opts
@@ -15153,20 +17672,38 @@ ${(function(){
           items.push(newItem);
         }
         renderCard(7);
+        if (typeof scheduleAutoSave === "function") scheduleAutoSave("boq-add");
       }
+      function setBOQClaimMode(enabled) {
+        const boq = STATE.boq || {};
+        boq.hasClaim = !!enabled;
+        if (!boq.hasClaim) {
+          ["structItems", "contentsItems", "serviceItems"].forEach((section) => {
+            (boq[section] || []).forEach((item) => {
+              item.claim = "";
+            });
+          });
+        }
+        renderCard(7);
+        if (typeof scheduleAutoSave === "function") scheduleAutoSave("boq-claim-mode");
+      }
+
       function updateBOQSummary() {
-        const boq = STATE.boq;
+        const boq = STATE.boq || {};
         const structTotal = calcSectionTotal(boq.structItems);
         const contTotal = calcSectionTotal(boq.contentsItems);
         const servTotal = calcSectionTotal(boq.serviceItems);
         const grand = structTotal + contTotal + servTotal;
+        const vat = boq.vat ? grand * 0.18 : 0;
+        const totalWithVat = grand + vat;
         const shiput = Math.round(
           (calcShiputBase(boq.structItems) +
             calcShiputBase(boq.contentsItems) +
             calcShiputBase(boq.serviceItems)) *
             0.67,
         );
-        const deduct = parseCurrency(STATE.insurance.deductStruct) || 0;
+        const deduct = parseCurrency(STATE.insurance?.deductStruct) || 0;
+        const recPayout = Math.max(0, shiput - deduct);
         const setEl = (id, val) => {
           const el = document.getElementById(id);
           if (el) el.textContent = val;
@@ -15175,14 +17712,18 @@ ${(function(){
         setEl("sumCont", contTotal > 0 ? "₪" + fmtNum(contTotal) : "—");
         setEl("sumServ", servTotal > 0 ? "₪" + fmtNum(servTotal) : "—");
         setEl("sumGrand", grand > 0 ? "₪" + fmtNum(grand) : "—");
+        setEl("sumVat", vat > 0 ? "₪" + fmtNum(Math.round(vat)) : "—");
+        setEl("sumTotal", grand > 0 ? "₪" + fmtNum(Math.round(totalWithVat)) : "—");
         setEl("sumShiput", shiput > 0 ? "₪" + fmtNum(shiput) : "—");
-        // Update claim sum
+        setEl("sumPayout", recPayout > 0 ? "₪" + fmtNum(recPayout) : "—");
         if (typeof mode !== "undefined" && mode === "insurance") {
-          const totalClaim = [
-            ...(boq.structItems || []),
-            ...(boq.contentsItems || []),
-            ...(boq.serviceItems || []),
-          ].reduce((s, i) => s + (parseFloat(i.claim) || 0), 0);
+          const totalClaim = boq.hasClaim
+            ? [
+                ...(boq.structItems || []),
+                ...(boq.contentsItems || []),
+                ...(boq.serviceItems || []),
+              ].reduce((s, i) => s + (parseFloat(i.claim) || 0), 0)
+            : 0;
           setEl("sumClaim", totalClaim > 0 ? "₪" + fmtNum(totalClaim) : "—");
         }
       }
@@ -15194,117 +17735,29 @@ ${(function(){
         const item = (STATE.boq[section] || []).find(
           (i) => String(i.id) === String(id),
         );
-        if (item) {
-          item[field] = val;
-          // סנכרון מחיר — אם שונה מחיר, עדכן כל הסעיפים עם תיאור זהה בכל הפרקים
-          if (field === "price" && val && item.desc) {
-            const allSections = [
-              "structItems",
-              "contentsItems",
-              "serviceItems",
-            ];
-            allSections.forEach((sec) => {
-              (STATE.boq[sec] || []).forEach((other) => {
-                if (
-                  String(other.id) !== String(id) &&
-                  other.desc === item.desc &&
-                  !other.isSupervision
-                ) {
-                  other.price = val;
-                  // עדכן תא כינון ושיפוי בDOM
-                  const ot = document.querySelector(
-                    `[data-total="${sec}_${other.id}"]`,
-                  );
-                  if (ot) {
-                    const tot =
-                      (parseFloat(other.qty) || 0) * (parseFloat(val) || 0);
-                    ot.textContent = tot > 0 ? "₪" + fmtNum(tot) : "";
-                    ot.style.color = tot > 0 ? "var(--blue)" : "var(--subtle)";
-                  }
-                  const os = document.querySelector(
-                    `[data-shiput="${sec}_${other.id}"]`,
-                  );
-                  if (os) {
-                    const tot =
-                      (parseFloat(other.qty) || 0) * (parseFloat(val) || 0);
-                    const sv = Math.round(tot * 0.67);
-                    os.textContent = sv > 0 ? "₪" + fmtNum(sv) : "";
-                    os.style.color = sv > 0 ? "var(--green)" : "var(--subtle)";
-                  }
-                  // עדכן גם את שדה הinput עצמו
-                  const inp = document.querySelector(
-                    `input[oninput*="${sec}_${other.id}"][oninput*="price"], input[oninput*="'${sec}','${other.id}','price'"]`,
-                  );
-                  if (inp && inp.value !== val) inp.value = val;
-                }
-              });
-            });
-          }
-          if (field === "qty" || field === "price") {
-            // Update inline total cell (כינון)
-            const t = document.querySelector(`[data-total="${section}_${id}"]`);
-            if (t) {
-              const tot =
-                (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
-              t.textContent = tot > 0 ? "₪" + fmtNum(tot) : "";
-              t.style.color = tot > 0 ? "var(--blue)" : "var(--subtle)";
-            }
-            // Update inline shiput cell (×0.67) — excluded for supervision/rental/noShiput
-            const sh = document.querySelector(
-              `[data-shiput="${section}_${id}"]`,
-            );
-            if (sh) {
-              const tot =
-                (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
-              if (item.isSupervision || item.isRental || item.noShiput) {
-                sh.textContent = "—";
-                sh.style.color = "var(--subtle)";
-              } else {
-                const shiputVal = Math.round(tot * 0.67);
-                sh.textContent = shiputVal > 0 ? "₪" + fmtNum(shiputVal) : "";
-                sh.style.color =
-                  shiputVal > 0 ? "var(--green)" : "var(--subtle)";
-              }
-            }
-            // Recalculate section subtotal row
-            const boq = STATE.boq;
-            const structTotal = calcSectionTotal(boq.structItems);
-            const contTotal = calcSectionTotal(boq.contentsItems);
-            const servTotal = calcSectionTotal(boq.serviceItems);
-            const grand = structTotal + contTotal + servTotal;
-            const vat = boq.vat ? grand * 0.18 : 0;
-            const totalWithVat = grand + vat;
-            const shiputBase =
-              calcShiputBase(boq.structItems) +
-              calcShiputBase(boq.contentsItems) +
-              calcShiputBase(boq.serviceItems);
-            const shiput = Math.round(shiputBase * 0.67);
-            const deduct = parseCurrency(STATE.insurance.deductStruct) || 0;
-            const recPayout = Math.max(0, shiput - deduct);
-            // Update summary elements if they exist on screen
-            const setEl = (id, val) => {
-              const el = document.getElementById(id);
-              if (el) el.textContent = val;
-            };
-            setEl(
-              "sumStruct",
-              structTotal > 0 ? "₪" + fmtNum(structTotal) : "—",
-            );
-            setEl("sumCont", contTotal > 0 ? "₪" + fmtNum(contTotal) : "—");
-            setEl("sumServ", servTotal > 0 ? "₪" + fmtNum(servTotal) : "—");
-            setEl("sumGrand", grand > 0 ? "₪" + fmtNum(grand) : "—");
-            setEl("sumVat", vat > 0 ? "₪" + fmtNum(vat) : "—");
-            setEl("sumTotal", grand > 0 ? "₪" + fmtNum(totalWithVat) : "—");
-            setEl("sumShiput", shiput > 0 ? "₪" + fmtNum(shiput) : "—");
-            setEl("sumPayout", recPayout > 0 ? "₪" + fmtNum(recPayout) : "—");
-            // Update supervision amount (5% of struct+cont)
-            const allRepair = structTotal + contTotal;
-            boq.serviceItems.forEach((i) => {
-              if (i.isSupervision) {
-                i.price = String(Math.round(allRepair * 0.05));
+        if (!item) return;
+        item[field] = val;
+
+        if (field === "price" && val && item.desc) {
+          ["structItems", "contentsItems", "serviceItems"].forEach((sec) => {
+            (STATE.boq[sec] || []).forEach((other) => {
+              if (
+                String(other.id) !== String(id) &&
+                other.desc === item.desc &&
+                !other.isSupervision
+              ) {
+                other.price = val;
+                const inp = document.querySelector(
+                  `.boq-card[data-boqkey="${sec}"][data-boqid="${other.id}"] .p-price input`,
+                );
+                if (inp && inp.value !== val) inp.value = val;
               }
             });
-          }
+          });
+        }
+
+        if (["qty", "price", "claim", "unit", "desc"].includes(field)) {
+          updateAllBOQTotals(true);
         }
       }
       function removeBOQItem(section, id) {
@@ -15312,6 +17765,7 @@ ${(function(){
           (i) => String(i.id) !== String(id),
         );
         renderCard(7);
+        if (typeof scheduleAutoSave === "function") scheduleAutoSave("boq-remove");
       }
 
       // ══════════════════════════════════════════════════
@@ -15322,7 +17776,7 @@ ${(function(){
       let _boqDragRoom = null;
 
       document.addEventListener("dragstart", (e) => {
-        const tr = e.target.closest("tr[data-boqid]");
+        const tr = e.target.closest(".boq-card[data-boqid]");
         if (!tr) return;
         _boqDragId = tr.dataset.boqid;
         _boqDragKey = tr.dataset.boqkey;
@@ -15334,16 +17788,16 @@ ${(function(){
 
       document.addEventListener("dragend", (e) => {
         document
-          .querySelectorAll("tr.boq-dragging")
+          .querySelectorAll(".boq-card.boq-dragging")
           .forEach((t) => t.classList.remove("boq-dragging"));
         document
-          .querySelectorAll("tr.boq-drag-over")
+          .querySelectorAll(".boq-card.boq-drag-over")
           .forEach((t) => t.classList.remove("boq-drag-over"));
         _boqDragId = null;
       });
 
       document.addEventListener("dragover", (e) => {
-        const tr = e.target.closest("tr[data-boqid]");
+        const tr = e.target.closest(".boq-card[data-boqid]");
         if (!tr || !_boqDragId) return;
         // רק באותו פרק
         if (
@@ -15353,13 +17807,13 @@ ${(function(){
           return;
         e.preventDefault();
         document
-          .querySelectorAll("tr.boq-drag-over")
+          .querySelectorAll(".boq-card.boq-drag-over")
           .forEach((t) => t.classList.remove("boq-drag-over"));
         tr.classList.add("boq-drag-over");
       });
 
       document.addEventListener("drop", (e) => {
-        const tr = e.target.closest("tr[data-boqid]");
+        const tr = e.target.closest(".boq-card[data-boqid]");
         if (!tr || !_boqDragId || tr.dataset.boqid === _boqDragId) return;
         if (
           tr.dataset.room !== _boqDragRoom ||
@@ -15385,6 +17839,7 @@ ${(function(){
         items.splice(toIdx, 0, moved);
 
         renderCard(7);
+        if (typeof scheduleAutoSave === "function") scheduleAutoSave("boq-reorder");
       });
       function toggleSection(head) {
         head.closest(".sc").classList.toggle("collapsed");
@@ -15469,14 +17924,8 @@ ${(function(){
           document.getElementById("appShell").classList.remove("hidden");
           const ml = document.getElementById("tbModeLabel");
           const mi = map[m] || map.insurance;
-          ml.textContent = mi.label;
-          ml.style.color = mi.color;
-          ml.style.background = mi.bg;
-          ml.style.padding = "4px 12px";
-          ml.style.borderRadius = "12px";
-          ml.style.fontWeight = "700";
-          ml.style.fontSize = "11px";
-          document.getElementById("progressWrap").style.display = "flex";
+          if (ml) { ml.textContent = mi.label; ml.style.color = mi.color; ml.style.background = mi.bg; ml.style.padding = "4px 12px"; ml.style.borderRadius = "12px"; ml.style.fontWeight = "700"; ml.style.fontSize = "11px"; }
+          /* progressWrap removed */;
           document.querySelectorAll(".nav-insurance-only").forEach((el) => {
             el.style.display = m === "tax" ? "none" : "";
           });
